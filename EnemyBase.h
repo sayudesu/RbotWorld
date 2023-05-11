@@ -12,7 +12,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	// UŒ‚—Í
-	int GetAttackDamage() { return 1; }
+	int GetAttackDamage() { return 10; }
 	// ƒTƒCƒY
 	RECT GetPos() { return m_size; }
 	// UŒ‚‚ğó‚¯‚½ê‡

@@ -15,6 +15,8 @@ public:
 	void Update();// 更新
 	void Draw();// 描画
 
+	bool GetInvincible();// 無敵時間
+
 	int GetAttackDamage() { return 100; }// 攻撃力
 	bool GetDirection() { return m_isDirection; }// 攻撃力
 
@@ -58,6 +60,8 @@ private:
 	bool m_isJump;// ジャンプしているかどうか
 
 	bool m_isDirection;//向いている方向（true:左向き、false:右向き）
+
+	int m_ultimateTimer;
 
 	RECT m_size;// ヒットボックス
 

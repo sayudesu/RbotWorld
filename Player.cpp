@@ -4,6 +4,16 @@
 #include "Animation.h"
 #include "Util/DrawFunctions.h"
 
+#include <list>
+
+#include <algorithm>
+#include <iostream>
+#include <string>
+
+#include <memory>//「スマートポインタ」を使うためのinclude
+#include <array>//配列用
+#include <list>
+
 namespace
 {
 	const char* const kModelName = "Data/Model/Player/Robot.mv1";
@@ -23,6 +33,9 @@ namespace
 	constexpr float kGravity = -1.5f;
 	// ジャンプ力
 	constexpr float kJumpPower = 30.0f;
+
+	//無敵時間
+	constexpr int kInvincibleTime = 30;
 
 	// アニメーションナンバー
 	constexpr int kAnimNoDead    = 1;	// 死んだ
@@ -61,6 +74,8 @@ Player::Player():
 	m_attackSize = {};
 
 	m_Hp = kMaxHp;
+
+	m_ultimateTimer = 1;
 }
 
 Player::~Player()
@@ -122,6 +137,7 @@ void Player::Update()
 			m_isJump = true;
 		}
 	}
+
 	// 攻撃
 	if (Pad::isTrigger(PAD_INPUT_2))
 	{
@@ -164,18 +180,48 @@ void Player::Update()
 	*/
 	MoveAnimation();// アニメーションを決める
 	AttackPos();// 攻撃座標
+
+	if (m_ultimateTimer > 1)
+	{
+		m_ultimateTimer--;
+	}
+	else
+	{
+		m_ultimateTimer = 1;
+	}
 }
 
 // 描画 //
 void Player::Draw()
 {
-	m_pAnimation->Draw();
 	DrawUI();
+
+	// 点滅
+	if (m_ultimateTimer % 2 == 0)
+	{
+		return;
+	}
+
+	m_pAnimation->Draw();
+
+}
+
+bool Player::GetInvincible()
+{
+	if (m_ultimateTimer != 1)	return true;// 攻撃を受けていたら
+
+	return false;// 受けていなかったら
 }
 
 void Player::SetDamge(int damage)
 {
-	if(m_Hp >= 0)m_Hp -= damage;
+	int tempHp = m_Hp;// 一つ前の体力を保存
+	if(m_Hp > 0)m_Hp -= damage;
+
+	if (tempHp != m_Hp)// 新しく攻撃を受けたら
+	{
+		m_ultimateTimer = kInvincibleTime;
+	}
 
 }
 
@@ -234,9 +280,6 @@ void Player::MoveAnimation()
 	}
 	else// 待機
 	{
-		//m_pAnimation->SetAnimation(kAnimNoIdle);// モデルの動きをセット
-		//m_idleCountTime++;
-		//m_playTime = 0.5f;
 		m_pAnimation->SetAnimation(kAnimNoRun);// モデルの動きをセット
 		m_isAttack = false;
 		m_idleCountTime = 0;
@@ -328,7 +371,10 @@ void Player::DrawUI()
 	//体力を描画
 	DrawBox(100 - 1, 130 - 1,
 		100 + 400 + 1, 130 + 1 + 20,
-		0x0000ff, true);//外枠
+		0xff0000, true);//外枠
+	DrawBox(100 - 1, 130 - 1,
+		100 + 400 + 1, 130 + 1 + 20,
+		0xffff00, false);//外枠
 	DrawBox(100, 130,
 		100 + 400 * m_Hp / kMaxHp, 130 + 20,
 		0x0ffff0, true);//メーター

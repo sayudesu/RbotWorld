@@ -13,8 +13,7 @@ namespace
 
 SceneDebug::SceneDebug():
 	m_enemyCount(0),
-	m_isCheckHit(false),
-	m_isCheckHitAttack(false),
+	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr)
 {
@@ -43,18 +42,18 @@ void SceneDebug::Init()
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(VGet(0, 300, -800), VGet(0.0f, 0.0f, 0.0f));
 
-
-
 	m_pPlayer->Init();
 	m_pField->Init();
 	for (auto& enemy : m_pEnemy)
 	{
 		enemy->Init();
 	}
-	for (auto& enemy : m_pEnemyRush)
+	for (auto& enemyRush : m_pEnemyRush)
 	{
-		enemy->Init();
+		enemyRush->Init();
 	}
+
+	m_isInvincible = true;
 }
 
 void SceneDebug::End()
@@ -81,7 +80,7 @@ SceneBase* SceneDebug::Update()
 
 	// 敵を生成(まだエネミー削除処理なし)
 	m_enemyCount++;
-	if (m_enemyCount > 60)
+	if (m_enemyCount > 60 * 1)
 	{
 		m_enemyCount = 0;
 		VECTOR pos = { 0.0f,0.0f,0.0f };
@@ -94,93 +93,21 @@ SceneBase* SceneDebug::Update()
 	{
 		enemy->Update();
 	}
-	for (auto& enemy : m_pEnemyRush)
+	for (auto& enemyRush : m_pEnemyRush)
 	{
-		enemy->Update();
+		enemyRush->Update();
 	}
 	for (auto& enemy : m_pEnemy)
 	{
 		enemy->SetPosPlayer(m_pPlayer->GetPos());
 	}
-	/*
-	for (auto& enemy : m_pEnemy)
+
+	if (!m_isInvincible)
 	{
-		// プレイヤーとエネミーの衝突
-		if ((m_pPlayer->GetPos().right > enemy->GetPos().left) &&
-			(m_pPlayer->GetPos().left < enemy->GetPos().right))
-		{
-			if ((m_pPlayer->GetPos().bottom > enemy->GetPos().top) &&
-				(m_pPlayer->GetPos().top < enemy->GetPos().bottom))
-			{
-				// ダメージ量を渡す
-				m_pPlayer->SetDamge(enemy->GetAttackDamage());
-				// 振動開始
-				StartJoypadVibration(DX_INPUT_PAD1, 100, 60, 0);
-			}
-		}
-
-		// プレイヤーの攻撃
-		if ((m_pPlayer->GetPosAttack().right > enemy->GetPos().left) &&
-			(m_pPlayer->GetPosAttack().left < enemy->GetPos().right))
-		{
-			if ((m_pPlayer->GetPosAttack().bottom > enemy->GetPos().top) &&
-				(m_pPlayer->GetPosAttack().top < enemy->GetPos().bottom))
-			{
-				// ダメージ量を渡す
-				enemy->SetDamge(m_pPlayer->GetAttackDamage());
-			}
-		}
-
+		damege();
 	}
-	*/
-	for (auto& enemy : m_pEnemyRush)
-	{
-		// プレイヤーとエネミーの衝突
-		if ((m_pPlayer->GetPos().right > enemy->GetPos().left) &&
-			(m_pPlayer->GetPos().left < enemy->GetPos().right))
-		{
-			if ((m_pPlayer->GetPos().bottom > enemy->GetPos().top) &&
-				(m_pPlayer->GetPos().top < enemy->GetPos().bottom))
-			{
-				if (!m_isCheckHit)
-				{
-					// ダメージ量を渡す
-					m_pPlayer->SetDamge(enemy->GetAttackDamage());
-					// 振動開始
-					StartJoypadVibration(DX_INPUT_PAD1, 100, 60, 0);
-
-					m_isCheckHit = true;
-				}
-			}
-		}
-		else
-		{
-			m_isCheckHit = false;
-		}
-		/*
-		// プレイヤーの攻撃
-		if ((m_pPlayer->GetPosAttack().right > enemy->GetPos().left) &&
-			(m_pPlayer->GetPosAttack().left < enemy->GetPos().right))
-		{
-			if ((m_pPlayer->GetPosAttack().bottom > enemy->GetPos().top) &&
-				(m_pPlayer->GetPosAttack().top < enemy->GetPos().bottom))
-			{
-				if (!m_isCheckHitAttack)
-				{
-					// ダメージ量を渡す
-					enemy->SetDamge(m_pPlayer->GetAttackDamage());
-				}
-				m_isCheckHitAttack = true;
-			}
-		}
-		else
-		{
-			m_isCheckHitAttack = false;
-		}
-		*/
-	}
-
 	
+	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 	
 	UpdateFade();
 
@@ -193,12 +120,43 @@ void SceneDebug::Draw()
 	{
 		enemy->Draw();
 	}
-	for (auto& enemy : m_pEnemyRush)
+	for (auto& enemyRush : m_pEnemyRush)
 	{
-		enemy->Draw();
+		enemyRush->Draw();
 	}
+
 	m_pPlayer->Draw();
 	m_pField->Draw();
+
 	SceneBase::DrawFade();
+}
+
+bool SceneDebug::damege()
+{
+	for (auto& enemyRush : m_pEnemyRush)
+	{
+		// プレイヤーとエネミーの衝突
+		if (m_pPlayer->GetPos().left > enemyRush->GetPos().right) continue;
+		
+		if (m_pPlayer->GetPos().right < enemyRush->GetPos().left) continue;
+		
+		if (m_pPlayer->GetPos().top > enemyRush->GetPos().bottom) continue;
+		
+		if (m_pPlayer->GetPos().bottom < enemyRush->GetPos().top) continue;
+
+		printfDx("ダメージをくらった\n");
+
+		// ダメージ量を渡す
+		m_pPlayer->SetDamge(enemyRush->GetAttackDamage());
+		// 振動開始
+		StartJoypadVibration(DX_INPUT_PAD1, 100, 60, 0);
+		// ダメージをくらった
+		m_isInvincible = true;
+
+		return true;
+	}
+
+	return false;
+	
 }
 

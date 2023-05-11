@@ -7,6 +7,7 @@ class Player;
 class Enemy;
 class EnemyRush;
 class Field;
+
 class SceneDebug : public SceneBase
 {
 public:
@@ -18,12 +19,13 @@ public:
 
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
+
+	bool damege();
 private:
 
 	int m_enemyCount;
 
-	bool m_isCheckHit;
-	bool m_isCheckHitAttack;
+	bool m_isInvincible;
 
 	Player* m_pPlayer;
 	std::vector<std::shared_ptr<Enemy>>m_pEnemy;

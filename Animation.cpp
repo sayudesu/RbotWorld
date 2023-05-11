@@ -43,6 +43,7 @@ void Animation::Init()
 
 void Animation::End()
 {
+	MV1DeleteModel(m_modelHandle);
 }
 
 void Animation::Update(float angleX,float angleY, float angleZ,float animTime)
