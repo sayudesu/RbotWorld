@@ -23,6 +23,10 @@ public:
 	bool damege();
 private:
 
+	int m_slowCount;
+
+	int m_slowSpeed;
+
 	int m_enemyCount;
 
 	bool m_isInvincible;

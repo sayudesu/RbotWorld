@@ -12,7 +12,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	// 攻撃力
-	int GetAttackDamage() { return 10; }
+	int GetAttackDamage() { return 30; }
 	// サイズ
 	RECT GetPos() { return m_size; }
 	// 攻撃を受けた場合
@@ -20,7 +20,7 @@ public:
 	// プレイヤーの位置を取得
 	void SetPosPlayer(RECT playerPos) { m_posPlayer = playerPos; }
 protected:
-	int m_Hp = 100;// 体力
+	int m_hp = 100;// 体力
 
 	int m_saveDamage = 0;
 

@@ -12,13 +12,15 @@ namespace
 }
 
 SceneDebug::SceneDebug():
+	m_slowCount(0),
+	m_slowSpeed(0),
 	m_enemyCount(0),
 	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr)
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
-	m_pEnemy.push_back(std::make_shared<Enemy>());
+//	m_pEnemy.push_back(std::make_shared<Enemy>());
 
 	m_pPlayer = new Player;
 	m_pField = new Field;
@@ -44,10 +46,10 @@ void SceneDebug::Init()
 
 	m_pPlayer->Init();
 	m_pField->Init();
-	for (auto& enemy : m_pEnemy)
-	{
-		enemy->Init();
-	}
+	//for (auto& enemy : m_pEnemy)
+	//{
+	//	enemy->Init();
+	//}
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Init();
@@ -58,10 +60,10 @@ void SceneDebug::Init()
 
 void SceneDebug::End()
 {
-	for (auto& enemy : m_pEnemy)
-	{
-		enemy->End();
-	}
+	//for (auto& enemy : m_pEnemy)
+	//{
+	//	enemy->End();
+	//}
 	for (auto& enemy : m_pEnemyRush)
 	{
 		enemy->End();
@@ -75,7 +77,6 @@ void SceneDebug::End()
 
 SceneBase* SceneDebug::Update()
 {
-	m_pPlayer->Update();
 	m_pField->Update();
 
 	// 敵を生成(まだエネミー削除処理なし)
@@ -89,26 +90,36 @@ SceneBase* SceneDebug::Update()
 	}
 
 
-	for (auto& enemy : m_pEnemy) 
+	m_slowSpeed = m_pPlayer->GetslowWorld();
+	// スローモーション処理
+	m_slowCount = (m_slowCount += 1) % m_slowSpeed;
+	if (m_slowCount == 0)
 	{
-		enemy->Update();
-	}
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		enemyRush->Update();
-	}
-	for (auto& enemy : m_pEnemy)
-	{
-		enemy->SetPosPlayer(m_pPlayer->GetPos());
+		m_pPlayer->Update();
+		for (auto& enemyRush : m_pEnemyRush)
+		{
+			enemyRush->Update();
+		}
+
 	}
 
+	/*for (auto& enemy : m_pEnemy)
+	{
+	enemy->Update();
+	}*/
+	//for (auto& enemy : m_pEnemy)
+	//{
+	//	enemy->SetPosPlayer(m_pPlayer->GetPos());
+	//}
+
+	// 無敵時間外に敵に当たっているかの判定
 	if (!m_isInvincible)
 	{
 		damege();
 	}
-	
+	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
-	
+	// フェイド処理
 	UpdateFade();
 
 	return this;
@@ -116,10 +127,11 @@ SceneBase* SceneDebug::Update()
 
 void SceneDebug::Draw()
 {
-	for (auto& enemy : m_pEnemy)
-	{
-		enemy->Draw();
-	}
+	//for (auto& enemy : m_pEnemy)
+	//{
+	//	enemy->Draw();
+	//}
+
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Draw();
@@ -128,9 +140,10 @@ void SceneDebug::Draw()
 	m_pPlayer->Draw();
 	m_pField->Draw();
 
+	// フェイド処理
 	SceneBase::DrawFade();
 }
-
+// 敵との衝突判定
 bool SceneDebug::damege()
 {
 	for (auto& enemyRush : m_pEnemyRush)
@@ -144,7 +157,7 @@ bool SceneDebug::damege()
 		
 		if (m_pPlayer->GetPos().bottom < enemyRush->GetPos().top) continue;
 
-		printfDx("ダメージをくらった\n");
+	//	printfDx("ダメージをくらった\n");
 
 		// ダメージ量を渡す
 		m_pPlayer->SetDamge(enemyRush->GetAttackDamage());

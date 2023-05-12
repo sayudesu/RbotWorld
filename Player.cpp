@@ -4,15 +4,6 @@
 #include "Animation.h"
 #include "Util/DrawFunctions.h"
 
-#include <list>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
-
-#include <memory>//「スマートポインタ」を使うためのinclude
-#include <array>//配列用
-#include <list>
 
 namespace
 {
@@ -37,6 +28,8 @@ namespace
 	//無敵時間
 	constexpr int kInvincibleTime = 30;
 
+	constexpr int kSlowSpeed = 2;
+
 	// アニメーションナンバー
 	constexpr int kAnimNoDead    = 1;	// 死んだ
 	constexpr int kAnimNoIdle    = 2;	// 待機
@@ -51,7 +44,8 @@ namespace
 Player::Player():
 	m_cameraAngle(0.0f),
 	m_idleCountTime(0),
-	m_Hp(0),
+	m_slowSpeed(0),
+	m_hp(0),
 	m_jumpAcc(0.0f),
 	m_animNo(kAnimNoIdle),
 	m_playTime(0.0f),
@@ -61,6 +55,7 @@ Player::Player():
 	m_isAttack(false),
 	m_attackPunch(0.0f),
 	m_isDead(false),
+	m_isAnimStop(false),
 	m_isJump(false),
 	m_isDirection(false),
 	m_pos(VGet(0,0,0)),
@@ -73,7 +68,15 @@ Player::Player():
 	m_size = {};
 	m_attackSize = {};
 
-	m_Hp = kMaxHp;
+	m_slowSpeed = 1;
+
+	m_hp = kMaxHp;
+	m_tempHp = 0;
+
+	m_isDamage = false;
+	m_isAnimStop = true;
+
+	m_tempDamage = 0;
 
 	m_ultimateTimer = 1;
 }
@@ -95,25 +98,45 @@ void Player::End()
 // 更新処理 //
 void Player::Update()
 {
-	UpdateCamera();
-
-	m_pAnimation->Update(0.0f,angle, 0.0f, m_playTime);
 	m_pAnimation->SetPos(m_pos);
+	UpdateCamera();
 
 	// 攻撃アニメーションを止める
 	if (m_pAnimation->GetAnimeTime())
 	{
 		m_isAttack = false;
 		m_isJump   = false;
+		if (m_isDead)
+		{
+			m_isAnimStop = false;
+		}
 	}
-	// 攻撃した場合はストップ
-	if (!m_isAttack)
+
+	if (m_isAnimStop)// アニメーションが停止するまで
 	{
-		m_pos.x += kRunSpeed;
+		m_pAnimation->Update(0.0f, angle, 0.0f, m_playTime);// アニメーション再生
 	}
-	else// 攻撃してる場合も少し移動可能
+
+	if (!m_isDead)
 	{
-		m_pos.x += 5.0f;
+		// プレイヤーと敵の動きを遅くする
+		if (Pad::isPress(PAD_INPUT_3))m_slowSpeed = kSlowSpeed;
+		else m_slowSpeed = 1;
+	
+		// 攻撃した場合はストップ
+		if (!m_isAttack)
+		{
+			m_pos.x += kRunSpeed;
+		}
+		else// 攻撃してる場合も少し移動可能
+		{
+			m_pos.x += 5.0f;
+		}
+	}
+	else
+	{
+		m_slowSpeed = 30;
+		
 	}
 
 	// ジャンプ処理
@@ -144,44 +167,57 @@ void Player::Update()
 		m_isAttack = true;
 	}
 
-	//m_isWalk = false;
-	//m_isRun  = false;
-	/*
-	if (Pad::isPress(PAD_INPUT_LEFT))// 右に移動
-	{
-		if (Pad::isPress(PAD_INPUT_3))// ダッシュ
-		{
-			m_isRun = true;
-			m_pos.x -= kRunSpeed;
-		}
-		else
-		{
-			m_isWalk = true;
-			m_pos.x -= kWalkSpeed;
-		}
-		m_isDirection = false;// 左向き
-		angle = 90.0f;
-	}
-	if (Pad::isPress(PAD_INPUT_RIGHT))// 左に移動
-	{
-		if (Pad::isPress(PAD_INPUT_3))// ダッシュ
-		{
-			m_isRun = true;
-			m_pos.x += kRunSpeed;
-		}
-		else
-		{
-			m_isWalk = true;
-			m_pos.x += kWalkSpeed;
-		}
-		m_isDirection = true;// 右向き
-		angle = -90.0f;
-	}
-	*/
-	MoveAnimation();// アニメーションを決める
-	AttackPos();// 攻撃座標
 
-	if (m_ultimateTimer > 1)
+
+	UpdateHitPoint();// 体力の計算処理
+	MoveAnimation();// アニメーションを決める
+
+	AttackPos();// 攻撃座標
+	UpdateInvincible();// 無敵時間処理
+}
+
+// 描画
+void Player::Draw()
+{
+	// UI表示
+	DrawUI();
+
+	// 点滅
+	if (m_ultimateTimer % 2 == 0)return;
+
+	// モデル表示
+	m_pAnimation->Draw();
+
+}
+
+void Player::UpdateHitPoint()
+{
+	// HPバー体力 - ダメージ分を徐々に減らす
+	if (m_isDamage)
+	{
+		// HPUIの枠を超えない様に
+		if (m_hp < 0)
+		{
+			m_hp = 0;
+			m_isDead = true;
+		}
+		else if (m_hp > m_tempHp - m_tempDamage)
+		{
+			// 減らす
+			m_hp--;
+		}
+		else
+		{
+			// 減らし終わったら合図
+			m_isDamage = false;
+		}
+	}
+}
+
+void Player::UpdateInvincible()
+{
+	// 点滅処理
+	if (m_ultimateTimer > 0 + 1)
 	{
 		m_ultimateTimer--;
 	}
@@ -191,21 +227,6 @@ void Player::Update()
 	}
 }
 
-// 描画 //
-void Player::Draw()
-{
-	DrawUI();
-
-	// 点滅
-	if (m_ultimateTimer % 2 == 0)
-	{
-		return;
-	}
-
-	m_pAnimation->Draw();
-
-}
-
 bool Player::GetInvincible()
 {
 	if (m_ultimateTimer != 1)	return true;// 攻撃を受けていたら
@@ -213,46 +234,38 @@ bool Player::GetInvincible()
 	return false;// 受けていなかったら
 }
 
+// ダメージを受けた時だけ更新 //
 void Player::SetDamge(int damage)
 {
-	int tempHp = m_Hp;// 一つ前の体力を保存
-	if(m_Hp > 0)m_Hp -= damage;
+	m_isDamage = true;
 
-	if (tempHp != m_Hp)// 新しく攻撃を受けたら
+	m_tempDamage = damage;
+
+	if (m_tempHp != m_hp)// 新しく攻撃を受けたら
 	{
 		m_ultimateTimer = kInvincibleTime;
 	}
+
+	m_tempHp = m_hp;// 一つ前の体力を保存
 
 }
 
 // アニメーションを決める //
 void Player::MoveAnimation()
 {
-	if (m_Hp <= 0)
+	if (m_isDead)
 	{
 		m_pAnimation->SetAnimation(kAnimNoDead);// モデルの動きをセット
 		m_playTime = 0.5f;
-		m_isDead = true;
+		printfDx("dead\n");
+		
 	}
 	else if (m_isJump)// ジャンプ
 	{
 		m_pAnimation->SetAnimation(kAnimNoRunJump);// モデルの動きをセット
 		m_idleCountTime = 0;
 		m_playTime = 0.4f;
-		/*
-		if (m_isRun)
-		{
-			m_pAnimation->SetAnimation(kAnimNoRunJump);// モデルの動きをセット
-			m_idleCountTime = 0;
-			m_playTime = 0.3f;
-		}
-		else
-		{
-			m_pAnimation->SetAnimation(kAnimNoJump);// モデルの動きをセット
-			m_idleCountTime = 0;
-			m_playTime = 0.4f;
-		}
-		*/
+		printfDx("1\n");
 	}
 	else if (m_isWalk)// 移動
 	{
@@ -260,6 +273,7 @@ void Player::MoveAnimation()
 		m_isAttack = false;
 		m_idleCountTime = 0;
 		m_playTime = 0.5f;
+		printfDx("2\n");
 	}
 	else if (m_isAttack)// 攻撃
 	{
@@ -272,18 +286,20 @@ void Player::MoveAnimation()
 		{
 			m_attackPunch = 65.0f;
 		}
+		printfDx("3\n");
 	}
 	else if (m_idleCountTime >= 60 * 5)
 	{
 		m_pAnimation->SetAnimation(kAnimNoWave);// モデルの動きをセット
 		angle = 0.0f;
+		printfDx("4\n");
 	}
-	else// 待機
+	else// 走り
 	{
 		m_pAnimation->SetAnimation(kAnimNoRun);// モデルの動きをセット
-		m_isAttack = false;
 		m_idleCountTime = 0;
 		m_playTime = 0.5f;
+		printfDx("5\n");
 	}
 }
 
@@ -376,7 +392,7 @@ void Player::DrawUI()
 		100 + 400 + 1, 130 + 1 + 20,
 		0xffff00, false);//外枠
 	DrawBox(100, 130,
-		100 + 400 * m_Hp / kMaxHp, 130 + 20,
+		100 + 400 * m_hp / kMaxHp, 130 + 20,
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
 }

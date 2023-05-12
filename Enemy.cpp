@@ -27,7 +27,7 @@ Enemy::Enemy() :
 
 	m_posPlayer = {};
 
-	m_Hp = kMaxHp;
+	m_hp = kMaxHp;
 }
 
 Enemy::~Enemy()
@@ -52,7 +52,7 @@ void Enemy::Update()
 
 	//m_angle.y++;
 //	m_angle.x = GetRand(1000.0f);
-	if (m_Hp < 0)// 死んだら
+	if (m_hp < 0)// 死んだら
 	{
 		if (m_pos.y > 100.0f)// 地面に落ちる
 		{
@@ -140,7 +140,7 @@ void Enemy::DrawUI()
 			m_size.left + 100 + 1, m_size.top + 1 + 20,
 			0x0000ff, true);//外枠
 		DrawBox(m_size.left, m_size.top,
-			m_size.left + 100 * m_Hp / kMaxHp, m_size.top + 20,
+			m_size.left + 100 * m_hp / kMaxHp, m_size.top + 20,
 			0x0ffff0, true);//メーター
 		//長さ * HP / HPMAX
 	}

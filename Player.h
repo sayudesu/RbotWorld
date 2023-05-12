@@ -15,7 +15,13 @@ public:
 	void Update();// 更新
 	void Draw();// 描画
 
+	void UpdateHitPoint();// 体力の計算処理
+
+	void UpdateInvincible();// 無敵時間処理
+
 	bool GetInvincible();// 無敵時間
+
+	int GetslowWorld() { return m_slowSpeed; }// スローの加減を渡す
 
 	int GetAttackDamage() { return 100; }// 攻撃力
 	bool GetDirection() { return m_isDirection; }// 攻撃力
@@ -37,7 +43,15 @@ private:
 
 	int m_idleCountTime;// 放置時間カウント
 
-	int m_Hp;// 体力
+	int m_slowSpeed;
+
+	int m_hp;// 体力
+
+	int m_tempHp;// 体力
+
+	bool m_isDamage;// 受けたダメージ
+
+	int m_tempDamage;
 
 	float m_jumpAcc;// ジャンプ
 
@@ -54,6 +68,8 @@ private:
 	bool m_isAttack;// 攻撃しているかどうか
 
 	float m_attackPunch;// 攻撃力
+
+	bool m_isAnimStop;// 死んでいるかどうか
 
 	bool m_isDead;// 死んでいるかどうか
 

@@ -52,7 +52,7 @@ void Animation::Update(float angleX,float angleY, float angleZ,float animTime)
 	m_playTime += animTime;
 
 	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
-	if (m_playTime >= m_totalTime)
+	if (m_playTime > m_totalTime)
 	{
 		m_playTime = 0.0f;
 		m_isAnimTime = true;
