@@ -24,6 +24,7 @@
     <ProjectGuid>{e59eab6a-57b0-4a50-bdfb-d4688abac265}</ProjectGuid>
     <RootNamespace>GameTemplate</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>RbotWorld</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -140,9 +141,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="CreateText.cpp" />
     <ClCompile Include="EnemyBase.cpp" />
     <ClCompile Include="EnemyRush.cpp" />
     <ClCompile Include="Field.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Util\DrawFunctions.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
@@ -155,9 +158,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="CreateText.h" />
     <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="EnemyRush.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Util\DrawFunctions.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Player.h" />

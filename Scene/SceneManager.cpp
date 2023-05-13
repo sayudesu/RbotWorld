@@ -2,6 +2,7 @@
 #include <cassert>
 #include "SceneBase.h"
 #include "SceneDebug.h"
+#include "SceneTitle.h"
 #include "Pad.h"
 
 SceneManager::SceneManager():
@@ -15,7 +16,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init()
 {
-	m_pScene.reset(new SceneDebug);
+	m_pScene.reset(new SceneTitle);
 	m_pScene->Init();
 }
 

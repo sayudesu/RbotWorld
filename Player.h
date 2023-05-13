@@ -23,7 +23,7 @@ public:
 
 	int GetslowWorld() { return m_slowSpeed; }// ƒXƒ[‚Ì‰ÁŒ¸‚ğ“n‚·
 
-	int GetAttackDamage() { return 100; }// UŒ‚—Í
+	int GetAttackDamage() const { return 100; }// UŒ‚—Í
 	bool GetDirection() { return m_isDirection; }// UŒ‚—Í
 
 	RECT GetPos() { return m_size; }// ˆÊ’u
@@ -69,7 +69,7 @@ private:
 
 	float m_attackPunch;// UŒ‚—Í
 
-	bool m_isAnimStop;// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	bool m_isAnimStop;// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ~‚ß‚é‚©‚Ç‚¤‚©
 
 	bool m_isDead;// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
 

@@ -27,8 +27,8 @@ namespace
 
 	//無敵時間
 	constexpr int kInvincibleTime = 30;
-
-	constexpr int kSlowSpeed = 2;
+	// スロー時間
+	constexpr int kSlowSpeed = 10;
 
 	// アニメーションナンバー
 	constexpr int kAnimNoDead    = 1;	// 死んだ
@@ -117,12 +117,9 @@ void Player::Update()
 		m_pAnimation->Update(0.0f, angle, 0.0f, m_playTime);// アニメーション再生
 	}
 
+	// 死んだ場合は動かない
 	if (!m_isDead)
-	{
-		// プレイヤーと敵の動きを遅くする
-		if (Pad::isPress(PAD_INPUT_3))m_slowSpeed = kSlowSpeed;
-		else m_slowSpeed = 1;
-	
+	{	
 		// 攻撃した場合はストップ
 		if (!m_isAttack)
 		{
@@ -133,9 +130,18 @@ void Player::Update()
 			m_pos.x += 5.0f;
 		}
 	}
+
+	// プレイヤーと敵の動きを遅くする
+	if (Pad::isPress(PAD_INPUT_3))
+	{
+		m_slowSpeed = kSlowSpeed;
+	}
 	else
 	{
-		m_slowSpeed = 30;
+		if (m_slowSpeed > 1)
+		{
+			m_slowSpeed--;
+		}
 		
 	}
 
@@ -256,16 +262,13 @@ void Player::MoveAnimation()
 	if (m_isDead)
 	{
 		m_pAnimation->SetAnimation(kAnimNoDead);// モデルの動きをセット
-		m_playTime = 0.5f;
-		printfDx("dead\n");
-		
+		m_playTime = 0.5f;	
 	}
 	else if (m_isJump)// ジャンプ
 	{
 		m_pAnimation->SetAnimation(kAnimNoRunJump);// モデルの動きをセット
 		m_idleCountTime = 0;
 		m_playTime = 0.4f;
-		printfDx("1\n");
 	}
 	else if (m_isWalk)// 移動
 	{
@@ -273,7 +276,6 @@ void Player::MoveAnimation()
 		m_isAttack = false;
 		m_idleCountTime = 0;
 		m_playTime = 0.5f;
-		printfDx("2\n");
 	}
 	else if (m_isAttack)// 攻撃
 	{
@@ -286,20 +288,17 @@ void Player::MoveAnimation()
 		{
 			m_attackPunch = 65.0f;
 		}
-		printfDx("3\n");
 	}
 	else if (m_idleCountTime >= 60 * 5)
 	{
 		m_pAnimation->SetAnimation(kAnimNoWave);// モデルの動きをセット
 		angle = 0.0f;
-		printfDx("4\n");
 	}
 	else// 走り
 	{
 		m_pAnimation->SetAnimation(kAnimNoRun);// モデルの動きをセット
 		m_idleCountTime = 0;
 		m_playTime = 0.5f;
-		printfDx("5\n");
 	}
 }
 
@@ -395,4 +394,11 @@ void Player::DrawUI()
 		100 + 400 * m_hp / kMaxHp, 130 + 20,
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
+
+	// 距離を描画
+	DrawFormatString(100, 100, 0xffffff, "%f", m_pos.x);
+	if (m_pos.x > 30000)
+	{
+		DrawString(1000, 1000, "30000達成！",0xffffff);
+	}
 }

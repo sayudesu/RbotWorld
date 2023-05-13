@@ -79,17 +79,6 @@ SceneBase* SceneDebug::Update()
 {
 	m_pField->Update();
 
-	// 敵を生成(まだエネミー削除処理なし)
-	m_enemyCount++;
-	if (m_enemyCount > 60 * 1)
-	{
-		m_enemyCount = 0;
-		VECTOR pos = { 0.0f,0.0f,0.0f };
-		pos.x = m_pPlayer->GetPosWorld().x + 3000;
-		m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
-	}
-
-
 	m_slowSpeed = m_pPlayer->GetslowWorld();
 	// スローモーション処理
 	m_slowCount = (m_slowCount += 1) % m_slowSpeed;
@@ -101,6 +90,15 @@ SceneBase* SceneDebug::Update()
 			enemyRush->Update();
 		}
 
+		// 敵を生成(まだエネミー削除処理なし)
+		m_enemyCount++;
+		if (m_enemyCount > 60 * 1)
+		{
+			m_enemyCount = 0;
+			VECTOR pos = { 0.0f,0.0f,0.0f };
+			pos.x = m_pPlayer->GetPosWorld().x + 3000;
+			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
+		}
 	}
 
 	/*for (auto& enemy : m_pEnemy)
