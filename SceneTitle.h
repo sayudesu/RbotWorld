@@ -1,5 +1,8 @@
 #pragma once
 #include "SceneBase.h"
+#include <vector>
+#include <memory>
+#include "Util/Vec2.h"
 
 class CreateText;
 class SceneTitle:public SceneBase
@@ -13,6 +16,13 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw();
 private:
-	CreateText* m_pText;
+	int m_size;
+	int m_color;
+
+	Vec2 m_pos;
+
+	// 決まった数なのでvectorからarrayに変更します
+	// テキスト描画用
+	std::vector<std::shared_ptr<CreateText>>m_pText;
 };
 
