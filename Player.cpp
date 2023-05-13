@@ -29,7 +29,7 @@ namespace
 	//無敵時間
 	constexpr int kInvincibleTime = 30;
 	// スロー時間
-	constexpr int kSlowSpeed = 10;
+	constexpr float kSlowSpeed = 10.0f;
 
 	// アニメーションナンバー
 	constexpr int kAnimNoDead    = 1;	// 死んだ
@@ -45,7 +45,7 @@ namespace
 Player::Player():
 	m_cameraAngle(0.0f),
 	m_idleCountTime(0),
-	m_slowSpeed(0),
+	m_slowSpeed(0.0f),
 	m_hp(0),
 	m_jumpAcc(0.0f),
 	m_animNo(kAnimNoIdle),
@@ -70,7 +70,7 @@ Player::Player():
 	m_size = {};
 	m_attackSize = {};
 
-	m_slowSpeed = 1;
+	m_slowSpeed = 1.0f;
 
 	m_hp = kMaxHp;
 	m_tempHp = 0;
@@ -172,18 +172,24 @@ void Player::UpdateControl()
 	{
 		if (m_slowSpeed < kSlowSpeed)
 		{
-			m_slowSpeed++;
+			m_slowSpeed += 0.5f;
 		}
 	}
 	else
 	{
-		if (m_slowSpeed > 1)
+		if (m_slowSpeed > 1.0f)
 		{
-			m_slowSpeed--;
+			m_slowSpeed -= 0.5f;
 		}
+		/*else
+		{
+			m_slowSpeed = 1.0f;
+		}*/
 
 	}
-	printfDx("%d", m_slowSpeed);
+
+	printfDx("%f\n", m_slowSpeed);
+
 	// 攻撃
 	if (!m_isJump)
 	{

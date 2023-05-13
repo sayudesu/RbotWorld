@@ -23,7 +23,7 @@ public:
 
 	bool GetInvincible();// 無敵時間
 
-	int GetslowWorld() { return m_slowSpeed; }// スローの加減を渡す
+	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }// スローの加減を渡す
 
 	int GetAttackDamage() const { return 100; }// 攻撃力
 	bool GetDirection() { return m_isDirection; }// 攻撃力
@@ -45,7 +45,7 @@ private:
 
 	int m_idleCountTime;// 放置時間カウント
 
-	int m_slowSpeed;
+	float m_slowSpeed;// スロー処理
 
 	int m_hp;// 体力
 

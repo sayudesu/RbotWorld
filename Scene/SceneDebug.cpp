@@ -13,14 +13,12 @@ namespace
 
 SceneDebug::SceneDebug():
 	m_slowCount(0),
-	m_slowSpeed(0),
 	m_enemyCount(0),
 	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr)
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
-//	m_pEnemy.push_back(std::make_shared<Enemy>());
 
 	m_pPlayer = new Player;
 	m_pField = new Field;
@@ -46,10 +44,7 @@ void SceneDebug::Init()
 
 	m_pPlayer->Init();
 	m_pField->Init();
-	//for (auto& enemy : m_pEnemy)
-	//{
-	//	enemy->Init();
-	//}
+
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Init();
@@ -60,13 +55,9 @@ void SceneDebug::Init()
 
 void SceneDebug::End()
 {
-	//for (auto& enemy : m_pEnemy)
-	//{
-	//	enemy->End();
-	//}
-	for (auto& enemy : m_pEnemyRush)
+	for (auto& enemyRush : m_pEnemyRush)
 	{
-		enemy->End();
+		enemyRush->End();
 	}
 	m_pPlayer->End();
 	m_pField->End();
@@ -75,12 +66,13 @@ void SceneDebug::End()
 	delete m_pField;
 }
 
+// 更新 //
 SceneBase* SceneDebug::Update()
 {
 	m_pField->Update();
 
 	// スローモーション処理
-	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetslowWorld();
+	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
 	if (m_slowCount == 0)
 	{
 		// プレイヤーの更新
@@ -111,19 +103,15 @@ SceneBase* SceneDebug::Update()
 	}
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
+
 	// フェイド処理
 	UpdateFade();
 
 	return this;
 }
-
+// 描画 //
 void SceneDebug::Draw()
 {
-	//for (auto& enemy : m_pEnemy)
-	//{
-	//	enemy->Draw();
-	//}
-
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Draw();
@@ -135,7 +123,8 @@ void SceneDebug::Draw()
 	// フェイド処理
 	SceneBase::DrawFade();
 }
-// 敵との衝突判定
+
+// 敵との衝突判定 //
 bool SceneDebug::damege()
 {
 	for (auto& enemyRush : m_pEnemyRush)
@@ -148,8 +137,6 @@ bool SceneDebug::damege()
 		if (m_pPlayer->GetPos().top > enemyRush->GetPos().bottom) continue;
 		
 		if (m_pPlayer->GetPos().bottom < enemyRush->GetPos().top) continue;
-
-	//	printfDx("ダメージをくらった\n");
 
 		// ダメージ量を渡す
 		m_pPlayer->SetDamge(enemyRush->GetAttackDamage());
