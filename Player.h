@@ -15,6 +15,8 @@ public:
 	void Update();// 更新
 	void Draw();// 描画
 
+	void UpdateControl();// 操作処理
+
 	void UpdateHitPoint();// 体力の計算処理
 
 	void UpdateInvincible();// 無敵時間処理
@@ -47,13 +49,15 @@ private:
 
 	int m_hp;// 体力
 
-	int m_tempHp;// 体力
+	int m_tempHp;// 保存用体力
 
 	bool m_isDamage;// 受けたダメージ
 
 	int m_tempDamage;
 
 	float m_jumpAcc;// ジャンプ
+
+	bool m_isJumping;// ジャンプできるかどうか
 
 	float angle;// 角度
 

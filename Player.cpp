@@ -7,6 +7,7 @@
 
 namespace
 {
+	// モデルパス
 	const char* const kModelName = "Data/Model/Player/Robot.mv1";
 
 	// カメラの初期位置
@@ -23,7 +24,7 @@ namespace
 	// 重力
 	constexpr float kGravity = -1.5f;
 	// ジャンプ力
-	constexpr float kJumpPower = 30.0f;
+	constexpr float kJumpPower = 35.0f;
 
 	//無敵時間
 	constexpr int kInvincibleTime = 30;
@@ -57,6 +58,7 @@ Player::Player():
 	m_isDead(false),
 	m_isAnimStop(false),
 	m_isJump(false),
+	m_isJumping(false),
 	m_isDirection(false),
 	m_pos(VGet(0,0,0)),
 	m_ScereenPos(VGet(0, 0, 0))
@@ -130,23 +132,8 @@ void Player::Update()
 			m_pos.x += 5.0f;
 		}
 	}
-
-	// プレイヤーと敵の動きを遅くする
-	if (Pad::isPress(PAD_INPUT_3))
-	{
-		m_slowSpeed = kSlowSpeed;
-	}
-	else
-	{
-		if (m_slowSpeed > 1)
-		{
-			m_slowSpeed--;
-		}
-		
-	}
-
 	// ジャンプ処理
-	bool isJumping = true;
+	m_isJumping = true;
 	m_jumpAcc += kGravity;
 	m_pos.y += m_jumpAcc;
 	// 地面に着地しているかどうか
@@ -154,26 +141,8 @@ void Player::Update()
 	{
 		m_pos.y = 0.0f;
 		m_jumpAcc = 0.0f;
-		isJumping = false;
+		m_isJumping = false;
 	}
-
-	// ジャンプ
-	if (!isJumping)
-	{
-		if (Pad::isTrigger(PAD_INPUT_1))
-		{
-			m_jumpAcc = kJumpPower;
-			m_isJump = true;
-		}
-	}
-
-	// 攻撃
-	if (Pad::isTrigger(PAD_INPUT_2))
-	{
-		m_isAttack = true;
-	}
-
-
 
 	UpdateHitPoint();// 体力の計算処理
 	MoveAnimation();// アニメーションを決める
@@ -193,6 +162,47 @@ void Player::Draw()
 
 	// モデル表示
 	m_pAnimation->Draw();
+
+}
+
+void Player::UpdateControl()
+{
+	// プレイヤーと敵の動きを遅くする
+	if (Pad::isPress(PAD_INPUT_3))
+	{
+		if (m_slowSpeed < kSlowSpeed)
+		{
+			m_slowSpeed++;
+		}
+	}
+	else
+	{
+		if (m_slowSpeed > 1)
+		{
+			m_slowSpeed--;
+		}
+
+	}
+	printfDx("%d", m_slowSpeed);
+	// 攻撃
+	if (!m_isJump)
+	{
+		if (Pad::isTrigger(PAD_INPUT_2))
+		{
+			m_isAttack = true;
+		}
+	}
+
+	// ジャンプ
+	if (!m_isJumping)
+	{
+		if (Pad::isTrigger(PAD_INPUT_1))
+		{
+			m_jumpAcc = kJumpPower;
+			m_isJump = true;
+		}
+	}
+
 
 }
 

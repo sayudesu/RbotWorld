@@ -67,7 +67,7 @@ void SceneTitle::Draw()
 
 	//// スタートボタン表示
 	m_pText[1]->DrawDef(m_pos,
-		kTextTitle, m_size, m_color);
+		kTextStart, m_size, m_color);
 
 	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 200.0f;
 	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f + 300.0f;

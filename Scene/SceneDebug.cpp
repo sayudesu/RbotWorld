@@ -79,11 +79,11 @@ SceneBase* SceneDebug::Update()
 {
 	m_pField->Update();
 
-	m_slowSpeed = m_pPlayer->GetslowWorld();
 	// スローモーション処理
-	m_slowCount = (m_slowCount += 1) % m_slowSpeed;
+	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetslowWorld();
 	if (m_slowCount == 0)
 	{
+		// プレイヤーの更新
 		m_pPlayer->Update();
 		for (auto& enemyRush : m_pEnemyRush)
 		{
@@ -101,14 +101,8 @@ SceneBase* SceneDebug::Update()
 		}
 	}
 
-	/*for (auto& enemy : m_pEnemy)
-	{
-	enemy->Update();
-	}*/
-	//for (auto& enemy : m_pEnemy)
-	//{
-	//	enemy->SetPosPlayer(m_pPlayer->GetPos());
-	//}
+	// プレイヤーの操作
+	m_pPlayer->UpdateControl();
 
 	// 無敵時間外に敵に当たっているかの判定
 	if (!m_isInvincible)
