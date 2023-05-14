@@ -10,12 +10,16 @@ public:
 	virtual ~Player();
 
 	void Init();// 初期化
-	void End();// メモリ開放
+	void End();// 終了処理
 
 	void Update();// 更新
 	void Draw();// 描画
 
 	void UpdateControl();// 操作処理
+
+	void UpdateJumpGravity();// ジャンプ処理
+
+	void UpdateRun();// 走ってる処理
 
 	void UpdateHitPoint();// 体力の計算処理
 

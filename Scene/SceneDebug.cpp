@@ -1,10 +1,10 @@
 #include "SceneDebug.h"
 #include <DxLib.h>
 #include "game.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "EnemyRush.h"
-#include "Field.h"
+#include "Object/Player.h"
+#include "Object/Enemy.h"
+#include "Object/EnemyRush.h"
+#include "Object/Field.h"
 
 namespace
 {
@@ -15,6 +15,7 @@ SceneDebug::SceneDebug():
 	m_slowCount(0),
 	m_enemyCount(0),
 	m_isInvincible(false),
+	m_isEnemyDamageHit(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr)
 {
@@ -99,7 +100,41 @@ SceneBase* SceneDebug::Update()
 	// 無敵時間外に敵に当たっているかの判定
 	if (!m_isInvincible)
 	{
-		damege();
+		for (auto & enemyRush : m_pEnemyRush)
+		{
+			damege(
+				m_pPlayer->GetPos().left,//プレイヤーの座標
+				m_pPlayer->GetPos().top,
+				m_pPlayer->GetPos().right,
+				m_pPlayer->GetPos().bottom,
+				enemyRush->GetPos().left,// 敵の座標
+				enemyRush->GetPos().top,
+				enemyRush->GetPos().right,
+				enemyRush->GetPos().bottom,
+				true,// ダメージを受ける側(プレイヤー : true敵: false）
+				enemyRush->GetAttackDamage()
+			);	
+
+			damege(
+				m_pPlayer->GetPosAttack().left,//プレイヤーの座標
+				m_pPlayer->GetPosAttack().top,
+				m_pPlayer->GetPosAttack().right,
+				m_pPlayer->GetPosAttack().bottom,
+				enemyRush->GetPos().left,// 敵の座標
+				enemyRush->GetPos().top,
+				enemyRush->GetPos().right,
+				enemyRush->GetPos().bottom,
+				false,// ダメージを受ける側(プレイヤー : true敵: false）
+				enemyRush->GetAttackDamage()
+			);
+
+			if (m_isEnemyDamageHit)
+			{
+				enemyRush->SetDamage(true);
+				m_isEnemyDamageHit = false;
+			}
+		}
+
 	}
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
@@ -125,30 +160,34 @@ void SceneDebug::Draw()
 }
 
 // 敵との衝突判定 //
-bool SceneDebug::damege()
+bool SceneDebug::damege(int left, int top, int right, int bottom,
+	int left1,int top1,int right1,int bottom1,
+	bool playerOrEnemy ,int damage)
 {
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		// プレイヤーとエネミーの衝突
-		if (m_pPlayer->GetPos().left > enemyRush->GetPos().right) continue;
-		
-		if (m_pPlayer->GetPos().right < enemyRush->GetPos().left) continue;
-		
-		if (m_pPlayer->GetPos().top > enemyRush->GetPos().bottom) continue;
-		
-		if (m_pPlayer->GetPos().bottom < enemyRush->GetPos().top) continue;
 
+	// プレイヤーとエネミーの衝突
+	if (left > right1) return true;;
+		
+	if (right < left1) return true;;
+		
+	if (top > bottom1) return true;;
+		
+	if (bottom <top1) return true;;
+
+	if (playerOrEnemy)
+	{
 		// ダメージ量を渡す
-		m_pPlayer->SetDamge(enemyRush->GetAttackDamage());
+		m_pPlayer->SetDamge(damage);
 		// 振動開始
 		StartJoypadVibration(DX_INPUT_PAD1, 100, 60, 0);
 		// ダメージをくらった
 		m_isInvincible = true;
-
-		return true;
+	}
+	else
+	{
+		m_isEnemyDamageHit = true;
 	}
 
 	return false;
-	
 }
 

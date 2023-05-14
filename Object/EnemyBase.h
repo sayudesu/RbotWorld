@@ -16,7 +16,7 @@ public:
 	// サイズ
 	RECT GetPos() { return m_size; }
 	// 攻撃を受けた場合
-	void SetDamge(int damage);
+	void SetDamage(bool damage);
 	// プレイヤーの位置を取得
 	void SetPosPlayer(RECT playerPos) { m_posPlayer = playerPos; }
 protected:

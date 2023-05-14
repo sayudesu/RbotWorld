@@ -29,7 +29,7 @@ namespace
 	//無敵時間
 	constexpr int kInvincibleTime = 30;
 	// スロー時間
-	constexpr float kSlowSpeed = 10.0f;
+	constexpr float kSlowSpeed = 3.0f;
 
 	// アニメーションナンバー
 	constexpr int kAnimNoDead    = 1;	// 死んだ
@@ -119,30 +119,10 @@ void Player::Update()
 		m_pAnimation->Update(0.0f, angle, 0.0f, m_playTime);// アニメーション再生
 	}
 
-	// 死んだ場合は動かない
-	if (!m_isDead)
-	{	
-		// 攻撃した場合はストップ
-		if (!m_isAttack)
-		{
-			m_pos.x += kRunSpeed;
-		}
-		else// 攻撃してる場合も少し移動可能
-		{
-			m_pos.x += 5.0f;
-		}
-	}
-	// ジャンプ処理
-	m_isJumping = true;
-	m_jumpAcc += kGravity;
-	m_pos.y += m_jumpAcc;
-	// 地面に着地しているかどうか
-	if (m_pos.y < 0.0f)
-	{
-		m_pos.y = 0.0f;
-		m_jumpAcc = 0.0f;
-		m_isJumping = false;
-	}
+
+	UpdateRun();// 走ってる処理
+
+	UpdateJumpGravity();// ジャンプ処理
 
 	UpdateHitPoint();// 体力の計算処理
 	MoveAnimation();// アニメーションを決める
@@ -188,8 +168,6 @@ void Player::UpdateControl()
 
 	}
 
-	printfDx("%f\n", m_slowSpeed);
-
 	// 攻撃
 	if (!m_isJump)
 	{
@@ -212,15 +190,51 @@ void Player::UpdateControl()
 
 }
 
+// ジャンプ処理 //
+void Player::UpdateJumpGravity()
+{
+	// ジャンプ処理
+	m_isJumping = true;
+	m_jumpAcc += kGravity;
+	m_pos.y += m_jumpAcc;
+	// 地面に着地しているかどうか
+	if (m_pos.y < 0.0f)
+	{
+		m_pos.y = 0.0f;
+		m_jumpAcc = 0.0f;
+		m_isJumping = false;
+	}
+}
+
+// 走ってる処理 //
+void Player::UpdateRun()
+{
+	// 死んだ場合は動かない
+	if (!m_isDead)
+	{
+		// 攻撃した場合はストップ
+		if (!m_isAttack)
+		{
+			m_pos.x += kRunSpeed;
+		}
+		else// 攻撃してる場合も少し移動可能
+		{
+			m_pos.x += 5.0f;
+		}
+	}
+}
+
 void Player::UpdateHitPoint()
 {
 	// HPバー体力 - ダメージ分を徐々に減らす
 	if (m_isDamage)
 	{
-		// HPUIの枠を超えない様に
-		if (m_hp < 0)
+		// HPUIの枠を超えない様に + 1
+		if (m_hp < 0 + 1)
 		{
+			// HPを0に設定
 			m_hp = 0;
+			// 死んだ
 			m_isDead = true;
 		}
 		else if (m_hp > m_tempHp - m_tempDamage)
@@ -337,15 +351,16 @@ void Player::AttackPos()
 			m_attackSize.right = m_attackSize.left + 180.0f;// - m_attackPunch;
 			m_attackSize.bottom = m_attackSize.top + 100.0f;
 		}
+
 	}
 	else
 	{
-		m_attackSize.left = NULL;
-		m_attackSize.top = NULL;
-		m_attackSize.right = NULL;
-		m_attackSize.bottom = NULL;
+		m_attackSize.left = 0;
+		m_attackSize.top = 0;
+		m_attackSize.right = 0;
+		m_attackSize.bottom = 0;
 
-		m_attackPunch = NULL;
+		m_attackPunch = 0;
 	}
 }
 

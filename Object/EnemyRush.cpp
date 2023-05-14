@@ -69,6 +69,8 @@ void EnemyRush::Update()
 
 	VECTOR size = { 0.2f,0.2f ,0.2f };
 	m_pAnimation->SetSize(size);
+
+	if (m_hp == 0)printfDx("éÄÇÒÇ≈Ç¢Ç‹Ç∑ÅB\n");
 }
 
 void EnemyRush::Draw()
