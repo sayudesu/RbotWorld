@@ -33,6 +33,8 @@ private:
 
 	int m_enemyCount;
 
+	int m_tempRand;
+
 	bool m_isInvincible;
 
 	bool m_isEnemyDamageHit;

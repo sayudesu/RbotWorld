@@ -94,6 +94,8 @@ private:
 
 //	VECTOR m_pos;// プレイヤーの位置
 	Vec3 m_pos;// プレイヤーの位置
+
+	Vec3 m_vec;// プレイヤー移動量
 	
 	VECTOR m_ScereenPos;// スクリーン座標に変換
 

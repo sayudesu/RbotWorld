@@ -84,15 +84,44 @@ SceneBase* SceneDebug::Update()
 		for (auto& enemyRush : m_pEnemyRush)
 		{
 			enemyRush->Update();
+
+			// 敵が画面座標から出たら削除
+			if (enemyRush->GetPos().left < 0)
+			{
+				enemyRush->End();
+			}
 		}
 
-		// 敵を生成(まだエネミー削除処理なし)
+		if (m_enemyCount == 0)
+		{
+			m_tempRand = GetRand(2);
+			printfDx("aaaaaaaaaaaaa");
+			switch (m_tempRand)
+			{
+			case 0:
+				m_tempRand = 1;
+			case 1:
+				m_tempRand = 2;
+			case 2:
+				m_tempRand = 3;
+			case 3:
+				m_tempRand = 4;
+			case 4:
+				m_tempRand = 5;
+			default:
+				m_tempRand = 1;
+				break;
+			}
+		}
+
+		printfDx("%d\n", m_tempRand);
+		// 敵を生成(まだ完全なエネミー削除処理なし)
 		m_enemyCount++;
-		if (m_enemyCount > 60 * 1)
+		if (m_enemyCount > 60 * m_tempRand)
 		{
 			m_enemyCount = 0;
 			Vec3 pos = { 0.0f,0.0f,0.0f };
-			pos.x = m_pPlayer->GetPosWorld().x + 3000;
+			pos.x = m_pPlayer->GetPosWorld().x + 1500;
 			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
 		}
 	}
@@ -163,7 +192,8 @@ void SceneDebug::Draw()
 }
 
 // 敵との衝突判定 //
-bool SceneDebug::damege(int left, int top, int right, int bottom,
+bool SceneDebug::damege(
+	int left, int top, int right, int bottom,
 	int left1,int top1,int right1,int bottom1,
 	bool playerOrEnemy ,int damage)
 {

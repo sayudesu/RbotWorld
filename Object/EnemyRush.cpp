@@ -48,6 +48,7 @@ EnemyRush::EnemyRush(Vec3 pos)/*:
 
 EnemyRush::~EnemyRush()
 {
+	
 }
 
 void EnemyRush::Init()

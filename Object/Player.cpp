@@ -15,8 +15,10 @@ namespace
 	constexpr VECTOR kCameraTarget{ 300.0f,300.0f, 0.0f     };
 
 	// 移動速度
-	constexpr float kWalkSpeed = 15.0f;
-	constexpr float kRunSpeed  = 30.0f;
+	constexpr float kAcc = 0.3f;//プレイヤーの加速度
+//	constexpr float kWalkSpeed = 15.0f;
+	constexpr float kMaxRunSpeed  = 30.0f;
+	constexpr float kMaxRunSpeedDown = 20.0f;
 
 	// 最大HP
 	constexpr int kMaxHp = 100;
@@ -61,6 +63,7 @@ Player::Player():
 	m_isJumping(false),
 	m_isDirection(false),
 	m_pos(0.0f, 0.0f, 0.0f),
+	m_vec(0.0f, 0.0f, 0.0f),
 	m_ScereenPos(VGet(0, 0, 0))
 {
 	// 3Dモデルの生成
@@ -123,6 +126,8 @@ void Player::Update()
 	UpdateRun();// 走ってる処理
 
 	UpdateJumpGravity();// ジャンプ処理
+
+	m_pos += m_vec;//移動量
 
 	UpdateHitPoint();// 体力の計算処理
 	MoveAnimation();// アニメーションを決める
@@ -215,12 +220,28 @@ void Player::UpdateRun()
 		// 攻撃した場合はストップ
 		if (!m_isAttack)
 		{
-			m_pos.x += kRunSpeed;
+			m_vec.x += kAcc;
+
+			if (!GetInvincible())
+			{
+				//運動量を確認しマックススピードを指定
+				if (m_vec.x > kMaxRunSpeed)	m_vec.x = kMaxRunSpeed;
+
+			}
+			else
+			{
+				//運動量を確認しマックススピードを指定
+				if (m_vec.x > kMaxRunSpeedDown)	m_vec.x = kMaxRunSpeedDown;
+			}
 		}
 		else// 攻撃してる場合も少し移動可能
 		{
-			m_pos.x += 5.0f;
+			m_vec.x = m_vec.x / 2.0f;//kAcc * 10;
 		}
+	}
+	else// 死んだら動かない
+	{
+		m_vec.x = 0.0f;
 	}
 }
 
