@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include "Util/Vec3.h"
 
 class EnemyBase
 {
@@ -16,7 +17,7 @@ public:
 	// サイズ
 	RECT GetPos() { return m_size; }
 	// 攻撃を受けた場合
-	void SetDamage(bool damage);
+	void SetDamage(int damage);
 	// プレイヤーの位置を取得
 	void SetPosPlayer(RECT playerPos) { m_posPlayer = playerPos; }
 protected:
@@ -26,7 +27,7 @@ protected:
 
 	VECTOR m_angle;// 角度
 
-	VECTOR m_pos;// 位置
+	Vec3 m_pos;// 位置
 
 	RECT m_size;// キャラクターサイズ
 

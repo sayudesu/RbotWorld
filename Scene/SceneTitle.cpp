@@ -18,7 +18,7 @@ namespace
 SceneTitle::SceneTitle():
 	m_size(0),
 	m_color(0),
-	m_pos(0.0f, 0.0f)
+	m_pos(0.0f, 0.0f, 0.0f)
 {
 	m_pText.push_back(std::make_shared<CreateText>());
 	m_pText.push_back(std::make_shared<CreateText>());

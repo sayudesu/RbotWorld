@@ -6,9 +6,12 @@
 #include "Object/EnemyRush.h"
 #include "Object/Field.h"
 
+#include "Util/Vec3.h"
+
 namespace
 {
-	VECTOR kPos = { static_cast<float>(Game::kScreenWidth),0.0f ,0.0f };
+	// 初期位置
+	Vec3 kPos = { static_cast<float>(Game::kScreenWidth),0.0f ,0.0f };
 }
 
 SceneDebug::SceneDebug():
@@ -88,7 +91,7 @@ SceneBase* SceneDebug::Update()
 		if (m_enemyCount > 60 * 1)
 		{
 			m_enemyCount = 0;
-			VECTOR pos = { 0.0f,0.0f,0.0f };
+			Vec3 pos = { 0.0f,0.0f,0.0f };
 			pos.x = m_pPlayer->GetPosWorld().x + 3000;
 			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
 		}
@@ -115,24 +118,24 @@ SceneBase* SceneDebug::Update()
 				enemyRush->GetAttackDamage()
 			);	
 
-			damege(
-				m_pPlayer->GetPosAttack().left,//プレイヤーの座標
-				m_pPlayer->GetPosAttack().top,
-				m_pPlayer->GetPosAttack().right,
-				m_pPlayer->GetPosAttack().bottom,
-				enemyRush->GetPos().left,// 敵の座標
-				enemyRush->GetPos().top,
-				enemyRush->GetPos().right,
-				enemyRush->GetPos().bottom,
-				false,// ダメージを受ける側(プレイヤー : true敵: false）
-				enemyRush->GetAttackDamage()
-			);
+			//damege(
+			//	m_pPlayer->GetPosAttack().left,//プレイヤーの座標
+			//	m_pPlayer->GetPosAttack().top,
+			//	m_pPlayer->GetPosAttack().right,
+			//	m_pPlayer->GetPosAttack().bottom,
+			//	enemyRush->GetPos().left,// 敵の座標
+			//	enemyRush->GetPos().top,
+			//	enemyRush->GetPos().right,
+			//	enemyRush->GetPos().bottom,
+			//	false,// ダメージを受ける側(プレイヤー : true敵: false）
+			//	enemyRush->GetAttackDamage()
+			//);
 
-			if (m_isEnemyDamageHit)
-			{
-				enemyRush->SetDamage(true);
-				m_isEnemyDamageHit = false;
-			}
+			//if (m_isEnemyDamageHit)
+			//{
+			//	enemyRush->SetDamage(m_pPlayer->GetAttackDamage());
+			//	m_isEnemyDamageHit = false;
+			//}
 		}
 
 	}

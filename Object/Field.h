@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <memory>
 #include <vector>
+#include "Util/Vec3.h"
 
 class Animation;
 class Field
@@ -19,7 +20,7 @@ private:
 
 	int count;
 
-	VECTOR m_boxPos;
+	Vec3 m_boxPos;
 
 	std::vector<std::shared_ptr<Animation>> m_pAnimation;// アニメーション再生用
 };

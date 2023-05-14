@@ -1,14 +1,14 @@
 #pragma once
 #include <DxLib.h>
 #include <memory>
-#include "Vec2.h"
+
 #include "EnemyBase.h"
 
 class Animation;
 class EnemyRush : public EnemyBase
 {
 public:
-	EnemyRush(VECTOR pos);
+	EnemyRush(Vec3 pos);
 	virtual ~EnemyRush();
 
 	void Init();

@@ -1,9 +1,10 @@
 #pragma once
 #include <DxLib.h>
+#include "Util/Vec3.h"
 class Animation
 {
 public:
-	Animation(const char* modelName, VECTOR pos);
+	Animation(const char* modelName, Vec3 pos);
 	Animation(const char* modelName);
 	virtual ~Animation();
 
@@ -16,7 +17,7 @@ public:
 
 	void ChangeAnimation(int animNo, bool isLoop);
 	// 位置を取得する
-	void SetPos(VECTOR pos);
+	void SetPos(Vec3 pos);
 	// サイズを取得する
 	void SetSize(VECTOR size);
 	

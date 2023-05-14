@@ -1,6 +1,6 @@
 #include "Enemy.h"
 #include "Animation.h"
-#include "Vec2.h"
+#include "Vec3.h"
 
 namespace
 {
@@ -83,7 +83,7 @@ void Enemy::Update()
 
 	if (!m_isDead)
 	{
-		Vec2 toPlayer{ 0,0 };
+		Vec3 toPlayer{ 0,0,0 };
 		toPlayer.x = m_posPlayer.left - m_size.left;
 		toPlayer.y = m_posPlayer.top  - m_size.top;
 
@@ -125,7 +125,7 @@ void Enemy::DrawUI()
 {
 	if (!m_isDead)
 	{
-		const VECTOR pos = ConvWorldPosToScreenPos(m_pos);
+		const VECTOR pos = ConvWorldPosToScreenPos({ m_pos.x,m_pos.y,m_pos.z });
 
 		m_size.left   = pos.x - 240.0f;
 		m_size.top    = pos.y - 150.0f;

@@ -1,6 +1,6 @@
 #include "EnemyRush.h"
 #include "Animation.h"
-#include "Vec2.h"
+
 
 namespace
 {
@@ -24,7 +24,7 @@ namespace
 
 }
 
-EnemyRush::EnemyRush(VECTOR pos)/*:
+EnemyRush::EnemyRush(Vec3 pos)/*:
 	m_upddateFunc(&EnemyRush::Update)*/
 {
 	// 3DÉÇÉfÉãÇÃê∂ê¨
@@ -88,7 +88,7 @@ void EnemyRush::DrawUI()
 {
 	if (!m_isDead)
 	{
-		const VECTOR pos = ConvWorldPosToScreenPos(m_pos);
+		const VECTOR pos = ConvWorldPosToScreenPos({m_pos.x,m_pos.y ,m_pos.z});
 
 		m_size.left   = pos.x- 50.0f;
 		m_size.top    = pos.y - 130.0f;

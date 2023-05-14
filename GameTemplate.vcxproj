@@ -154,7 +154,7 @@
     <ClCompile Include="Scene\SceneDebug.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="util\Pad.cpp" />
-    <ClCompile Include="util\Vec2.cpp" />
+    <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util\Animation.h" />
@@ -171,7 +171,7 @@
     <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="Util\game.h" />
     <ClInclude Include="util\Pad.h" />
-    <ClInclude Include="util\Vec2.h" />
+    <ClInclude Include="util\Vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

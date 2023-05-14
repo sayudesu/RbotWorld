@@ -1,7 +1,7 @@
 #include "Animation.h"
 #include <cassert>
 
-Animation::Animation(const char* modelName, VECTOR pos) :
+Animation::Animation(const char* modelName, Vec3 pos) :
 	m_modelHandle(-1),
 	m_playTime(0.0f),
 	m_attachIndex(0), m_totalTime(0),
@@ -11,7 +11,8 @@ Animation::Animation(const char* modelName, VECTOR pos) :
 	m_modelHandle = MV1LoadModel(modelName);
 	assert(m_modelHandle != -1);
 
-	MV1SetPosition(m_modelHandle, pos);
+	VECTOR DxPos = { pos.x, pos.y, pos.z };
+	MV1SetPosition(m_modelHandle, DxPos);
 }
 
 Animation::Animation(const char* modelName):
@@ -112,10 +113,11 @@ void Animation::ChangeAnimation(int animNo, bool isLoop)
 
 }
 
-void Animation::SetPos(VECTOR pos)
+void Animation::SetPos(Vec3 pos)
 {
 	// ˆÊ’u‚ðŽæ“¾‚·‚é
-	MV1SetPosition(m_modelHandle, pos);
+	VECTOR DxPos = { pos.x, pos.y, pos.z };
+	MV1SetPosition(m_modelHandle, DxPos);
 }
 
 void Animation::SetSize(VECTOR size)

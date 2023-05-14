@@ -8,7 +8,7 @@ namespace
 
 Field::Field() :
 	m_hBox(-1),
-	m_boxPos(VGet(0.0f, 0.0f, 0.0f))
+	m_boxPos(0.0f, 0.0f, 0.0f)
 {
 	// 3DÉÇÉfÉãÇÃê∂ê¨
 	m_pAnimation.push_back(std::make_shared<Animation>(kModelName, m_boxPos));

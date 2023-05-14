@@ -60,7 +60,7 @@ Player::Player():
 	m_isJump(false),
 	m_isJumping(false),
 	m_isDirection(false),
-	m_pos(VGet(0,0,0)),
+	m_pos(0.0f, 0.0f, 0.0f),
 	m_ScereenPos(VGet(0, 0, 0))
 {
 	// 3Dモデルの生成
@@ -372,7 +372,8 @@ void Player::UpdateCamera()
 
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
-	VECTOR cameraTrans = m_pos;
+
+	VECTOR cameraTrans = { m_pos.x,m_pos.y,m_pos.z };
 	//cameraTrans.y = m_pos.y * 0.0f;
 	//cameraTrans.y = m_pos.y * 0.2f;
 	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
@@ -396,7 +397,7 @@ void Player::UpdateCamera()
 void Player::DrawUI()
 {
 	// ワールド座標からスクリーン座標に変換
-	m_ScereenPos = ConvWorldPosToScreenPos(m_pos);
+	m_ScereenPos = ConvWorldPosToScreenPos({ m_pos.x,m_pos.y,m_pos.z });
 	m_size.left   = m_ScereenPos.x - 60.0f;
 	m_size.top    = m_ScereenPos.y - 300.0f;
 	m_size.right  = m_size.left    + 140.0f;

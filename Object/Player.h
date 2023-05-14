@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include "Util/Vec3.h"
 #include <memory>
 
 class Animation;// アニメーション再生用
@@ -34,7 +35,7 @@ public:
 
 	RECT GetPos() { return m_size; }// 位置
 	RECT GetPosAttack() { return m_attackSize; }// 攻撃判定
-	VECTOR GetPosWorld() { return m_pos; }
+	Vec3 GetPosWorld() { return m_pos; }
 
 	void SetDamge(int damage);// 体力管理
 
@@ -91,7 +92,8 @@ private:
 
 	RECT m_attackSize;// 攻撃ヒットボックス
 
-	VECTOR m_pos;// プレイヤーの位置
+//	VECTOR m_pos;// プレイヤーの位置
+	Vec3 m_pos;// プレイヤーの位置
 	
 	VECTOR m_ScereenPos;// スクリーン座標に変換
 

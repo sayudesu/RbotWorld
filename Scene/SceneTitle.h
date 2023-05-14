@@ -2,7 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 #include <memory>
-#include "Util/Vec2.h"
+#include "Util/Vec3.h"
 
 class CreateText;
 class SceneTitle:public SceneBase
@@ -19,7 +19,7 @@ private:
 	int m_size;
 	int m_color;
 
-	Vec2 m_pos;
+	Vec3 m_pos;
 
 	// 決まった数なのでvectorからarrayに変更します
 	// テキスト描画用

@@ -2,7 +2,7 @@
 #include <DxLib.h>
 
 CreateText::CreateText():
-	m_posUp(0.0f, 0.0f),
+	m_posUp(0.0f, 0.0f, 0.0f),
 	m_isTempDef(false),
 	m_isTempUp(false)
 {
@@ -14,7 +14,7 @@ CreateText::~CreateText()
 	SetFontSize(17);
 }
 
-void CreateText::DrawDef(Vec2 pos,const char* text, int size,int color)
+void CreateText::DrawDef(Vec3 pos,const char* text, int size,int color)
 {
 	// ˆê“x‚¾‚¯•Û‘¶
 	if (!m_isTempDef)
@@ -27,7 +27,7 @@ void CreateText::DrawDef(Vec2 pos,const char* text, int size,int color)
 	DrawStringToHandle(pos.x, pos.y, text, color, m_hDef);
 }
 
-void CreateText::DrawUp(Vec2 pos, const char* text, int size,float speedUp, int color)
+void CreateText::DrawUp(Vec3 pos, const char* text, int size,float speedUp, int color)
 {
 	// ˆê“x‚¾‚¯•Û‘¶
 	if (!m_isTempUp)
