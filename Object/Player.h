@@ -58,13 +58,15 @@ private:
 
 	bool m_isDamage;// 受けたダメージ
 
-	int m_tempDamage;
+	int m_tempDamage;// 前回受けたダメージを保存する
 
 	float m_jumpAcc;// ジャンプ
 
 	bool m_isJumping;// ジャンプできるかどうか
 
-	float angle;// 角度
+	bool m_isSecondJumping;// 二段ジャンプができるかどうか
+
+	VECTOR m_angle;// 角度
 
 	int m_animNo;// アニメーション番号
 
@@ -86,7 +88,7 @@ private:
 
 	bool m_isDirection;//向いている方向（true:左向き、false:右向き）
 
-	int m_ultimateTimer;
+	int m_ultimateTimer;// ダメージをくらった場合の無敵判定用
 
 	RECT m_size;// ヒットボックス
 

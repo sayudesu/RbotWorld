@@ -40,6 +40,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 裏画面を表画面を入れ替える
 		ScreenFlip();
 
+
+		SaveDrawScreen(0, 0, 1920, 1080,
+			"ScreenShot.bmp");
+
 		// escキーを押したら終了する
 		if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
 

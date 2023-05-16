@@ -48,7 +48,7 @@ void Enemy::End()
 void Enemy::Update()
 {
 	m_pAnimation->SetPos(m_pos);
-	m_pAnimation->Update(m_angle.x, m_angle.y, m_angle.z,1.0f);
+	m_pAnimation->Update(m_angle,1.0f);
 
 	//m_angle.y++;
 //	m_angle.x = GetRand(1000.0f);

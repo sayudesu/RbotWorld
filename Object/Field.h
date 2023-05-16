@@ -16,12 +16,15 @@ public:
 	void Update();
 	void Draw();
 private:
-	int m_hBox;
 
-	int count;
+	VERTEX3D m_vertex[6];
 
-	Vec3 m_boxPos;
+//	int m_hBox;
 
-	std::vector<std::shared_ptr<Animation>> m_pAnimation;// アニメーション再生用
+//	int count;
+
+//	Vec3 m_boxPos;
+
+//	std::vector<std::shared_ptr<Animation>> m_pAnimation;// アニメーション再生用
 };
 

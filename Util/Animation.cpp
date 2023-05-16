@@ -47,7 +47,7 @@ void Animation::End()
 	MV1DeleteModel(m_modelHandle);
 }
 
-void Animation::Update(float angleX,float angleY, float angleZ,float animTime)
+void Animation::Update(VECTOR rota,float animTime)
 {
 	// 再生時間を進める
 	m_playTime += animTime;
@@ -66,7 +66,9 @@ void Animation::Update(float angleX,float angleY, float angleZ,float animTime)
 	// 再生時間をセットする
 	MV1SetAttachAnimTime(m_modelHandle, m_attachIndex, m_playTime);
 	// モデルの向きをセットする
-	MV1SetRotationXYZ(m_modelHandle, VGet(angleX, angleY * DX_PI_F / 180.0f, angleZ));
+	MV1SetRotationXYZ(m_modelHandle, VGet(rota.x * DX_PI_F / 180.0f,
+										  rota.y * DX_PI_F / 180.0f,
+		                                  rota.z * DX_PI_F / 180.0f));
 }
 
 void Animation::Draw()
@@ -116,8 +118,8 @@ void Animation::ChangeAnimation(int animNo, bool isLoop)
 void Animation::SetPos(Vec3 pos)
 {
 	// 位置を取得する
-	VECTOR DxPos = { pos.x, pos.y, pos.z };
-	MV1SetPosition(m_modelHandle, DxPos);
+	VECTOR dxPos = { pos.x, pos.y, pos.z };
+	MV1SetPosition(m_modelHandle, dxPos);
 }
 
 void Animation::SetSize(VECTOR size)

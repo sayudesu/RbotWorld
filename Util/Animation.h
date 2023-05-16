@@ -10,7 +10,7 @@ public:
 
 	void Init();
 	void End();
-	void Update(float angleX, float angleY, float angleZ, float animTime = 0.5f);
+	void Update(VECTOR rota, float animTime = 0.5f);
 	void Draw();
 
 	void SetAnimation(int animNo);

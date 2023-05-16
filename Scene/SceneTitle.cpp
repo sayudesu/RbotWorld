@@ -77,6 +77,4 @@ void SceneTitle::Draw()
 	//// •¶ŽšƒeƒXƒg
 	m_pText[0]->DrawUp(m_pos,
 		kTextTest, m_size, 8.0f,m_color);
-
-
 }

@@ -27,6 +27,8 @@ namespace
 EnemyRush::EnemyRush(Vec3 pos)/*:
 	m_upddateFunc(&EnemyRush::Update)*/
 {
+	//VECTOR pos{};
+
 	// 3Dモデルの生成
 	m_pAnimation = std::make_shared<Animation>(kModelName);// モデルのハンドルを渡す
 	m_pAnimation->SetAnimation(kAnimNoRush);// モデルの動きをセット
@@ -34,6 +36,7 @@ EnemyRush::EnemyRush(Vec3 pos)/*:
 	m_pos = pos;
 
 	// モデルの向き
+	m_angle.x = 90.0f;
 	m_angle.y = 90.0f;
 
 	m_size = {};
@@ -64,7 +67,7 @@ void EnemyRush::End()
 void EnemyRush::Update()
 {
 	m_pAnimation->SetPos(m_pos);
-	m_pAnimation->Update(m_angle.x, m_angle.y, m_angle.z,1.0f);
+	m_pAnimation->Update(m_angle,1.0f);
 
 	m_pos.x -= kRushSpeed;
 

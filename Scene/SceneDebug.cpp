@@ -38,16 +38,8 @@ void SceneDebug::Init()
 	// ポリゴンの裏面を描画しない
 	SetUseBackCulling(true);
 
-	//カメラの設定
-	// near,far
-	SetCameraNearFar(5.0f, 2800.0f);
-	// カメラの視野角を設定（ラジアン）
-	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
-	// カメラの位置、どこを見ているかを設定する
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 300, -800), VGet(0.0f, 0.0f, 0.0f));
-
 	m_pPlayer->Init();
-	m_pField->Init();
+	m_pField->Init(); 
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -95,7 +87,7 @@ SceneBase* SceneDebug::Update()
 		if (m_enemyCount == 0)
 		{
 			m_tempRand = GetRand(2);
-			printfDx("aaaaaaaaaaaaa");
+		//	printfDx("aaaaaaaaaaaaa");
 			switch (m_tempRand)
 			{
 			case 0:
@@ -113,15 +105,13 @@ SceneBase* SceneDebug::Update()
 				break;
 			}
 		}
-
-		printfDx("%d\n", m_tempRand);
 		// 敵を生成(まだ完全なエネミー削除処理なし)
 		m_enemyCount++;
 		if (m_enemyCount > 60 * m_tempRand)
 		{
 			m_enemyCount = 0;
-			Vec3 pos = { 0.0f,0.0f,0.0f };
-			pos.x = m_pPlayer->GetPosWorld().x + 1500;
+			Vec3 pos = { m_pPlayer->GetPosWorld().x,0.0f,0.0f };
+			pos.x += 3000;
 			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
 		}
 	}
@@ -179,6 +169,25 @@ SceneBase* SceneDebug::Update()
 // 描画 //
 void SceneDebug::Draw()
 {
+	// 3D空間に2D画像読み込ませる
+#if false	
+
+	// 画像の読み込み
+	int GrHandle = LoadGraph("Title.png");
+
+	VECTOR pos = { m_pPlayer->GetPosWorld().x,m_pPlayer->GetPosWorld().y,m_pPlayer->GetPosWorld().z };
+	pos.z += 200.0f;
+	// ３Ｄ空間上に画像を描画
+	DrawBillboard3D(pos, 0.5f, 0.5f, 120.0f * 30, 0.0f, GrHandle, true);
+
+//	pos = { 0.0f,0.0f,pos.z };
+//	DrawExtendGraph3D(pos.x, pos.y, pos.z, Game::kScreenWidth, Game::kScreenHeight, GrHandle, true);
+
+	//DrawGraph3D(pos.x, pos.y, pos.z, GrHandle,true);
+
+	DeleteGraph(GrHandle);
+
+#endif	
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Draw();
@@ -212,7 +221,8 @@ bool SceneDebug::damege(
 		// ダメージ量を渡す
 		m_pPlayer->SetDamge(damage);
 		// 振動開始
-		StartJoypadVibration(DX_INPUT_PAD1, 100, 60, 0);
+		StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
+		StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, 1);
 		// ダメージをくらった
 		m_isInvincible = true;
 	}
