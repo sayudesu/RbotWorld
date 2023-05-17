@@ -84,10 +84,22 @@ SceneBase* SceneDebug::Update()
 			}
 		}
 
+		// 敵を生成(まだ完全なエネミー削除処理なし)
+		m_enemyCount++;
+		if (m_enemyCount > 60 * m_tempRand)
+		{
+			m_enemyCount = 0;
+			Vec3 pos = { m_pPlayer->GetPosWorld().x,0.0f,0.0f };
+			pos.x += 3000;
+			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
+		}
+
+		// 次のエネミーをランダム秒に出現
 		if (m_enemyCount == 0)
 		{
-			m_tempRand = GetRand(2);
-		//	printfDx("aaaaaaaaaaaaa");
+			m_tempRand = GetRand(4);
+			/*
+			//	printfDx("aaaaaaaaaaaaa");
 			switch (m_tempRand)
 			{
 			case 0:
@@ -104,15 +116,7 @@ SceneBase* SceneDebug::Update()
 				m_tempRand = 1;
 				break;
 			}
-		}
-		// 敵を生成(まだ完全なエネミー削除処理なし)
-		m_enemyCount++;
-		if (m_enemyCount > 60 * m_tempRand)
-		{
-			m_enemyCount = 0;
-			Vec3 pos = { m_pPlayer->GetPosWorld().x,0.0f,0.0f };
-			pos.x += 3000;
-			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
+			*/
 		}
 	}
 

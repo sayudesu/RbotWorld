@@ -1,10 +1,6 @@
 #pragma once
 #include <DxLib.h>
-#include <memory>
-#include <vector>
-#include "Util/Vec3.h"
 
-class Animation;
 class Field
 {
 public:
@@ -15,16 +11,24 @@ public:
 	void End();
 	void Update();
 	void Draw();
+
+	// マップのサイズを取得する
+	float GetSizeX() const;
+	float GetSizeY() const;
+	float GetSizeZ() const;
+
+	// マップの中心座標を取得する
+	VECTOR GetCenter() const;
+
+	// マップチップ情報を取得する
+	int GetChipNumX() const;
+	int GetChipNumZ() const;
+	// 指定した場所がブロックかどうかを取得する
+	bool IsBlock(int x, int z) const;
+
+	// 指定したチップの3D座標を取得する(中心位置)
+	VECTOR GetChipPos(int x, int z) const;
 private:
-
-	VERTEX3D m_vertex[6];
-
-//	int m_hBox;
-
-//	int count;
-
-//	Vec3 m_boxPos;
-
-//	std::vector<std::shared_ptr<Animation>> m_pAnimation;// アニメーション再生用
+	int m_texture;
 };
 

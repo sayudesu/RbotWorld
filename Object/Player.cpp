@@ -449,6 +449,7 @@ void Player::UpdateCamera()
 	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
 	// ƒJƒƒ‰‚ÌˆÊ’uA‚Ç‚±‚ğŒ©‚Ä‚¢‚é‚©‚ğİ’è‚·‚é
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
+	//SetCameraPositionAndTarget_UpVecY(cameraPos, VGet(300.0f, 0.0f, 300.0f));
 }
 
 void Player::DrawUI()

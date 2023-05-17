@@ -80,6 +80,8 @@ void Animation::SetAnimation(int animNo)
 {
 //	if (m_isAnimTime) return;
 
+	int tempIndex = m_attachIndex;
+
 	// 前回とは違うアニメーションだったら
 	if (m_saveAnimNo != animNo)
 	{
@@ -96,6 +98,13 @@ void Animation::SetAnimation(int animNo)
 		// アニメーション記録
 		m_saveAnimNo = animNo;
 	}
+
+	//// アニメーション変化のフレーム数に応じたブレンド率を設定する
+	//float rate = static_cast<float>(m_animChangeFrame) / static_cast<float>(m_animChangeFrameTotal);
+	//if (rate > 1.0f)	rate = 1.0f;
+
+	//MV1SetAttachAnimBlendRate(m_modelHandle, tempIndex, 1.0f - rate);
+	//MV1SetAttachAnimBlendRate(m_modelHandle, m_attachIndex, rate);
 }
 
 void Animation::ChangeAnimation(int animNo, bool isLoop)
