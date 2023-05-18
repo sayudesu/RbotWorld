@@ -1,107 +1,82 @@
 #pragma once
 #include <DxLib.h>
-#include "Util/Vec3.h"
 #include <memory>
 
-class Animation;// アニメーション再生用
+class SceneTest;
+class Animation;
 class Player
 {
 public:
 	Player();
 	virtual ~Player();
 
-	void Init();// 初期化
-	void End();// 終了処理
+	void Init();
+	void End();
+	void Update();
+	void Draw();
 
-	void Update();// 更新
-	void Draw();// 描画
-
-	void UpdateControl();// 操作処理
-
-	void UpdateJumpGravity();// ジャンプ処理
-
-	void UpdateRun();// 走ってる処理
-
-	void UpdateHitPoint();// 体力の計算処理
-
-	void UpdateInvincible();// 無敵時間処理
-
-	bool GetInvincible();// 無敵時間
+	// プレイヤーの位置を取得する
+	VECTOR GetPos() const { return m_pos; }
 
 	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }// スローの加減を渡す
 
-	int GetAttackDamage() const { return 100; }// 攻撃力
-	bool GetDirection() { return m_isDirection; }// 攻撃力
+	// 当たり判定の半径
+	float GetColRadius();
 
-	RECT GetPos() { return m_size; }// 位置
-	RECT GetPosAttack() { return m_attackSize; }// 攻撃判定
-	Vec3 GetPosWorld() { return m_pos; }
+	// ダメージを受けた
+	void OnDamage(int damage);
 
-	void SetDamge(int damage);// 体力管理
-
-private:
-	void MoveAnimation();// アニメーション再生命令
-	void AttackPos();// 攻撃位置を計算
-	void UpdateCamera();// カメラ位置を計算
-	void DrawUI();// UIを表示
+	void UpdateControl();// 操作処理
 private:
 
-	float m_cameraAngle;// カメラ角度
+	// カメラの更新
+	void UpdateCamera();
 
-	int m_idleCountTime;// 放置時間カウント
+	// 動き全体の更新用関数
+	void UpdateRun();
+	// ジャンプする用関数
+	void UpdateJump();
+	// 移動用関数
+	void UpdateMove();
+
+private:
+	// 
+	SceneTest* m_pScene;
+
+	// メンバ関数ポインタ
+	void (Player::*m_updateFunc)();
+
+	// プレイヤーのモデル
+	std::shared_ptr<Animation> m_pModel;
+	
+	bool m_isJumping;
+
+	// 再生しているアニメーション番号
+	int m_animNo;
+
+	// フレームカウント
+	int m_frameCount;
+
+	// プレイヤーの位置
+	VECTOR m_pos;
+	// ジャンプ処理用加速度
+	float m_jumpAcc;
+
+	// ジャンプをしているかどうか(true ジャンプできない	:	false ジャンプできる )
+	bool m_isFastJumping;
+	bool m_isSecondJumping;
+
+	// プレイヤーの向いている方向
+	float m_angle;
+
+	// カメラの向いている方向
+	float m_cameraAngle;
 
 	float m_slowSpeed;// スロー処理
 
-	int m_hp;// 体力
-
-	int m_tempHp;// 保存用体力
-
-	bool m_isDamage;// 受けたダメージ
-
-	int m_tempDamage;// 前回受けたダメージを保存する
-
-	float m_jumpAcc;// ジャンプ
-
-	bool m_isJumping;// ジャンプできるかどうか
-
-	bool m_isSecondJumping;// 二段ジャンプができるかどうか
-
-	VECTOR m_angle;// 角度
-
-	int m_animNo;// アニメーション番号
-
-	float m_playTime;// アニメーション再生スピード
-
-	bool m_isWalk;// 歩いているかどうか
-
-	bool m_isRun;// 走っているかどうか
-
-	bool m_isAttack;// 攻撃しているかどうか
-
-	float m_attackPunch;// 攻撃力
-
-	bool m_isAnimStop;// アニメーションを止めるかどうか
-
-	bool m_isDead;// 死んでいるかどうか
-
-	bool m_isJump;// ジャンプしているかどうか
-
-	bool m_isDirection;//向いている方向（true:左向き、false:右向き）
-
-	int m_ultimateTimer;// ダメージをくらった場合の無敵判定用
-
-	RECT m_size;// ヒットボックス
-
-	RECT m_attackSize;// 攻撃ヒットボックス
-
-//	VECTOR m_pos;// プレイヤーの位置
-	Vec3 m_pos;// プレイヤーの位置
-
-	Vec3 m_vec;// プレイヤー移動量
-	
-	VECTOR m_ScereenPos;// スクリーン座標に変換
-
-	std::shared_ptr<Animation> m_pAnimation;// アニメーション再生用
-
+	// HP
+	int m_hp;
+	// 無敵時間
+	int m_damageFrame;
 };
 

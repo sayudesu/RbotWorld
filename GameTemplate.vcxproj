@@ -140,7 +140,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Object\Field\DrawPoly.cpp" />
     <ClCompile Include="Util\Animation.cpp" />
     <ClCompile Include="Util\CreateText.cpp" />
     <ClCompile Include="Object\EnemyBase.cpp" />
@@ -158,7 +157,6 @@
     <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Object\Field\DrawPoly.h" />
     <ClInclude Include="Util\Animation.h" />
     <ClInclude Include="Util\CreateText.h" />
     <ClInclude Include="Object\EnemyBase.h" />
