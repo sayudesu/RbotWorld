@@ -40,7 +40,7 @@ private:
 	bool m_isEnemyDamageHit;
 
 	Player* m_pPlayer;
-	std::vector<std::shared_ptr<Enemy>>m_pEnemy;
+//	std::vector<std::shared_ptr<Enemy>>m_pEnemy;
 	std::vector<std::shared_ptr<EnemyRush>>m_pEnemyRush;
 	Field* m_pField;
 };

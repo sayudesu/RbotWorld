@@ -1,74 +1,102 @@
 #include "Animation.h"
-#include <cassert>
+#include <assert.h>
 
-Animation::Animation(const char* modelName, Vec3 pos) :
-	m_modelHandle(-1),
-	m_playTime(0.0f),
-	m_attachIndex(0), m_totalTime(0),
-	m_saveAnimNo(2),
-	m_isAnimTime(false)
+namespace
 {
-	m_modelHandle = MV1LoadModel(modelName);
-	assert(m_modelHandle != -1);
-
-	VECTOR DxPos = { pos.x, pos.y, pos.z };
-	MV1SetPosition(m_modelHandle, DxPos);
+	// 当たり判定として利用するフレーム名前
+	const char* const kCollsionFrameName = "Collsion";
 }
 
-Animation::Animation(const char* modelName):
-	m_modelHandle(-1),
-	m_playTime(0.0f),
-	m_attachIndex(0), m_totalTime(0),
-	m_saveAnimNo(2),
-	m_isAnimTime(false)
+Animation::Animation(const char* fileName):
+	m_isUseCllision(false),
+	m_isUpdateCollision(false),
+	m_animChangeFrame(0),
+	m_animChangeFrameTotal(0)
 {
-	m_modelHandle = MV1LoadModel(modelName);
+	m_modelHandle = MV1LoadModel(fileName);
+	// コピーに失敗した場合
 	assert(m_modelHandle != -1);
+	// アニメーションデータのクリア
+	clearAnimData(m_animPrev);
+	clearAnimData(m_animNext);
+}
+
+Animation::Animation(int orgModel):
+	m_isUseCllision(false),
+	m_isUpdateCollision(false),
+	m_animChangeFrame(0),
+	m_animChangeFrameTotal(0)
+{
+	// ロードに失敗したモデルがコピー元として指定されている
+	assert(m_modelHandle != -1);
+	m_modelHandle = MV1DuplicateModel(orgModel);
+	// アニメーションデータのクリア
+	clearAnimData(m_animPrev);
+	clearAnimData(m_animNext);
 }
 
 Animation::~Animation()
 {
-}
-
-void Animation::Init()
-{
-	// ３Ｄモデルの０番目のアニメーションをアタッチする
-	m_attachIndex = MV1AttachAnim(m_modelHandle, m_saveAnimNo, -1, FALSE);
-
-	// アタッチしたアニメーションの総再生時間を取得する
-	m_totalTime = static_cast<int>(MV1GetAttachAnimTotalTime(m_modelHandle, m_attachIndex));
-
-	// 標準ライトを無効にする
-	SetLightEnable(true);
-}
-
-void Animation::End()
-{
+	if (m_isUseCllision)
+	{
+		// 当たり判定情報を利用していたら破棄する
+		MV1TerminateCollInfo(m_modelHandle, m_colFrameIndex);
+		m_isUseCllision = false;
+	}
 	MV1DeleteModel(m_modelHandle);
 }
 
-void Animation::Update(VECTOR rota,float animTime)
+void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
 {
-	// 再生時間を進める
-	m_playTime += animTime;
+	assert(isUse || (!isNeedUpdate));
 
-	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
-	if (m_playTime > m_totalTime)
+	// 当たり判定用情報に変化があった場合のみ更新する
+	if (m_isUseCllision != isUse)
 	{
-		m_playTime = 0.0f;
-		m_isAnimTime = true;
-	}
-	else
-	{
-		m_isAnimTime = false;
+		if (isUse)
+		{
+			// 使わない→使う
+
+			// 当たり判定用フレームを検索する
+			m_colFrameIndex = MV1SearchFrame(m_modelHandle, kCollsionFrameName);
+			if (m_colFrameIndex < 0)// 見つからなかった or エラー
+			{
+				m_colFrameIndex = -1;
+			}
+
+			MV1SetupCollInfo(m_modelHandle, m_colFrameIndex, 8, 8, 8);
+		}
+		else
+		{
+			// 使う→使わない
+			MV1TerminateCollInfo(m_modelHandle, -1);
+		}
 	}
 
-	// 再生時間をセットする
-	MV1SetAttachAnimTime(m_modelHandle, m_attachIndex, m_playTime);
-	// モデルの向きをセットする
-	MV1SetRotationXYZ(m_modelHandle, VGet(rota.x * DX_PI_F / 180.0f,
-										  rota.y * DX_PI_F / 180.0f,
-		                                  rota.z * DX_PI_F / 180.0f));
+	m_isUseCllision = isUse;
+	m_isUpdateCollision = isNeedUpdate;
+
+}
+
+void Animation::Update()
+{
+	updateAnim(m_animPrev);
+	updateAnim(m_animNext);
+
+	// 指定フレームにかけてアニメーションを変更する
+	m_animChangeFrame++;
+	if (m_animChangeFrame > m_animChangeFrameTotal)
+	{
+		m_animChangeFrame = m_animChangeFrameTotal;
+	}
+	// アニメーションのブレンド率を設定する
+	updateAnimBlendRate();
+
+	// 当たり判定データの更新
+	if (m_isUseCllision && m_isUpdateCollision)
+	{
+		MV1RefreshCollInfo(m_modelHandle, m_colFrameIndex);
+	}
 }
 
 void Animation::Draw()
@@ -76,63 +104,134 @@ void Animation::Draw()
 	MV1DrawModel(m_modelHandle);
 }
 
-void Animation::SetAnimation(int animNo)
+void Animation::SetPos(VECTOR pos)
 {
-//	if (m_isAnimTime) return;
-
-	int tempIndex = m_attachIndex;
-
-	// 前回とは違うアニメーションだったら
-	if (m_saveAnimNo != animNo)
-	{
-		// アニメーション情報を削除
-		MV1DetachAnim(m_modelHandle, m_attachIndex);
-		// アニメーション再生時間を初期化
-		m_playTime = 0.0f;
-		// 新しいアニメーション情報
-		MV1SetAttachAnimTime(m_modelHandle, animNo, m_playTime);
-		// ３ＤモデルのanimNo番目のアニメーションをアタッチする
-		m_attachIndex = MV1AttachAnim(m_modelHandle, animNo, -1, FALSE);
-		// アタッチしたアニメーションの総再生時間を取得する
-		m_totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_attachIndex);
-		// アニメーション記録
-		m_saveAnimNo = animNo;
-	}
-
-	//// アニメーション変化のフレーム数に応じたブレンド率を設定する
-	//float rate = static_cast<float>(m_animChangeFrame) / static_cast<float>(m_animChangeFrameTotal);
-	//if (rate > 1.0f)	rate = 1.0f;
-
-	//MV1SetAttachAnimBlendRate(m_modelHandle, tempIndex, 1.0f - rate);
-	//MV1SetAttachAnimBlendRate(m_modelHandle, m_attachIndex, rate);
+	MV1SetPosition(m_modelHandle,pos);
 }
 
-void Animation::ChangeAnimation(int animNo, bool isLoop)
+void Animation::SetRot(VECTOR rot)
 {
-	// アニメーション情報を削除
-	MV1DetachAnim(m_modelHandle, m_attachIndex);
-	// アニメーション再生時間を初期化
-	m_playTime = 0.0f;
-	// アニメーション記録
-	m_saveAnimNo = animNo;
-	// 新しいアニメーション情報
-	MV1SetAttachAnimTime(m_modelHandle, m_saveAnimNo, m_playTime);
-	// ３ＤモデルのanimNo番目のアニメーションをアタッチする
-	m_attachIndex = MV1AttachAnim(m_modelHandle, m_saveAnimNo, -1, FALSE);
-	// アタッチしたアニメーションの総再生時間を取得する
-	m_totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_attachIndex);
-
-}
-
-void Animation::SetPos(Vec3 pos)
-{
-	// 位置を取得する
-	VECTOR dxPos = { pos.x, pos.y, pos.z };
-	MV1SetPosition(m_modelHandle, dxPos);
+	MV1SetRotationXYZ(m_modelHandle, rot);
 }
 
 void Animation::SetSize(VECTOR size)
 {
-	// ３Ｄモデルのスケールをx軸方向に２倍にする
 	MV1SetScale(m_modelHandle, size);
+}
+
+void Animation::SetAnimation(int animNo, bool isLoop, bool isForceChange)
+{
+	if (!isForceChange)
+	{
+		// すでに再生されているアニメは再生しない
+		if (m_animNext.animNo == animNo) return;
+	}
+
+	// 以前のアニメーションが残っていれば終了
+	if (m_animPrev.attachNo != -1)
+	{
+		MV1DetachAnim(m_modelHandle, m_animPrev.attachNo);
+		clearAnimData(m_animPrev);
+	}
+	if (m_animNext.attachNo != -1)
+	{
+		MV1DetachAnim(m_modelHandle, m_animNext.attachNo);
+		clearAnimData(m_animNext);
+	}
+
+	// 新しくアニメーションを設定
+	m_animNext.animNo = animNo;
+	m_animNext.attachNo = MV1AttachAnim(m_modelHandle, animNo, -1, false);
+	m_animNext.totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animNext.attachNo);
+	m_animNext.isLoop = isLoop;
+
+	// 変更にかけるフレーム数を覚えておく
+	m_animChangeFrameTotal = 1;
+	m_animChangeFrame = 1;
+}
+
+void Animation::ChangeAnimation(int animNo, bool isLoop, bool isForceChange, int changeFrame)
+{
+	if (!isForceChange)
+	{
+		// すでに再生されているアニメは再生しない
+		if (m_animNext.animNo == animNo) return;
+	}
+	
+
+	// 以前のアニメーションが残っていれば終了
+	if (m_animPrev.attachNo != -1)
+	{
+		MV1DetachAnim(m_modelHandle, m_animPrev.attachNo);
+		clearAnimData(m_animPrev);
+	}
+	// 現在再生しているアニメーションを古いアニメとする
+	m_animPrev = m_animNext;
+	// 新しくアニメーションを設定
+	m_animNext.animNo = animNo;
+	m_animNext.attachNo = MV1AttachAnim(m_modelHandle, animNo, -1, false);
+	m_animNext.totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animNext.attachNo);
+	m_animNext.isLoop = isLoop;
+
+	// 変更にかけるフレーム数を覚えておく
+	m_animChangeFrameTotal = changeFrame;
+	m_animChangeFrame = 0;
+
+	// アニメーションのブレンド率を設定する
+	updateAnimBlendRate();
+}
+
+bool Animation::IsAnimEnd()
+{
+	// Loopアニメの場合は常にfalseを返す
+	if (m_animNext.isLoop) return false;
+
+	float time = MV1GetAttachAnimTime(m_modelHandle, m_animNext.attachNo);
+	if (time >= m_animNext.totalTime)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void Animation::clearAnimData(AnimData& anim)
+{
+	anim.animNo = -1;
+	anim.attachNo = -1;
+	anim.totalTime = 0.0f;
+	anim.isLoop = false;
+}
+
+void Animation::updateAnim(AnimData anim, float dt)
+{
+	// アニメーションが設定されていない場合は何もしない
+	if (anim.attachNo == -1) return;
+
+	// アニメーションの更新
+	float time = MV1GetAttachAnimTime(m_modelHandle, anim.attachNo);
+	time += dt;
+	if (time > anim.totalTime)
+	{
+		if (anim.isLoop)
+		{
+			// アニメーションのループ
+			time -= anim.totalTime;
+		}
+		else
+		{
+			time = anim.totalTime;
+		}
+	}
+	MV1SetAttachAnimTime(m_modelHandle, anim.attachNo, time);
+}
+
+void Animation::updateAnimBlendRate()
+{	
+	// アニメーション変化のフレーム数に応じたブレンド率を設定する
+	float rate = static_cast<float>(m_animChangeFrame) / static_cast<float>(m_animChangeFrameTotal);
+	if (rate > 1.0f)	rate = 1.0f;
+
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_animPrev.attachNo, 1.0f - rate);
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_animNext.attachNo, rate);
 }
