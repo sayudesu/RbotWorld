@@ -13,6 +13,10 @@ public:
 	void End();
 	void Update();
 	void Draw();
+
+	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚ÌŽæ“¾
+	int GetModelHandle()const;
+	int GetColFrameIndex()const;
 private:
 	std::vector<std::shared_ptr<Animation>> m_pModel;
 };

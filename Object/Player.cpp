@@ -5,41 +5,7 @@
 #include <cassert>
 
 
-namespace
-{
-	// ファイル名
-	const char* const kFileName = "Data/Model/Player/Robot.mv1";
 
-	// カメラの初期位置
-	constexpr VECTOR kCameraPos{ 300.0f,300.0f, -1300.0f };
-	constexpr VECTOR kCameraTarget{ 300.0f,300.0f, 0.0f };
-
-	// プレイヤーの移動量
-	constexpr VECTOR kPlayerVec{ 0.0f, 0.0f, -30.0f };
-	// ショットの速度
-	constexpr float kShotSpeed = 10.0f;
-	// ジャンプ力
-	constexpr float kJumpPower = 50.0f;
-	// 重力
-	constexpr float kGravity = -2.0f;
-	// スロー時間
-	constexpr float kSlowSpeed = 3.0f;
-	// アニメーション番号
-	constexpr int kIdleAnimNo = 2;	// 待機モーション
-	constexpr int kWalkAnimNo = 6;	// 移動モーション
-	constexpr int kJumpAnimNo = 11;	// 移動モーション
-	constexpr int kWaveAnimNo = 12;	// 手を振る
-	constexpr int kIdleShootAnimNo = 11;	// 停止している状態でショットを撃つアニメーション
-
-	// アニメーション切り替わりにかかるフレーム数
-	constexpr int kAnimChangeFrame = 4;
-
-	// 当たり判定サイズ半径
-	constexpr float kColRaidus = 60.0f;
-
-	// HP
-	constexpr int kMaxHp = 100;
-}
 
 Player::Player():
 	m_updateFunc(&Player::UpdateRun),
@@ -117,6 +83,8 @@ void Player::OnDamage(int damage)
 
 void Player::UpdateControl()
 {
+
+
 	// プレイヤーと敵の動きを遅くする
 	if (Pad::isPress(PAD_INPUT_2))
 	{
@@ -306,11 +274,30 @@ void Player::UpdateMove()
 	// プレイヤーの進行方向
 	MATRIX playerRotMtx = MGetRotY(-90 * DX_PI_F / 180.0f);
 	VECTOR move = VTransform(kPlayerVec, playerRotMtx);
+
 	//移動量
 	m_pos = VAdd(m_pos, move);
 	// プレイヤーの角度
-	m_pModel->SetRot(VGet(m_angle * DX_PI_F / 180.0f, -90.0f * DX_PI_F / 180.0f, 0.0f));
+	m_pModel->SetRot(VGet(
+		m_angle * DX_PI_F / 180.0f,
+		-90.0f * DX_PI_F / 180.0f,
+		0.0f));
 	// プレイヤーの位置
 	m_pModel->SetPos(m_pos);
+
+	// まっすぐ進む
+	m_lastPos = m_pos;
+
+	DrawCapsule3D(
+		m_pos,
+		VGet(m_pos.x, m_pos.y + kSize, m_pos.z),
+		100.0f,
+		8,
+		0xffffff,
+		0xffffff,
+		true);
+
+	//	m_lastPos.x++;
+	//	printfDx("%f\n", m_lastPos.x);
 
 }

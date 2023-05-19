@@ -2,6 +2,14 @@
 #include <Dxlib.h>
 #include <vector>
 #include <memory>
+
+namespace
+{
+	// 当たり判定として利用するフレーム名前
+	const char* const kCollsionFielfFrameName = "CollField";
+	const char* const kCollsionEnemyFrameName = "Coll";
+}
+
 class Animation
 {
 public:

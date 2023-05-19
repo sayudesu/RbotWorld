@@ -15,6 +15,10 @@ public:
 	void End();
 	void Update();
 	void Draw();
+
+	// 当たり判定のフレームインデックス取得
+	int GetColFrameIndex()const;
+	int GetModelHandle()const;
 private:
 	void Dead();
 	void DrawUI();

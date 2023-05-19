@@ -1,11 +1,7 @@
 #include "Animation.h"
 #include <assert.h>
 
-namespace
-{
-	// 当たり判定として利用するフレーム名前
-	const char* const kCollsionFrameName = "Collsion";
-}
+
 
 Animation::Animation(const char* fileName):
 	m_isUseCllision(false),
@@ -58,7 +54,7 @@ void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
 			// 使わない→使う
 
 			// 当たり判定用フレームを検索する
-			m_colFrameIndex = MV1SearchFrame(m_modelHandle, kCollsionFrameName);
+			m_colFrameIndex = MV1SearchFrame(m_modelHandle, kCollsionEnemyFrameName);
 			if (m_colFrameIndex < 0)// 見つからなかった or エラー
 			{
 				m_colFrameIndex = -1;
@@ -75,6 +71,8 @@ void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
 
 	m_isUseCllision = isUse;
 	m_isUpdateCollision = isNeedUpdate;
+
+	printfDx("%d\n", m_colFrameIndex);
 
 }
 

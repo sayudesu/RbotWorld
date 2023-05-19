@@ -47,6 +47,8 @@ EnemyRush::EnemyRush(Vec3 pos)/*:
 
 	m_isDead = false;
 
+	m_pAnimation->SetUseCollision(true, true);
+
 }
 
 EnemyRush::~EnemyRush()
@@ -84,6 +86,16 @@ void EnemyRush::Draw()
 {
 	m_pAnimation->Draw();
 	DrawUI();
+}
+
+int EnemyRush::GetModelHandle() const
+{
+	return m_pAnimation->GetModelHandle();
+}
+
+int EnemyRush::GetColFrameIndex() const
+{
+	return m_pAnimation->GetColFrameIndex();
 }
 
 void EnemyRush::Dead()

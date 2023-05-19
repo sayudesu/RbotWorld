@@ -25,12 +25,13 @@ Field::Field()
 {
 	// 3Dモデルをロード
 	m_pModel.push_back(std::make_shared<Animation>(kFileName));
-
+	
 	// 最初にロードしたモデルと合わせてモデルを100個生成
 	int orgModel = m_pModel[0]->GetModelHandle();
 	for (int i = 0; i < kBlockNum - 1; i++)
 	{
 		m_pModel.push_back(std::make_shared<Animation>(orgModel));
+		m_pModel[i]->SetUseCollision(true, true);
 	}
 
 	// 地面に並べる
@@ -100,4 +101,20 @@ void Field::Draw()
 		DrawLine3D(start, end, 0xffff00);
 	}
 #endif
+}
+
+int Field::GetModelHandle() const
+{
+	for (auto& model : m_pModel)
+	{
+		return model->GetModelHandle();
+	}
+}
+
+int Field::GetColFrameIndex()const
+{
+	for (auto& model : m_pModel)
+	{
+		return model->GetColFrameIndex();
+	}
 }

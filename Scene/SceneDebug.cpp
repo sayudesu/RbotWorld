@@ -75,7 +75,11 @@ SceneBase* SceneDebug::Update()
 
 //	printfDx("%d\n", m_pPlayer->GetSlowWorld());
 	// スローモーション処理
-
+	
+	///////////////////////////////
+	// ここはプレイヤーcppに置く //
+	//     プレイヤーの操作      //
+	///////////////////////////////
 	m_pPlayer->UpdateControl();
 
 	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
@@ -111,6 +115,50 @@ SceneBase* SceneDebug::Update()
 			m_tempRand = GetRand(4);
 		}
 	}
+
+	// 当たり判定の情報
+	// 敵との判定
+	//for (auto& enemy : m_pEnemyRush)
+	//{
+	//	// DxLibの関数を利用して当たり判定をとる
+	//	MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+
+	//	result = MV1CollCheck_Capsule(
+	//		enemy->GetModelHandle(),
+	//		enemy->GetColFrameIndex(),
+	//		m_pPlayer->GetPos(),
+	//		m_pPlayer->GetLastPos(),
+	//		m_pPlayer->GetRadius());
+	//	if (result.HitNum > 0)	//1舞以上のポリゴンと当たっていたらモデルにあっている設定
+	//	{
+	//		printfDx("Hit %d\n", result.HitNum);
+	//		//enemy->OnDamage(50);
+	//	}
+
+	//	// 当たり判定情報の後始末
+	//	MV1CollResultPolyDimTerminate(result);
+	//}
+	// 地面との判定
+
+
+	// DxLibの関数を利用して当たり判定をとる
+	MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+
+	result = MV1CollCheck_Capsule(
+		m_pField->GetModelHandle(),
+		m_pField->GetColFrameIndex(),
+		m_pPlayer->GetPos(),
+		m_pPlayer->GetLastPos(),
+		m_pPlayer->GetRadius());
+	if (result.HitNum > 0)	//1舞以上のポリゴンと当たっていたらモデルにあっている設定
+	{
+		printfDx("地面判定\n");
+		//enemy->OnDamage(50);
+	}
+
+	// 当たり判定情報の後始末
+	MV1CollResultPolyDimTerminate(result);
+
 
 	// プレイヤーの操作
 	//	m_pPlayer->UpdateControl();
