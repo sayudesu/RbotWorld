@@ -4,6 +4,7 @@
 #include "CreateText.h"
 #include "game.h"
 #include "Pad.h"
+#include "Sound.h"
 
 namespace
 {
@@ -31,14 +32,19 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
+	// BGM çƒê∂
+	Sound::startBgm(Sound::SoundId_Title, 50);
 }
 
 void SceneTitle::End()
 {
+	// BGM í‚é~
+	Sound::stopBgm(Sound::SoundId_Title);
 }
 
 SceneBase* SceneTitle::Update()
 {
+
 	if (Pad::isTrigger(PAD_INPUT_1))
 	{
 		return(new SceneDebug);

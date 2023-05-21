@@ -3,6 +3,8 @@
 #include "game.h"
 #include "SceneManager.h"
 
+#include "Sound.h"
+
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -22,10 +24,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);
+	
+	// サウンド読み込み
+	Sound::load();
 
 	SceneManager* pScene = new SceneManager;
 
 	pScene->Init();
+
+
 
 	while (ProcessMessage() == 0)
 	{
@@ -40,10 +47,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 裏画面を表画面を入れ替える
 		ScreenFlip();
 
-
-		SaveDrawScreen(0, 0, 1920, 1080,
-			"ScreenShot.bmp");
-
 		// escキーを押したら終了する
 		if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
 
@@ -54,6 +57,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	pScene->End();
+
+	Sound::unload();
 
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 

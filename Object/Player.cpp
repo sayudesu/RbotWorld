@@ -116,35 +116,7 @@ void Player::UpdateControl()
 
 void Player::UpdateCamera()
 {
-	/*
-	// m_cameraAngle = m_angle;
-	m_cameraAngle = (m_cameraAngle * 0.8f) + (m_angle * 0.2f);
-	MATRIX cameraRotMtx = MGetRotY(m_cameraAngle);
 
-	// ジャンプ時は単純にプレイヤーに追従するのではなく
-	// プレイヤーの立っていた位置を見るようにする
-	VECTOR cameraTrans = m_pos;
-	// cameraTrans.y = 0.0f;
-	cameraTrans.y = m_pos.y * 0.3f;
-	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
-
-	
-	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる
-	// プレイヤーの回転情報と平行移動情報を合成
-	MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
-
-	VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
-	VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
-
-	// カメラの設定
-	// どこまで表示するか
-	// SetCameraNearFar(5.0f, 2800.0f);
-	 SetCameraNearFar(5.0f, 3500.0f);
-	// カメラの視野角(ラジアン)
-	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
-	// カメラの位置、どこからどこを見ているかを設定
-	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
-	*/
 	// ジャンプ場合
 //	m_cameraAngle = (m_cameraAngle * 0.8f) + (0 * 0.2f);
 	MATRIX cameraRotMtx = MGetRotY(m_cameraAngle);
@@ -290,7 +262,7 @@ void Player::UpdateMove()
 
 	DrawCapsule3D(
 		m_pos,
-		VGet(m_pos.x, m_pos.y + kSize, m_pos.z),
+		VGet(m_pos.x, m_pos.y + kColRaidus, m_pos.z),
 		100.0f,
 		8,
 		0xffffff,

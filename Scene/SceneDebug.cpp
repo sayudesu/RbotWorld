@@ -8,6 +8,8 @@
 
 #include "Util/Vec3.h"
 
+#include "Sound.h"
+
 namespace
 {
 	// 初期位置
@@ -47,10 +49,15 @@ void SceneDebug::Init()
 	}
 
 	m_isInvincible = true;
+
+	Sound::startBgm(Sound::SoundId_Main, 50);
 }
 
 void SceneDebug::End()
 {
+
+	Sound::stopBgm(Sound::SoundId_Main);
+
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->End();
@@ -117,47 +124,55 @@ SceneBase* SceneDebug::Update()
 	}
 
 	// 当たり判定の情報
+
 	// 敵との判定
-	//for (auto& enemy : m_pEnemyRush)
-	//{
-	//	// DxLibの関数を利用して当たり判定をとる
-	//	MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-
-	//	result = MV1CollCheck_Capsule(
-	//		enemy->GetModelHandle(),
-	//		enemy->GetColFrameIndex(),
-	//		m_pPlayer->GetPos(),
-	//		m_pPlayer->GetLastPos(),
-	//		m_pPlayer->GetRadius());
-	//	if (result.HitNum > 0)	//1舞以上のポリゴンと当たっていたらモデルにあっている設定
-	//	{
-	//		printfDx("Hit %d\n", result.HitNum);
-	//		//enemy->OnDamage(50);
-	//	}
-
-	//	// 当たり判定情報の後始末
-	//	MV1CollResultPolyDimTerminate(result);
-	//}
-	// 地面との判定
-
-
-	// DxLibの関数を利用して当たり判定をとる
-	MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-
-	result = MV1CollCheck_Capsule(
-		m_pField->GetModelHandle(),
-		m_pField->GetColFrameIndex(),
-		m_pPlayer->GetPos(),
-		m_pPlayer->GetLastPos(),
-		m_pPlayer->GetRadius());
-	if (result.HitNum > 0)	//1舞以上のポリゴンと当たっていたらモデルにあっている設定
+	for (auto& enemy : m_pEnemyRush)
 	{
-		printfDx("地面判定\n");
-		//enemy->OnDamage(50);
+		// DxLibの関数を利用して当たり判定をとる
+		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+
+		result = MV1CollCheck_Capsule(
+			enemy->GetModelHandle(),
+			enemy->GetColFrameIndex(),
+			m_pPlayer->GetPos(),
+			m_pPlayer->GetLastPos(),
+			m_pPlayer->GetRadius());
+		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+		{
+			printfDx("ヒットしました\n");
+			// ダメージ量を渡す
+			//	m_pPlayer->SetDamge(damage);
+			// 振動開始
+			StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
+			// ダメージをくらった
+			m_isInvincible = true;
+		}
+
+		// 当たり判定情報の後始末
+		MV1CollResultPolyDimTerminate(result);
 	}
 
-	// 当たり判定情報の後始末
-	MV1CollResultPolyDimTerminate(result);
+	// 地面との判定
+	for (int i = 0; i < m_pField->GetModelNum(); i++)
+	{
+		// DxLibの関数を利用して当たり判定をとる
+		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+
+		result = MV1CollCheck_Capsule(
+			m_pField->GetModelHandle(),
+			m_pField->GetColFrameIndex(),
+			m_pPlayer->GetPos(),
+			m_pPlayer->GetLastPos(),
+			m_pPlayer->GetRadius());
+		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+		{
+			printfDx("地面判定\n");
+		}
+
+		// 当たり判定情報の後始末
+		MV1CollResultPolyDimTerminate(result);
+	}
+
 
 
 	// プレイヤーの操作

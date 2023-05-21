@@ -2,29 +2,12 @@
 #include "Animation.h"
 #include <DxLib.h>
 
-namespace
-{
-	// ファイル名
-	const char* const kFileName = "Data/Model/Stage/Field.mv1";
 
-	// 地面に敷き詰めるブロックの数
-	constexpr int kBlockNumX = 50;
-	constexpr int kBlockNumZ = 5;
-
-	constexpr int kBlockNum = kBlockNumX * kBlockNumZ;
-
-	// ブロックの一辺の長さ
-	constexpr float kBlockSideLength = 100.0f;
-
-	// 地面の一辺の長さ
-	constexpr float kFieldSideLengthX = kBlockSideLength * kBlockNumX;
-	constexpr float kFieldSideLengthZ = kBlockSideLength * kBlockNumZ;
-}
 
 Field::Field()
 {
 	// 3Dモデルをロード
-	m_pModel.push_back(std::make_shared<Animation>(kFileName));
+	m_pModel.push_back(std::make_shared<Animation>(kFileStageName));
 	
 	// 最初にロードしたモデルと合わせてモデルを100個生成
 	int orgModel = m_pModel[0]->GetModelHandle();
@@ -105,10 +88,7 @@ void Field::Draw()
 
 int Field::GetModelHandle() const
 {
-	for (auto& model : m_pModel)
-	{
-		return model->GetModelHandle();
-	}
+	return m_pModel.size();
 }
 
 int Field::GetColFrameIndex()const

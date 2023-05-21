@@ -71,9 +71,6 @@ void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
 
 	m_isUseCllision = isUse;
 	m_isUpdateCollision = isNeedUpdate;
-
-	printfDx("%d\n", m_colFrameIndex);
-
 }
 
 void Animation::Update()

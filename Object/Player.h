@@ -8,8 +8,8 @@ class Animation;
 namespace
 {
 	// ファイル名
-	const char* const kFileName = "Data/Model/Player/Robot2.mv1";
-	//	const char* const kFileName = "Data/Model/Player/RobotScond.mv1";
+	const char* const kFileName = "Data/Model/Player/Robot.mv1";
+	//  const char* const kFileName = "Data/Model/Player/Robot2.mv1";
 	//	const char* const kFileName = "Data/Model/Player/RobotScond.mv1";
 
 		// カメラの初期位置
@@ -28,8 +28,8 @@ namespace
 	constexpr float kSlowSpeed = 3.0f;
 	// アニメーション番号
 	constexpr int kIdleAnimNo = 2;	// 待機モーション
-	constexpr int kWalkAnimNo = 9;	// 移動モーション // 6
-	constexpr int kJumpAnimNo = 2;	// 移動モーション // 11
+	constexpr int kWalkAnimNo = 6;	// 移動モーション // 6
+	constexpr int kJumpAnimNo = 11;	// 移動モーション // 11
 	constexpr int kWaveAnimNo = 12;	// 手を振る
 	constexpr int kIdleShootAnimNo = 11;	// 停止している状態でショットを撃つアニメーション
 
@@ -37,13 +37,13 @@ namespace
 	constexpr int kAnimChangeFrame = 4;
 
 	// 当たり判定サイズ半径
-	constexpr float kColRaidus = 60.0f;
+	constexpr float kColRaidus = 100.0f;
 
 	// HP
 	constexpr int kMaxHp = 100;
 
-	constexpr float kSize = 300.0f;
 }
+
 class Player
 {
 public:
@@ -66,7 +66,7 @@ public:
 	// 前のフレーム
 	VECTOR GetLastPos()const { return m_lastPos; }
 	// 半径の取得
-	float GetRadius()const { return kSize; }
+	float GetRadius()const { return kColRaidus; }
 
 	// ダメージを受けた
 	void OnDamage(int damage);
