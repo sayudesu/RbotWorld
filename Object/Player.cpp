@@ -4,6 +4,8 @@
 #include "Animation.h"
 #include <cassert>
 
+#include <cmath>
+
 namespace
 {
 	// ファイル名
@@ -198,7 +200,6 @@ void Player::UpdateControl()
 	{
 		m_isFastJumping = true;
 	}
-	
 }
 
 void Player::UpdateCamera()
@@ -260,7 +261,7 @@ void Player::UpdateRun()
 		m_pModel->ChangeAnimation(m_animNo, true, false, 4);
 	}
 
-	UpdateMove();
+	UpdateMove(); 
 	UpdateCamera();
 }
 
@@ -345,14 +346,42 @@ void Player::UpdateMove()
 	// まっすぐ進む
 	m_lastPos = m_pos;
 
+	
+
+	// 回転角度を更新
+	m_rad += 1.0f;
+	// 回転を適用
+	float cosAngle = cosf(m_rad);
+	float sinAngle = sinf(m_rad);
+
+	// カプセルの位置とサイズ
+	VECTOR startPos = VGet(
+		m_pos.x * cosAngle + m_pos.z * sinAngle,
+		m_pos.y,
+		m_pos.z * cosAngle - m_pos.x * sinAngle);
+	VECTOR endPos = VGet(
+		m_pos.x * cosAngle + m_pos.z * sinAngle,
+		m_pos.y + kColRaidus,
+		m_pos.z * cosAngle - m_pos.x * sinAngle);
+
+	// カプセルの描画
 	DrawCapsule3D(
-		m_lastPos,
-		VGet(m_lastPos.x, m_lastPos.y + kColRaidus, m_lastPos.z),
+		startPos,
+		endPos,
 		100.0f,
 		8,
 		0xffffff,
 		0xffffff,
 		true);
+
+	//DrawCapsule3D(
+	//	m_lastPos,
+	//	VGet(m_lastPos.x, m_lastPos.y + kColRaidus, m_lastPos.z),
+	//	100.0f,
+	//	8,
+	//	0xffffff,
+	//	0xffffff,
+	//	true);
 
 	//radcounter++;
 

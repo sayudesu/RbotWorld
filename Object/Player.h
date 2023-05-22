@@ -99,5 +99,9 @@ private:
 	int m_tempDamage = 0;// 前回受けたダメージを保存する
 	int m_tempHp = 0;// 保存用体力
 	int m_ultimateTimer = 1;// ダメージをくらった場合の無敵判定用
+
+
+	// 回転角度を更新
+	float m_rad = 0.0f;
 };
 
