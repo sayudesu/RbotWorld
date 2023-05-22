@@ -4,8 +4,41 @@
 #include "Animation.h"
 #include <cassert>
 
+namespace
+{
+	// ファイル名
+	const char* const kFileName = "Data/Model/Player/Robot.mv1";
 
+		// カメラの初期位置
+	constexpr VECTOR kCameraPos{ 300.0f,300.0f, -1300.0f };
+	constexpr VECTOR kCameraTarget{ 300.0f,300.0f, 0.0f };
 
+	// プレイヤーの移動量
+	constexpr VECTOR kPlayerVec{ 0.0f, 0.0f, -30.0f };
+
+	// ジャンプ力
+	constexpr float kJumpPower = 50.0f;
+	// 重力
+	constexpr float kGravity = -2.0f;
+	// スロー時間
+	constexpr float kSlowSpeed = 3.0f;
+	// アニメーション番号
+	constexpr int kIdleAnimNo = 2;	// 待機モーション
+	constexpr int kWalkAnimNo = 6;	// 移動モーション // 6
+	constexpr int kJumpAnimNo = 11;	// 移動モーション // 11
+	constexpr int kWaveAnimNo = 12;	// 手を振る
+	constexpr int kIdleShootAnimNo = 11;	// 停止している状態でショットを撃つアニメーション
+
+	// アニメーション切り替わりにかかるフレーム数
+	constexpr int kAnimChangeFrame = 4;
+
+	// 当たり判定サイズ半径
+	constexpr float kColRaidus = 200.0f;
+
+	// HP
+	constexpr int kMaxHp = 100;
+
+}
 
 Player::Player():
 	m_updateFunc(&Player::UpdateRun),
@@ -61,10 +94,8 @@ void Player::Draw()
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
 
-	if (m_damageFrame > 0)
-	{
-		//if (m_damageFrame % 2)return;
-	}
+	// 点滅
+	if (m_ultimateTimer % 2 == 0)return;
 
 	m_pModel->Draw();
 }
@@ -74,17 +105,73 @@ float Player::GetColRadius()
 	return kColRaidus;
 }
 
+float Player::GetRadius() const
+{
+	return kColRaidus;
+}
+
 void Player::OnDamage(int damage)
 {
-	if (m_damageFrame > 0) return;
-	m_hp -= damage;
-	m_damageFrame = 60 * 2;
+	m_isDamage = true;
+
+	m_tempDamage = damage;
+
+	if (m_tempHp != m_hp)// 新しく攻撃を受けたら
+	{
+		m_ultimateTimer = 30;//kInvincibleTime;
+	}
+
+	m_tempHp = m_hp;// 一つ前の体力を保存
+}
+
+bool Player::GetInvincible()
+{
+	if (m_ultimateTimer != 1)	return true;// 攻撃を受けていたら
+
+	return false;// 受けていなかったら
+}
+
+void Player::UpdateInvincible()
+{
+	// 点滅処理
+	if (m_ultimateTimer > 0 + 1)
+	{
+		m_ultimateTimer--;
+	}
+	else
+	{
+		m_ultimateTimer = 1;
+	}
+}
+
+void Player::UpdateHitPoint()
+{
+	// HPバー体力 - ダメージ分を徐々に減らす
+	if (m_isDamage)
+	{
+		// HPUIの枠を超えない様に + 1
+		if (m_hp < 0 + 1)
+		{
+			// HPを0に設定
+			m_hp = 0;
+			// 死んだ
+		//	m_isDead = true;
+		}
+		else if (m_hp > m_tempHp - m_tempDamage)
+		{
+			// 減らす
+			m_hp--;
+		}
+		else
+		{
+			// 減らし終わったら合図
+			m_isDamage = false;
+		}
+	}
 }
 
 void Player::UpdateControl()
 {
-
-
 	// プレイヤーと敵の動きを遅くする
 	if (Pad::isPress(PAD_INPUT_2))
 	{
@@ -116,17 +203,14 @@ void Player::UpdateControl()
 
 void Player::UpdateCamera()
 {
-
 	// ジャンプ場合
-//	m_cameraAngle = (m_cameraAngle * 0.8f) + (0 * 0.2f);
 	MATRIX cameraRotMtx = MGetRotY(m_cameraAngle);
 
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
 
 	VECTOR cameraTrans = { m_pos.x,0.0f,m_pos.z };
-	//cameraTrans.y = m_pos.y * 0.0f;
-	//cameraTrans.y = m_pos.y * 0.2f;
+
 	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
 	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる
@@ -143,7 +227,6 @@ void Player::UpdateCamera()
 	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
-	//SetCameraPositionAndTarget_UpVecY(cameraPos, VGet(300.0f, 0.0f, 300.0f));
 }
 
 void Player::UpdateRun()
@@ -234,7 +317,7 @@ void Player::UpdateJump()
 
 	if (m_pModel->IsAnimEnd())
 	{
-	//	printfDx("終わりました。\n");
+	//	m_pModel->ChangeAnimation(kWalkAnimNo, true, true, 4);
 	}
 
 	UpdateMove();
@@ -243,6 +326,8 @@ void Player::UpdateJump()
 
 void Player::UpdateMove()
 {
+	UpdateHitPoint();// 体力の計算処理
+	UpdateInvincible();// 無敵時間処理
 	// プレイヤーの進行方向
 	MATRIX playerRotMtx = MGetRotY(-90 * DX_PI_F / 180.0f);
 	VECTOR move = VTransform(kPlayerVec, playerRotMtx);
@@ -261,13 +346,21 @@ void Player::UpdateMove()
 	m_lastPos = m_pos;
 
 	DrawCapsule3D(
-		m_pos,
-		VGet(m_pos.x, m_pos.y + kColRaidus, m_pos.z),
+		m_lastPos,
+		VGet(m_lastPos.x, m_lastPos.y + kColRaidus, m_lastPos.z),
 		100.0f,
 		8,
 		0xffffff,
 		0xffffff,
 		true);
+
+	//radcounter++;
+
+	//rad = radcounter / 180 * DX_PI;
+
+	//m_lastPos.x = cos(rad);	
+	//m_lastPos.y = sin(rad);
+	//
 
 	//	m_lastPos.x++;
 	//	printfDx("%f\n", m_lastPos.x);

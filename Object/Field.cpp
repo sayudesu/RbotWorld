@@ -2,7 +2,24 @@
 #include "Animation.h"
 #include <DxLib.h>
 
+namespace
+{
+	// ファイル名
+	const char* const kFileStageName = "Data/Model/Stage/Field.mv1";
 
+	// 地面に敷き詰めるブロックの数
+	constexpr int kBlockNumX = 50;
+	constexpr int kBlockNumZ = 5;
+
+	constexpr int kBlockNum = kBlockNumX * kBlockNumZ;
+
+	// ブロックの一辺の長さ
+	constexpr float kBlockSideLength = 100.0f;
+
+	// 地面の一辺の長さ
+	constexpr float kFieldSideLengthX = kBlockSideLength * kBlockNumX;
+	constexpr float kFieldSideLengthZ = kBlockSideLength * kBlockNumZ;
+}
 
 Field::Field()
 {
@@ -22,9 +39,10 @@ Field::Field()
 	{
 		float x = 200.0f * (i % kBlockNumX) - kFieldSideLengthX / 2 + kBlockSideLength / 2;
 		float z = 200.0f * (i / kBlockNumX) - kFieldSideLengthX / 2 + kBlockSideLength / 2;
-		m_pModel[i]->SetPos(VGet(x,
-								 -kBlockSideLength / 2.0f - 50.0f,//上面がy=0.0fになるように配置
-								 z + 2000.0f));
+		m_pModel[i]->SetPos(VGet(
+			x,
+			-kBlockSideLength / 2.0f - 50.0f,//上面がy=0.0fになるように配置
+			z + 2000.0f));
 	}
 }
 
@@ -51,6 +69,7 @@ void Field::Draw()
 	{
 		model->Draw();
 	}
+
 #if _DEBUG	
 	// 右に移動用ライン
 	const float xMax = 30000.0f;
@@ -86,6 +105,13 @@ void Field::Draw()
 #endif
 }
 
+// モデルの数
+int Field::GetModelNum()
+{
+	return kBlockNum;
+}
+
+// 指定した番号のモデルのハンドルを取得する
 int Field::GetModelHandle() const
 {
 	return m_pModel.size();

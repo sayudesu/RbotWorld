@@ -5,6 +5,7 @@
 #include "Object/Enemy.h"
 #include "Object/EnemyRush.h"
 #include "Object/Field.h"
+#include "SceneTitle.h"
 
 #include "Util/Vec3.h"
 
@@ -22,12 +23,17 @@ SceneDebug::SceneDebug():
 	m_isInvincible(false),
 	m_isEnemyDamageHit(false),
 	m_pPlayer(nullptr),
-	m_pField(nullptr)
+	m_pField()
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
-
 	m_pPlayer = new Player;
-	m_pField = new Field;
+
+	m_pField.push_back(std::make_shared<Field>());
+	int modelNum = m_pField[0]->GetModelHandle();
+	for (int i = 0; i < modelNum - 1; i++)
+	{
+	//	m_pField.push_back(std::make_shared<Field>());
+	}
 }
 
 void SceneDebug::Init()
@@ -41,7 +47,10 @@ void SceneDebug::Init()
 	SetUseBackCulling(true);
 
 	m_pPlayer->Init();
-	m_pField->Init(); 
+	for (auto& field : m_pField)
+	{
+		field->Init();
+	}
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -64,16 +73,19 @@ void SceneDebug::End()
 	}
 
 	m_pPlayer->End();
-	m_pField->End();
+	for (auto& field : m_pField)
+	{
+		field->End();
+	}
 
 	delete m_pPlayer;
-	delete m_pField;
+//	delete m_pField;
 }
 
 // 更新 //
 SceneBase* SceneDebug::Update()
 {
-	m_pField->Update();
+//	m_pField->Update();
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -100,10 +112,10 @@ SceneBase* SceneDebug::Update()
 			enemyRush->Update();
 
 			//// 敵が画面座標から出たら削除
-			//if (enemyRush->GetPos().x < 0)
-			//{
-			//	enemyRush->End();
-			//}
+			if (enemyRush->GetPos().x < 0)
+			{
+				enemyRush->End();
+			}
 		}
 
 		// 敵を生成(まだ完全なエネミー削除処理なし)
@@ -124,43 +136,48 @@ SceneBase* SceneDebug::Update()
 	}
 
 	// 当たり判定の情報
-
-	// 敵との判定
-	for (auto& enemy : m_pEnemyRush)
+	if (!m_isInvincible)
 	{
-		// DxLibの関数を利用して当たり判定をとる
-		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-
-		result = MV1CollCheck_Capsule(
-			enemy->GetModelHandle(),
-			enemy->GetColFrameIndex(),
-			m_pPlayer->GetPos(),
-			m_pPlayer->GetLastPos(),
-			m_pPlayer->GetRadius());
-		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+		// 敵との判定
+		for (auto& enemy : m_pEnemyRush)
 		{
-			printfDx("ヒットしました\n");
-			// ダメージ量を渡す
-			//	m_pPlayer->SetDamge(damage);
-			// 振動開始
-			StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
-			// ダメージをくらった
-			m_isInvincible = true;
-		}
+			// DxLibの関数を利用して当たり判定をとる
+			MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
 
-		// 当たり判定情報の後始末
-		MV1CollResultPolyDimTerminate(result);
+			result = MV1CollCheck_Capsule(
+				enemy->GetModelHandle(),
+				enemy->GetColFrameIndex(),
+				m_pPlayer->GetPos(),
+				m_pPlayer->GetLastPos(),
+				m_pPlayer->GetRadius());
+			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+			{
+				printfDx("ヒットしました\n");
+				// ダメージ量を渡す
+				m_pPlayer->OnDamage(30);
+				// 振動開始
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
+				// ダメージをくらった
+				m_isInvincible = true;
+			}
+
+			// 当たり判定情報の後始末
+			MV1CollResultPolyDimTerminate(result);
+		}
 	}
 
+	// 無敵時間の調整
+	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
+
 	// 地面との判定
-	for (int i = 0; i < m_pField->GetModelNum(); i++)
+	for(auto& field : m_pField)
 	{
 		// DxLibの関数を利用して当たり判定をとる
 		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
 
 		result = MV1CollCheck_Capsule(
-			m_pField->GetModelHandle(),
-			m_pField->GetColFrameIndex(),
+			field->GetModelHandle(),
+			field->GetColFrameIndex(),
 			m_pPlayer->GetPos(),
 			m_pPlayer->GetLastPos(),
 			m_pPlayer->GetRadius());
@@ -173,55 +190,13 @@ SceneBase* SceneDebug::Update()
 		MV1CollResultPolyDimTerminate(result);
 	}
 
-
-
-	// プレイヤーの操作
-	//	m_pPlayer->UpdateControl();
-
-	// 無敵時間外に敵に当たっているかの判定
-	//if (!m_isInvincible)
-	//{
-	//	for (auto & enemyRush : m_pEnemyRush)
-	//	{
-	//		//damege(
-	//		//	m_pPlayer->GetPos().left,//プレイヤーの座標
-	//		//	m_pPlayer->GetPos().top,
-	//		//	m_pPlayer->GetPos().right,
-	//		//	m_pPlayer->GetPos().bottom,
-	//		//	enemyRush->GetPos().left,// 敵の座標
-	//		//	enemyRush->GetPos().top,
-	//		//	enemyRush->GetPos().right,
-	//		//	enemyRush->GetPos().bottom,
-	//		//	true,// ダメージを受ける側(プレイヤー : true敵: false）
-	//		//	enemyRush->GetAttackDamage()
-	//		//);	
-
-	//		//damege(
-	//		//	m_pPlayer->GetPosAttack().left,//プレイヤーの座標
-	//		//	m_pPlayer->GetPosAttack().top,
-	//		//	m_pPlayer->GetPosAttack().right,
-	//		//	m_pPlayer->GetPosAttack().bottom,
-	//		//	enemyRush->GetPos().left,// 敵の座標
-	//		//	enemyRush->GetPos().top,
-	//		//	enemyRush->GetPos().right,
-	//		//	enemyRush->GetPos().bottom,
-	//		//	false,// ダメージを受ける側(プレイヤー : true敵: false）
-	//		//	enemyRush->GetAttackDamage()
-	//		//);
-
-	//		//if (m_isEnemyDamageHit)
-	//		//{
-	//		//	enemyRush->SetDamage(m_pPlayer->GetAttackDamage());
-	//		//	m_isEnemyDamageHit = false;
-	//		//}
-	// }
-
-	//}
-	// 無敵時間の調整
-	//if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
-
 	// フェイド処理
 	UpdateFade();
+
+	if (m_pPlayer->GetPos().x > 30000)
+	{
+		return(new SceneTitle);
+	}
 
 	return this;
 }
@@ -235,43 +210,11 @@ void SceneDebug::Draw()
 	}
 
 	m_pPlayer->Draw();
-	m_pField->Draw();
+	for (auto& field : m_pField)
+	{
+		field->Draw();
+	}
 
 	// フェイド処理
 	SceneBase::DrawFade();
 }
-
-// 敵との衝突判定 //
-bool SceneDebug::damege(
-	int left, int top, int right, int bottom,
-	int left1,int top1,int right1,int bottom1,
-	bool playerOrEnemy ,int damage)
-{
-
-	// プレイヤーとエネミーの衝突
-	//if (left > right1) return true;;
-	//	
-	//if (right < left1) return true;;
-	//	
-	//if (top > bottom1) return true;;
-	//	
-	//if (bottom <top1) return true;;
-
-	//if (playerOrEnemy)
-	//{
-	//	// ダメージ量を渡す
-	//	m_pPlayer->SetDamge(damage);
-	//	// 振動開始
-	//	StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
-	//	StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, 1);
-	//	// ダメージをくらった
-	//	m_isInvincible = true;
-	//}
-	//else
-	//{
-	//	m_isEnemyDamageHit = true;
-	//}
-
-	return false;
-}
-

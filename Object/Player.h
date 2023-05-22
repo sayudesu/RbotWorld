@@ -5,45 +5,6 @@
 class SceneTest;
 class Animation;
 
-namespace
-{
-	// ファイル名
-	const char* const kFileName = "Data/Model/Player/Robot.mv1";
-	//  const char* const kFileName = "Data/Model/Player/Robot2.mv1";
-	//	const char* const kFileName = "Data/Model/Player/RobotScond.mv1";
-
-		// カメラの初期位置
-	constexpr VECTOR kCameraPos{ 300.0f,300.0f, -1300.0f };
-	constexpr VECTOR kCameraTarget{ 300.0f,300.0f, 0.0f };
-
-	// プレイヤーの移動量
-	constexpr VECTOR kPlayerVec{ 0.0f, 0.0f, -30.0f };
-	// ショットの速度
-	constexpr float kShotSpeed = 10.0f;
-	// ジャンプ力
-	constexpr float kJumpPower = 50.0f;
-	// 重力
-	constexpr float kGravity = -2.0f;
-	// スロー時間
-	constexpr float kSlowSpeed = 3.0f;
-	// アニメーション番号
-	constexpr int kIdleAnimNo = 2;	// 待機モーション
-	constexpr int kWalkAnimNo = 6;	// 移動モーション // 6
-	constexpr int kJumpAnimNo = 11;	// 移動モーション // 11
-	constexpr int kWaveAnimNo = 12;	// 手を振る
-	constexpr int kIdleShootAnimNo = 11;	// 停止している状態でショットを撃つアニメーション
-
-	// アニメーション切り替わりにかかるフレーム数
-	constexpr int kAnimChangeFrame = 4;
-
-	// 当たり判定サイズ半径
-	constexpr float kColRaidus = 100.0f;
-
-	// HP
-	constexpr int kMaxHp = 100;
-
-}
-
 class Player
 {
 public:
@@ -54,6 +15,8 @@ public:
 	void End();
 	void Update();
 	void Draw();
+
+	void UpdateControl();// 操作処理
 
 	// プレイヤーの位置を取得する
 	VECTOR GetPos() const { return m_pos; }
@@ -66,14 +29,16 @@ public:
 	// 前のフレーム
 	VECTOR GetLastPos()const { return m_lastPos; }
 	// 半径の取得
-	float GetRadius()const { return kColRaidus; }
+	float GetRadius()const;
 
 	// ダメージを受けた
 	void OnDamage(int damage);
+	bool GetInvincible();// 無敵時間
 
-	void UpdateControl();// 操作処理
 private:
-
+	void UpdateInvincible();// 
+	void UpdateHitPoint();// 体力管理
+private:
 	// カメラの更新
 	void UpdateCamera();
 
@@ -126,5 +91,13 @@ private:
 	int m_hp;
 	// 無敵時間
 	int m_damageFrame;
+
+	//float rad = 0.0f;
+	//float radcounter = 0.0f;
+
+	bool m_isDamage = false;// ダメージを受けたかどうか
+	int m_tempDamage = 0;// 前回受けたダメージを保存する
+	int m_tempHp = 0;// 保存用体力
+	int m_ultimateTimer = 1;// ダメージをくらった場合の無敵判定用
 };
 
