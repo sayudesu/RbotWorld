@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <memory>
 
 class Animation;
@@ -17,13 +18,12 @@ public:
 	// モデルの数
 	int GetModelNum();
 	// 指定した番号のモデルのハンドルを取得する
-	int GetModelHandle()const;
+	int GetModelHandle(int handlNum);
 
 	int GetColFrameIndex()const;
 
-
-
 private:
 	std::vector<std::shared_ptr<Animation>> m_pModel;
+//	std::vector<std::shared_ptr<Animation>, std::vector<int>> m_pModel;
 };
 

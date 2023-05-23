@@ -21,19 +21,19 @@ SceneDebug::SceneDebug():
 	m_slowCount(0),
 	m_enemyCount(0),
 	m_isInvincible(false),
-	m_isEnemyDamageHit(false),
 	m_pPlayer(nullptr),
-	m_pField()
+	m_pField(nullptr)
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
 	m_pPlayer = new Player;
+	m_pField = new Field;
+}
 
-	m_pField.push_back(std::make_shared<Field>());
-	int modelNum = m_pField[0]->GetModelHandle();
-	for (int i = 0; i < modelNum - 1; i++)
-	{
-	//	m_pField.push_back(std::make_shared<Field>());
-	}
+SceneDebug::~SceneDebug()
+{
+	delete m_pPlayer;
+	delete m_pField;
+
 }
 
 void SceneDebug::Init()
@@ -47,10 +47,8 @@ void SceneDebug::Init()
 	SetUseBackCulling(true);
 
 	m_pPlayer->Init();
-	for (auto& field : m_pField)
-	{
-		field->Init();
-	}
+
+	m_pField->Init();
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -73,19 +71,14 @@ void SceneDebug::End()
 	}
 
 	m_pPlayer->End();
-	for (auto& field : m_pField)
-	{
-		field->End();
-	}
 
-	delete m_pPlayer;
-//	delete m_pField;
+	m_pField->End();
 }
 
 // 更新 //
 SceneBase* SceneDebug::Update()
 {
-//	m_pField->Update();
+	m_pField->Update();
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -131,65 +124,19 @@ SceneBase* SceneDebug::Update()
 		// 次のエネミーをランダム秒に出現
 		if (m_enemyCount == 0)
 		{
-			m_tempRand = GetRand(4);
+			m_tempRand = GetRand(2);
 		}
 	}
 
-	// 当たり判定の情報
-	if (!m_isInvincible)
-	{
-		// 敵との判定
-		for (auto& enemy : m_pEnemyRush)
-		{
-			// DxLibの関数を利用して当たり判定をとる
-			MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-
-			result = MV1CollCheck_Capsule(
-				enemy->GetModelHandle(),
-				enemy->GetColFrameIndex(),
-				m_pPlayer->GetPos(),
-				m_pPlayer->GetLastPos(),
-				m_pPlayer->GetRadius());
-			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
-			{
-				printfDx("ヒットしました\n");
-				// ダメージ量を渡す
-				m_pPlayer->OnDamage(30);
-				// 振動開始
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
-				// ダメージをくらった
-				m_isInvincible = true;
-			}
-
-			// 当たり判定情報の後始末
-			MV1CollResultPolyDimTerminate(result);
-		}
-	}
-
+	// プレイヤーとエネミーの当たり判定
+	playerCheckHit();
+	// プレイヤーと地面の当たり判定
+	fieldCheckHit();
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
-	// 地面との判定
-	for(auto& field : m_pField)
-	{
-		// DxLibの関数を利用して当たり判定をとる
-		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
 
-		result = MV1CollCheck_Capsule(
-			field->GetModelHandle(),
-			field->GetColFrameIndex(),
-			m_pPlayer->GetPos(),
-			m_pPlayer->GetLastPos(),
-			m_pPlayer->GetRadius());
-		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
-		{
-			printfDx("地面判定\n");
-		}
-
-		// 当たり判定情報の後始末
-		MV1CollResultPolyDimTerminate(result);
-	}
-
+	
 	// フェイド処理
 	UpdateFade();
 
@@ -210,11 +157,66 @@ void SceneDebug::Draw()
 	}
 
 	m_pPlayer->Draw();
-	for (auto& field : m_pField)
-	{
-		field->Draw();
-	}
+
+	m_pField->Draw();
 
 	// フェイド処理
 	SceneBase::DrawFade();
+}
+
+void SceneDebug::playerCheckHit()
+{
+	// 当たり判定の情報
+	if (!m_isInvincible)
+	{
+		// 敵との判定
+		for (auto& enemy : m_pEnemyRush)
+		{
+			// DxLibの関数を利用して当たり判定をとる
+			MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+
+			result = MV1CollCheck_Capsule(
+				enemy->GetModelHandle(),
+				enemy->GetColFrameIndex(),
+				m_pPlayer->GetPos(),
+				m_pPlayer->GetSize(),
+				m_pPlayer->GetRadius());
+			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+			{
+				printfDx("エネミーヒットしました\n");
+				// ダメージ量を渡す
+				m_pPlayer->OnDamage(30);
+				// 振動開始
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
+				// ダメージをくらった
+				m_isInvincible = true;
+			}
+
+			// 当たり判定情報の後始末
+			MV1CollResultPolyDimTerminate(result);
+		}
+	}
+}
+
+void SceneDebug::fieldCheckHit()
+{
+	// 地面との判定
+// DxLibの関数を利用して当たり判定をとる
+	for (int i = 0; i < m_pField->GetModelNum(); i++)
+	{
+		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+		result = MV1CollCheck_Capsule(
+			m_pField->GetModelHandle(i),
+			m_pField->GetColFrameIndex(),
+			m_pPlayer->GetPos(),
+			m_pPlayer->GetSize(),
+			m_pPlayer->GetRadius());
+		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+		{
+			printfDx("地面判定\n");
+		}
+		// 当たり判定情報の後始末
+		MV1CollResultPolyDimTerminate(result);
+	}
+
 }

@@ -35,7 +35,7 @@ namespace
 	constexpr int kAnimChangeFrame = 4;
 
 	// 当たり判定サイズ半径
-	constexpr float kColRaidus = 200.0f;
+	constexpr float kColRaidus = 50.0f;
 
 	// HP
 	constexpr int kMaxHp = 100;
@@ -100,11 +100,6 @@ void Player::Draw()
 	if (m_ultimateTimer % 2 == 0)return;
 
 	m_pModel->Draw();
-}
-
-float Player::GetColRadius()
-{
-	return kColRaidus;
 }
 
 float Player::GetRadius() const
@@ -343,55 +338,29 @@ void Player::UpdateMove()
 	// プレイヤーの位置
 	m_pModel->SetPos(m_pos);
 
-	// まっすぐ進む
-	m_lastPos = m_pos;
+	//// 回転角度の更新
+	//m_rad += 0.10f;
+	//// カプセルの座標を計算
+	//endPos.x = startPos.x + cosf(m_rad) * 100.0f;
+	//endPos.y = (startPos.y + sinf(m_rad) * 100.0f) + 100.0f;
+	//endPos.z = startPos.z;
 
-	
+	//// カプセルの描画
+	//DrawCapsule3D(startPos, endPos, 100.0f, 20, 0x0000ff, 0xffffff, TRUE);
 
-	// 回転角度を更新
-	m_rad += 1.0f;
-	// 回転を適用
-	float cosAngle = cosf(m_rad);
-	float sinAngle = sinf(m_rad);
 
-	// カプセルの位置とサイズ
-	VECTOR startPos = VGet(
-		m_pos.x * cosAngle + m_pos.z * sinAngle,
-		m_pos.y,
-		m_pos.z * cosAngle - m_pos.x * sinAngle);
-	VECTOR endPos = VGet(
-		m_pos.x * cosAngle + m_pos.z * sinAngle,
-		m_pos.y + kColRaidus,
-		m_pos.z * cosAngle - m_pos.x * sinAngle);
+	m_size = { m_pos.x, m_pos.y + 300.0f, m_pos.z };
 
-	// カプセルの描画
+	// プレイヤー判定用
 	DrawCapsule3D(
-		startPos,
-		endPos,
-		100.0f,
+		m_pos,
+		m_size,
+		kColRaidus,
 		8,
 		0xffffff,
 		0xffffff,
 		true);
 
-	//DrawCapsule3D(
-	//	m_lastPos,
-	//	VGet(m_lastPos.x, m_lastPos.y + kColRaidus, m_lastPos.z),
-	//	100.0f,
-	//	8,
-	//	0xffffff,
-	//	0xffffff,
-	//	true);
-
-	//radcounter++;
-
-	//rad = radcounter / 180 * DX_PI;
-
-	//m_lastPos.x = cos(rad);	
-	//m_lastPos.y = sin(rad);
-	//
-
-	//	m_lastPos.x++;
-	//	printfDx("%f\n", m_lastPos.x);
-
+	//m_jumpAcc += kGravity;
+	//m_pos.y += m_jumpAcc;
 }

@@ -20,15 +20,12 @@ public:
 
 	// プレイヤーの位置を取得する
 	VECTOR GetPos() const { return m_pos; }
+	VECTOR GetSize()const { return m_size; }
 
 	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }// スローの加減を渡す
 
-	// 当たり判定の半径
-	float GetColRadius();
-
 	// 前のフレーム
-	VECTOR GetLastPos()const { return m_lastPos; }
-	// 半径の取得
+	// 当たり判定の半径
 	float GetRadius()const;
 
 	// ダメージを受けた
@@ -70,7 +67,7 @@ private:
 	// プレイヤーの位置
 	VECTOR m_pos;
 	// 1フレーム前の位置
-	VECTOR m_lastPos;
+	VECTOR m_size;
 
 	// ジャンプ処理用加速度
 	float m_jumpAcc;
@@ -103,5 +100,8 @@ private:
 
 	// 回転角度を更新
 	float m_rad = 0.0f;
+
+	VECTOR startPos = { 0.0f,0.0f ,0.0f };
+	VECTOR endPos   = { 0.0f,0.0f ,0.0f };
 };
 

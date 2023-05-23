@@ -10,6 +10,7 @@ Animation::Animation(const char* fileName):
 	m_animChangeFrameTotal(0)
 {
 	m_modelHandle = MV1LoadModel(fileName);
+
 	// コピーに失敗した場合
 	assert(m_modelHandle != -1);
 	// アニメーションデータのクリア

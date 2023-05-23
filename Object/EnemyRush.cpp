@@ -88,7 +88,7 @@ void EnemyRush::Draw()
 	DrawUI();
 }
 
-int EnemyRush::GetModelHandle() const
+int EnemyRush::GetModelHandle()
 {
 	return m_pAnimation->GetModelHandle();
 }
