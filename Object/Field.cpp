@@ -40,10 +40,10 @@ namespace
 	// 二次元配列マップデータvecotr
 	std::vector<std::vector<int>> mapData =
 	{
-		{1, 1, 1, 1, 1, 1},
-		{1, 0, 0, 0, 0, 1},
-		{1, 0, 1, 1, 0, 1},
-		{1, 0, 1, 1, 0, 1},
+		{1, 1, 1, 1, 1},	//, 1,1, 0, 1, 1, 0, 1,1, 0, 1, 1, 0, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1},
+		{1, 0, 0, 0, 1},	//, 1,1, 0, 1, 1, 0, 1,1, 0, 1, 1, 0, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1},
+		{1, 0, 0, 0, 1},	//, 1,1, 0, 1, 1, 0, 1,1, 0, 1, 1, 0, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1},	//, 1,1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1 },
 	};
 	
 }
@@ -85,18 +85,35 @@ Field::Field()
 	//	}
 	//}
 
-	for (int i = 0; i < VcStageData.size(); i++)
-	{
-		if (VcStageData[i] == 1)
-		{
-			float x = 200.0f * i;
+//	printfDx("%d\n", mapData.at());
+		printfDx("%d\n", mapData.at(0).size());
 
-			m_pModel[i]->SetPos(VGet(
-				x,
-				-kBlockSideLength,
+	for (int y = 0; y < mapData.size(); y++)
+	{
+		for (int x = 0; x  < mapData.at(0).size(); x ++)
+		{
+			float sizeX = 200.0f * x;
+			float sizeY = 200.0f * y;
+
+			m_pModel[x]->SetPos(VGet(
+				sizeX,
+				-kBlockSideLength + sizeY,
 				0.0f));
 		}
 	}
+
+	//for (int i = 0; i < VcStageData.size(); i++)
+	//{
+	//	if (VcStageData[i] == 1)
+	//	{
+	//		float x = 200.0f * i;
+
+	//		m_pModel[i]->SetPos(VGet(
+	//			x,
+	//			-kBlockSideLength,
+	//			0.0f));
+	//	}
+	//}
 	
 	//  700
 	//  500
