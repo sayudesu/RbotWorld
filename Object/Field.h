@@ -16,13 +16,16 @@ public:
 	void Draw();
 
 	// モデルの数
-	int GetModelNum();
+	int GetModelNumX();
+	int GetModelNumY();
 	// 指定した番号のモデルのハンドルを取得する
+//	int GetModelHandle(int handlNum, int handleNumX);
 	int GetModelHandle(int handlNum);
 
 	int GetColFrameIndex()const;
 
 private:
 	std::vector<std::shared_ptr<Animation>> m_pModel;
+//	std::vector<std::vector<std::shared_ptr<Animation>>> m_pModel;
 };
 

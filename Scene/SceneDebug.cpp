@@ -206,11 +206,12 @@ void SceneDebug::fieldCheckHit()
 	m_pPlayer->FieldCheckHit(false);
 	// 地面との判定
 	// DxLibの関数を利用して当たり判定をとる
-	for (int i = 0; i < m_pField->GetModelNum(); i++)
+
+	for (int x = 0; x < m_pField->GetModelNumX(); x++)
 	{
 		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
 		result = MV1CollCheck_Capsule(
-			m_pField->GetModelHandle(i),
+			m_pField->GetModelHandle(x),
 			m_pField->GetColFrameIndex(),
 			m_pPlayer->GetPos(),
 			m_pPlayer->GetSize(),
@@ -223,5 +224,4 @@ void SceneDebug::fieldCheckHit()
 		// 当たり判定情報の後始末
 		MV1CollResultPolyDimTerminate(result);
 	}
-
 }
