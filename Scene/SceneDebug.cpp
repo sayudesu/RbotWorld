@@ -144,7 +144,10 @@ SceneBase* SceneDebug::Update()
 	{
 		return(new SceneTitle);
 	}
-
+	if (m_pPlayer->GetPos().y < -1000.0f)
+	{
+		return(new SceneTitle);
+	}
 	return this;
 }
 // 描画 //
@@ -183,7 +186,6 @@ void SceneDebug::playerCheckHit()
 				m_pPlayer->GetRadius());
 			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
 			{
-				printfDx("エネミーヒットしました\n");
 				// ダメージ量を渡す
 				m_pPlayer->OnDamage(30);
 				// 振動開始
@@ -200,8 +202,10 @@ void SceneDebug::playerCheckHit()
 
 void SceneDebug::fieldCheckHit()
 {
+	// 地面判定の情報を渡す
+	m_pPlayer->FieldCheckHit(false);
 	// 地面との判定
-// DxLibの関数を利用して当たり判定をとる
+	// DxLibの関数を利用して当たり判定をとる
 	for (int i = 0; i < m_pField->GetModelNum(); i++)
 	{
 		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
@@ -213,7 +217,8 @@ void SceneDebug::fieldCheckHit()
 			m_pPlayer->GetRadius());
 		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
 		{
-			printfDx("地面判定\n");
+			// 地面判定の情報を渡す
+			m_pPlayer->FieldCheckHit(true);
 		}
 		// 当たり判定情報の後始末
 		MV1CollResultPolyDimTerminate(result);

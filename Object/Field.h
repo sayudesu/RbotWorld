@@ -24,6 +24,5 @@ public:
 
 private:
 	std::vector<std::shared_ptr<Animation>> m_pModel;
-//	std::vector<std::shared_ptr<Animation>, std::vector<int>> m_pModel;
 };
 

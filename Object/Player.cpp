@@ -44,9 +44,12 @@ namespace
 
 Player::Player():
 	m_updateFunc(&Player::UpdateRun),
+	m_isJumping(false),
 	m_animNo(kWalkAnimNo),
 	m_frameCount(0),
-	m_pos(VGet(0.0f,0.0f,0.0f)),
+	m_pos(VGet(0.0f,300.0f,0.0f)),
+	m_posColl(VGet(0.0f, 100.0f, 0.0f)),
+	m_size(VGet(0.0f, 100.0f, 0.0f)),
 	m_jumpAcc(0.0f),
 	m_isFastJumping(false),
 	m_isSecondJumping(false),
@@ -77,6 +80,7 @@ void Player::End()
 {
 
 }
+
 void Player::Update()
 {	
 	(this->*m_updateFunc)();
@@ -167,6 +171,7 @@ void Player::UpdateHitPoint()
 	}
 }
 
+// 操作処理 //
 void Player::UpdateControl()
 {
 	// プレイヤーと敵の動きを遅くする
@@ -190,13 +195,13 @@ void Player::UpdateControl()
 	}
 
 	// ジャンプする
-//	m_isFastJumping = false;
-	if (Pad::isTrigger(PAD_INPUT_1))
+	if (Pad::isTrigger(PAD_INPUT_1))// XBox : A
 	{
 		m_isFastJumping = true;
 	}
 }
 
+// プレイヤーを追跡するカメラの設定 //
 void Player::UpdateCamera()
 {
 	// ジャンプ場合
@@ -227,114 +232,113 @@ void Player::UpdateCamera()
 
 void Player::UpdateRun()
 {
-	// アニメーションを進める
+	// ショットアニメ以外でこのupdateは呼ばれない
+	assert(m_animNo == kWalkAnimNo);
+
+	// モデルの更新
 	m_pModel->Update();
 
-	m_damageFrame--;
-	if (m_damageFrame <= 0) { m_damageFrame = 0; }
-
 	// ジャンプできるかどうか
-	if (!m_isJumping)
+	if(m_isFastJumping)
 	{
-		// 1ボタンでジャンプ
-		if(m_isFastJumping)
-		{
-			// ジャンプ力
-			m_jumpAcc = kJumpPower;
-
-			// ジャンプアニメーションに変更
-			m_animNo = kJumpAnimNo;
-			m_pModel->ChangeAnimation(m_animNo, false, false, 4);
-			m_updateFunc = &Player::UpdateJump;
-		}
+		// ジャンプ力
+		m_jumpAcc = kJumpPower;
+		// ジャンプアニメーションに変更
+		m_animNo = kJumpAnimNo;
+		// アニメーションを変更する
+		m_pModel->ChangeAnimation(m_animNo, false, false, 4);
+		// Jump関数に移動する
+		m_updateFunc = &Player::UpdateJump;
+	}
+	else
+	{
+		UpdateHitField();//地面に当たった場合の処理
 	}
 
+	// 走るアニメだったら走るアニメに変更
 	if (m_animNo == kWalkAnimNo)
 	{
-		// 走るアニメに変更
 		m_animNo = kWalkAnimNo;
 		m_pModel->ChangeAnimation(m_animNo, true, false, 4);
 	}
 
-	UpdateMove(); 
-	UpdateCamera();
+	UpdateMove();// 移動用関数
+	UpdateCamera();// カメラ用関数
+	UpdateGravity();//重力系管理用関数
+
+	UpdateHitPoint();// 体力の計算処理
+	UpdateInvincible();// 無敵時間処理
+	UpdateRot();// 角度用関数
 }
 
+// ジャンプした場合の処理 //
 void Player::UpdateJump()
 {
-	m_damageFrame--;
-	if (m_damageFrame <= 0) { m_damageFrame = 0; }
-
 	// ショットアニメ以外でこのupdateは呼ばれない
 	assert(m_animNo == kJumpAnimNo);
+
+	// モデルの更新
 	m_pModel->Update();
 
-	m_jumpAcc += kGravity;
-	m_pos.y += m_jumpAcc;
-
-	if (m_pos.y < 0.0f)
+	// 地面に当たったら
+//	if (m_pos.y <= 0.0f)// 座標が0とは限らないので修正待ち
+	if (m_jumpAcc <= 0)
 	{
-		m_pos.y = 0.0f;
-		m_jumpAcc = 0.0f;
-
-		m_isFastJumping = false;
-		m_isSecondJumping = false;
-
-		// 走るアニメに変更する
-		m_animNo = kWalkAnimNo;
-		m_angle = 0.0f;// X軸の角度を0に戻す
-		m_pModel->ChangeAnimation(kWalkAnimNo, true, true, 4);
-		// updateを待機に
-		m_updateFunc = &Player::UpdateRun;
-	}
-	else
-	{
-		if (!m_isSecondJumping)
+		if(m_isFieldHit)
 		{
-			//////////////////////////////////////////////////
-			// ここスローモーション中でも動ける様に工夫待ち //
-			//////////////////////////////////////////////////
-			
-			// 二段ジャンプが有効になった場合
-			if (Pad::isTrigger(PAD_INPUT_1))
-			{
-				m_jumpAcc = kJumpPower;
-
-				m_isSecondJumping = true;
-			}
-			
+			// 走るアニメに変更する
+			m_animNo = kWalkAnimNo;
+			m_pModel->ChangeAnimation(m_animNo, true, true, 4);
+			// updateを待機に
+			m_updateFunc = &Player::UpdateRun;
 		}
 		else
 		{
-			// X軸の角度を変更する
-			if (m_angle > -360.0f)m_angle -= 10.0;
+			if (!m_isSecondJumping)
+			{
+				//////////////////////////////////////////////////
+				// ここスローモーション中でも動ける様に工夫待ち //
+				//////////////////////////////////////////////////
+			
+				// 二段ジャンプが有効になった場合
+				if (Pad::isTrigger(PAD_INPUT_1))
+				{
+					m_jumpAcc = kJumpPower;
+
+					m_isSecondJumping = true;
+				}
+			
+			}
+			else
+			{
+
+			}
 		}
 	}
 
-	if (m_pModel->IsAnimEnd())
+	if (m_isSecondJumping)
 	{
-	//	m_pModel->ChangeAnimation(kWalkAnimNo, true, true, 4);
+		// X軸の角度を変更する
+		if (m_angle > -360.0f)m_angle -= 10.0;
 	}
 
-	UpdateMove();
-	UpdateCamera();
+	UpdateMove();// 移動用関数
+	UpdateCamera();// カメラ用関数
+	UpdateGravity();//重力系管理用関数
+	UpdateHitField();//地面に当たった場合の処理
+	UpdateHitPoint();// 体力の計算処理
+	UpdateInvincible();// 無敵時間処理
+	UpdateRot();// 角度用関数
 }
 
 void Player::UpdateMove()
 {
-	UpdateHitPoint();// 体力の計算処理
-	UpdateInvincible();// 無敵時間処理
 	// プレイヤーの進行方向
 	MATRIX playerRotMtx = MGetRotY(-90 * DX_PI_F / 180.0f);
 	VECTOR move = VTransform(kPlayerVec, playerRotMtx);
-
 	//移動量
 	m_pos = VAdd(m_pos, move);
-	// プレイヤーの角度
-	m_pModel->SetRot(VGet(
-		m_angle * DX_PI_F / 180.0f,
-		-90.0f * DX_PI_F / 180.0f,
-		0.0f));
+
 	// プレイヤーの位置
 	m_pModel->SetPos(m_pos);
 
@@ -349,18 +353,63 @@ void Player::UpdateMove()
 	//DrawCapsule3D(startPos, endPos, 100.0f, 20, 0x0000ff, 0xffffff, TRUE);
 
 
-	m_size = { m_pos.x, m_pos.y + 300.0f, m_pos.z };
+	// 当たり判定用サイズ
+	m_posColl = { m_pos.x - 25.0f, m_pos.y + 50.0f,      m_pos.z     };
+	m_size    = { m_posColl.x,     m_posColl.y + 300.0f, m_posColl.z };
 
-	// プレイヤー判定用
+#if true	
+	// プレイヤー判定確認用
 	DrawCapsule3D(
-		m_pos,
+		m_posColl,
 		m_size,
 		kColRaidus,
 		8,
 		0xffffff,
 		0xffffff,
 		true);
+#endif
+}
 
-	//m_jumpAcc += kGravity;
-	//m_pos.y += m_jumpAcc;
+// 角度管理用関数 //
+void Player::UpdateRot()
+{
+	// プレイヤーの角度
+	m_pModel->SetRot(
+		VGet(
+			m_angle * DX_PI_F / 180.0f, //x
+			-90.0f * DX_PI_F  / 180.0f, //y
+			0.0f					    //z
+			)					    
+	);
+}
+
+// 地面に当たった場合の処理 //
+void Player::UpdateHitField()
+{
+	if (m_jumpAcc <= 0)
+	{
+		// 地面に触れているかどうか
+		// 地面に当たったら
+		if (m_isFieldHit)
+		{
+			// 座標を地面に戻す
+			m_pos.y = 0.0f;
+			//m_pos.y = 地面の位置.y
+			// ジャンプ加速をなくす
+			m_jumpAcc = 0.0f;
+			// X軸の角度を0に戻す
+			m_angle = 0.0f;
+			// 次にまたジャンプ出来るようにする
+			m_isFastJumping = false;
+			m_isSecondJumping = false;
+		}
+	}
+}
+
+// 重力系管理用関数 //
+void Player::UpdateGravity()
+{
+	// 重力
+	m_jumpAcc += kGravity;
+	m_pos.y += m_jumpAcc;
 }

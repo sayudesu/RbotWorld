@@ -19,10 +19,15 @@ public:
 	void UpdateControl();// 操作処理
 
 	// プレイヤーの位置を取得する
-	VECTOR GetPos() const { return m_pos; }
-	VECTOR GetSize()const { return m_size; }
+	VECTOR GetPos()     const { return m_pos;     }
+	// プレイヤーの当たり判定用位置を取得する
+	VECTOR GetPosColl() const { return m_posColl; }
+	VECTOR GetSize()    const { return m_size;    }
 
 	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }// スローの加減を渡す
+
+	// 地面に当たっているかどうかを取得する
+	void FieldCheckHit(bool hit) { m_isFieldHit = hit; }
 
 	// 前のフレーム
 	// 当たり判定の半径
@@ -38,14 +43,18 @@ private:
 private:
 	// カメラの更新
 	void UpdateCamera();
-
 	// 動き全体の更新用関数
 	void UpdateRun();
 	// ジャンプする用関数
 	void UpdateJump();
 	// 移動用関数
 	void UpdateMove();
-
+	// 角度管理用関数
+	void UpdateRot();
+	// 重力系管理用関数
+	void UpdateGravity();
+	// 地面に当たった場合の処理
+	void UpdateHitField();
 private:
 	// 
 	SceneTest* m_pScene;
@@ -56,6 +65,8 @@ private:
 	// プレイヤーのモデル
 	std::shared_ptr<Animation> m_pModel;
 	
+	// ジャンプできるかどうか
+	// (true : ジャンプできる, false : ジャンプできない)
 	bool m_isJumping;
 
 	// 再生しているアニメーション番号
@@ -66,15 +77,21 @@ private:
 
 	// プレイヤーの位置
 	VECTOR m_pos;
-	// 1フレーム前の位置
+	// 当たり判定用位置
+	VECTOR m_posColl;
 	VECTOR m_size;
 
 	// ジャンプ処理用加速度
 	float m_jumpAcc;
 
-	// ジャンプをしているかどうか(true ジャンプできない	:	false ジャンプできる )
+	// ジャンプをしているかどうか
+	// (true ジャンプできない : false ジャンプできる )
 	bool m_isFastJumping;
 	bool m_isSecondJumping;
+
+	// 地面に当たっているかどうか
+	// (true : 当たっている, false : 当たっていない)
+	bool m_isFieldHit = false;
 
 	// プレイヤーの向いている方向
 	float m_angle;
@@ -82,7 +99,8 @@ private:
 	// カメラの向いている方向
 	float m_cameraAngle;
 
-	float m_slowSpeed;// スロー処理
+	// スロー時間
+	float m_slowSpeed;
 
 	// HP
 	int m_hp;
@@ -96,7 +114,6 @@ private:
 	int m_tempDamage = 0;// 前回受けたダメージを保存する
 	int m_tempHp = 0;// 保存用体力
 	int m_ultimateTimer = 1;// ダメージをくらった場合の無敵判定用
-
 
 	// 回転角度を更新
 	float m_rad = 0.0f;
