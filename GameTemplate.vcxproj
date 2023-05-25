@@ -140,6 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Object\Map\Map.cpp" />
+    <ClCompile Include="Object\Map\WorldSprite.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Util\Animation.cpp" />
     <ClCompile Include="Util\CreateText.cpp" />
@@ -158,6 +160,8 @@
     <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Map\Map.h" />
+    <ClInclude Include="Object\Map\WorldSprite.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Util\Animation.h" />
     <ClInclude Include="Util\CreateText.h" />

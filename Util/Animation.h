@@ -33,6 +33,8 @@ public:
 	// 当たり判定に使用するフレームインデックスを取得する
 	int GetColFrameIndex()const { return m_colFrameIndex; }
 
+	VECTOR GetModelPos() { return m_pos; }
+
 	//表示位置の設定
 	void SetPos(VECTOR pos);
 
@@ -83,6 +85,9 @@ private:
 private:
 	// モデルのハンドル
 	int m_modelHandle;
+
+	// モデルの位置
+	VECTOR m_pos;
 
 	// 当たり判定情報を使用する
 	bool m_isUseCllision;

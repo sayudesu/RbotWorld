@@ -20,9 +20,6 @@ public:
 	int GetColFrameIndex()const;
 	int GetModelHandle();
 private:
-	void Dead();
-	void DrawUI();
-private:
 
 	std::shared_ptr<Animation> m_pAnimation;
 

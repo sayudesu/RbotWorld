@@ -14,10 +14,6 @@ public:
 	void End();
 	void Update();
 	void Draw();
-
-private:
-	void Dead();
-	void DrawUI();
 private:
 
 	std::shared_ptr<Animation> m_pAnimation;

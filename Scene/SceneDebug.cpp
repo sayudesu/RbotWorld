@@ -6,6 +6,7 @@
 #include "Object/EnemyRush.h"
 #include "Object/Field.h"
 #include "SceneTitle.h"
+#include "Object/Map/Map.h"
 
 #include "Util/Vec3.h"
 
@@ -22,17 +23,20 @@ SceneDebug::SceneDebug():
 	m_enemyCount(0),
 	m_isInvincible(false),
 	m_pPlayer(nullptr),
-	m_pField(nullptr)
+	m_pField(nullptr),
+	m_pMap(nullptr)
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
 	m_pPlayer = new Player;
 	m_pField = new Field;
+	m_pMap = new Map;
 }
 
 SceneDebug::~SceneDebug()
 {
 	delete m_pPlayer;
 	delete m_pField;
+	delete m_pMap;
 
 }
 
@@ -49,6 +53,8 @@ void SceneDebug::Init()
 	m_pPlayer->Init();
 
 	m_pField->Init();
+
+	m_pMap->Load();
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -153,7 +159,7 @@ SceneBase* SceneDebug::Update()
 // 描画 //
 void SceneDebug::Draw()
 {
-
+	m_pMap->Draw();
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->Draw();
@@ -187,7 +193,7 @@ void SceneDebug::playerCheckHit()
 			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
 			{
 				// ダメージ量を渡す
-				m_pPlayer->OnDamage(30);
+				m_pPlayer->OnDamage(enemy->GetAttackDamage());
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
 				// ダメージをくらった
@@ -207,21 +213,28 @@ void SceneDebug::fieldCheckHit()
 	// 地面との判定
 	// DxLibの関数を利用して当たり判定をとる
 
-	for (int x = 0; x < m_pField->GetModelNumX(); x++)
+	for (int y = 0; y < m_pField->GetModelNumY(); y++)
 	{
-		MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-		result = MV1CollCheck_Capsule(
-			m_pField->GetModelHandle(x),
-			m_pField->GetColFrameIndex(),
-			m_pPlayer->GetPos(),
-			m_pPlayer->GetSize(),
-			m_pPlayer->GetRadius());
-		if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+		for (int x = 0; x < m_pField->GetModelNumX(); x++)
 		{
-			// 地面判定の情報を渡す
-			m_pPlayer->FieldCheckHit(true);
+			MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
+			result = MV1CollCheck_Capsule(
+				m_pField->GetModelHandle(y,x),
+				m_pField->GetColFrameIndex(y,x),
+				m_pPlayer->GetPos(),
+				m_pPlayer->GetSize(),
+				m_pPlayer->GetRadius());
+			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
+			{
+				// 地面判定の情報を渡す
+				m_pPlayer->FieldCheckHit(true);
+				m_pPlayer->FieldPosY(m_pField->SetPosY(y, x));
+			}
+			// 当たり判定情報の後始末
+			MV1CollResultPolyDimTerminate(result);
+
+		//	printfDx("%f\n", m_pPlayer->FieldPosY(m_pField->SetPosY(y, x)));
 		}
-		// 当たり判定情報の後始末
-		MV1CollResultPolyDimTerminate(result);
 	}
+
 }

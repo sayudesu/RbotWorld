@@ -102,6 +102,7 @@ void Animation::Draw()
 
 void Animation::SetPos(VECTOR pos)
 {
+	m_pos = pos;
 	MV1SetPosition(m_modelHandle,pos);
 }
 

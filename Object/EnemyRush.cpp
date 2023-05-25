@@ -12,9 +12,8 @@ namespace
 	constexpr float kSpeedIdle = 3.0f;
 
 	constexpr float kRushSpeed = 15.0f;
-
-	// 最大HP
-	constexpr int kMaxHp = 100;
+	
+	constexpr int kDamagePower = 30;
 
 	// アニメーションナンバー
 	constexpr int kAnimNoView = 0;	// 発見する
@@ -24,11 +23,8 @@ namespace
 
 }
 
-EnemyRush::EnemyRush(Vec3 pos)/*:
-	m_upddateFunc(&EnemyRush::Update)*/
+EnemyRush::EnemyRush(Vec3 pos)
 {
-	//VECTOR pos{};
-
 	// 3Dモデルの生成
 	m_pAnimation = std::make_shared<Animation>(kModelName);// モデルのハンドルを渡す
 	m_pAnimation->SetAnimation(kAnimNoRush,true,true);// モデルの動きをセット
@@ -39,13 +35,7 @@ EnemyRush::EnemyRush(Vec3 pos)/*:
 	m_angle.x = 90.0f;
 	m_angle.y = 90.0f;
 
-//	m_size = {};
-
-//	m_posPlayer = {};
-
-	m_hp = kMaxHp;
-
-	m_isDead = false;
+	m_hitDamage = kDamagePower;
 
 	m_pAnimation->SetUseCollision(true, true);
 
@@ -53,7 +43,7 @@ EnemyRush::EnemyRush(Vec3 pos)/*:
 
 EnemyRush::~EnemyRush()
 {
-	
+	printfDx("きえました\n");
 }
 
 void EnemyRush::Init()
@@ -78,14 +68,11 @@ void EnemyRush::Update()
 
 	m_pAnimation->SetSize(VGet(0.3f, 0.3f, 0.3f));
 	m_pAnimation->SetRot(VGet(0.0f, 90.0f * DX_PI_F / 180.0f, 0.0f));
-
-	if (m_hp == 0)printfDx("死んでいます。\n");
 }
 
 void EnemyRush::Draw()
 {
 	m_pAnimation->Draw();
-	DrawUI();
 }
 
 int EnemyRush::GetModelHandle()
@@ -96,42 +83,4 @@ int EnemyRush::GetModelHandle()
 int EnemyRush::GetColFrameIndex() const
 {
 	return m_pAnimation->GetColFrameIndex();
-}
-
-void EnemyRush::Dead()
-{
-
-}
-
-void EnemyRush::DrawUI()
-{
-	if (!m_isDead)
-	{
-		const VECTOR pos = ConvWorldPosToScreenPos({m_pos.x,m_pos.y ,m_pos.z});
-
-		//m_size.left   = pos.x- 50.0f;
-		//m_size.top    = pos.y - 130.0f;
-		//m_size.right  = m_size.left  + 110.0f;
-		//m_size.bottom = m_size.top   + 130.0f;
-
-		//DrawFormatString(m_size.left, m_size.top, 0xffffff, "EnemyRush");
-		//DrawBox(m_size.left, m_size.top, m_size.right, m_size.bottom, 0xff0000, false);
-
-		////体力を描画
-		//DrawBox(m_size.left - 1, m_size.top - 1,
-		//	m_size.left + 100 + 1, m_size.top + 1 + 20,
-		//	0x0000ff, true);//外枠
-		//DrawBox(m_size.left, m_size.top,
-		//	m_size.left + 100 * m_hp / kMaxHp, m_size.top + 20,
-		//	0x0ffff0, true);//メーター
-		////長さ * HP / HPMAX
-	}
-	else
-	{
-	/*	m_size.left   = NULL;
-		m_size.top    = NULL;
-		m_size.right  = NULL;
-		m_size.bottom = NULL;*/
-	}
-
 }

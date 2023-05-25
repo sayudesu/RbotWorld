@@ -7,6 +7,7 @@ class Player;
 class Enemy;
 class EnemyRush;
 class Field;
+class Map;
 
 class SceneDebug : public SceneBase
 {
@@ -39,5 +40,6 @@ private:
 	std::vector<std::shared_ptr<EnemyRush>>m_pEnemyRush;
 	// マップのポインタ
 	Field* m_pField;
+	Map* m_pMap;
 
 };

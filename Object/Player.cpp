@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "Pad.h"
 #include "Animation.h"
+#include "game.h"
 #include <cassert>
 
 #include <cmath>
@@ -66,6 +67,9 @@ Player::Player():
 
 	m_slowSpeed = 1.0f;
 
+	// 回転角度
+	m_rad = 90.0f * DX_PI_F / 180.0f;
+
 }
 
 Player::~Player()
@@ -99,11 +103,31 @@ void Player::Draw()
 		100 + 400 * m_hp / kMaxHp, 130 + 20,
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
+	
 
 	// 点滅
-	if (m_ultimateTimer % 2 == 0)return;
+//	if (m_ultimateTimer % 2 == 0)return;
 
+	//handle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
+
+	//// 作成した画像を描画対象にする
+	//SetDrawScreen(handle);
+
+	//// ブレンドモードを設定
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);  // 透明度128で半透明ブレンディング
+
+	// 画像の描画
+	// プレイヤーモデルの描画
 	m_pModel->Draw();
+
+	//DrawExtendGraph(100, 100, Game::kScreenWidth, Game::kScreenHeight, handle, true);
+
+	//// メインバッファを画面に描画
+	//SetDrawScreen(DX_SCREEN_BACK);
+
+	//// バッファの解放
+	//DeleteGraph(handle);
+
 }
 
 float Player::GetRadius() const
@@ -228,6 +252,8 @@ void Player::UpdateCamera()
 	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
+//	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x - 300.0f, m_pos.y + 400.0f, m_pos.z), 
+//									  VGet(cameraTarget.x, m_pos.y   + 400.0f, cameraTarget.z));
 }
 
 void Player::UpdateRun()
@@ -318,8 +344,8 @@ void Player::UpdateJump()
 
 	if (m_isSecondJumping)
 	{
-		// X軸の角度を変更する
-		if (m_angle > -360.0f)m_angle -= 10.0;
+		if (m_angle > -360.0f)m_angle -= 10.0f;
+		if (m_rad   > -360.0f)m_rad -= 0.15f;
 	}
 
 	UpdateMove();// 移動用関数
@@ -342,31 +368,32 @@ void Player::UpdateMove()
 	// プレイヤーの位置
 	m_pModel->SetPos(m_pos);
 
-	//// 回転角度の更新
-	//m_rad += 0.10f;
-	//// カプセルの座標を計算
-	//endPos.x = startPos.x + cosf(m_rad) * 100.0f;
-	//endPos.y = (startPos.y + sinf(m_rad) * 100.0f) + 100.0f;
-	//endPos.z = startPos.z;
-
-	//// カプセルの描画
-	//DrawCapsule3D(startPos, endPos, 100.0f, 20, 0x0000ff, 0xffffff, TRUE);
-
-
 	// 当たり判定用サイズ
-	m_posColl = { m_pos.x - 25.0f, m_pos.y + 50.0f,      m_pos.z     };
-	m_size    = { m_posColl.x,     m_posColl.y + 300.0f, m_posColl.z };
+	m_posColl = { m_pos.x - 25.0f, m_pos.y + 50.0f,      m_pos.z };
+	m_size = { m_posColl.x,     m_posColl.y + 300.0f, m_posColl.z };
+
+	
+
+//	printfDx("%f\n", m_rad);
+
+	// カプセルの座標を計算
+	m_size.x = m_posColl.x + cosf(m_rad) * 100.0f;
+	m_size.y = (m_posColl.y + sinf(m_rad) * 100.0f) + 100.0f;
+	m_size.z = m_posColl.z;
+
+	// カプセルの描画
+	DrawCapsule3D(m_posColl, m_size, kColRaidus, 20, 0xffffff, 0xffffff, true);
 
 #if true	
-	// プレイヤー判定確認用
-	DrawCapsule3D(
-		m_posColl,
-		m_size,
-		kColRaidus,
-		8,
-		0xffffff,
-		0xffffff,
-		true);
+	//// プレイヤー判定確認用
+	//DrawCapsule3D(
+	//	m_posColl,
+	//	m_size,
+	//	kColRaidus,
+	//	8,
+	//	0xffffff,
+	//	0xffffff,
+	//	true);
 #endif
 }
 
@@ -393,12 +420,14 @@ void Player::UpdateHitField()
 		if (m_isFieldHit)
 		{
 			// 座標を地面に戻す
-			m_pos.y = 0.0f;
-			//m_pos.y = 地面の位置.y
+		//	m_pos.y = 0.0f;
+			m_pos.y = m_fieldPosY + 100.0f;
 			// ジャンプ加速をなくす
 			m_jumpAcc = 0.0f;
 			// X軸の角度を0に戻す
 			m_angle = 0.0f;
+			// 当たり判定の回転角度
+			m_rad = 90.0f * DX_PI_F / 180.0f;
 			// 次にまたジャンプ出来るようにする
 			m_isFastJumping = false;
 			m_isSecondJumping = false;

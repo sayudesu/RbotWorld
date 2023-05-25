@@ -29,6 +29,9 @@ public:
 	// 地面に当たっているかどうかを取得する
 	void FieldCheckHit(bool hit) { m_isFieldHit = hit; }
 
+	// 地面のy座標を取得する
+	void FieldPosY(float posY) { m_fieldPosY = posY; }
+
 	// 前のフレーム
 	// 当たり判定の半径
 	float GetRadius()const;
@@ -92,6 +95,8 @@ private:
 	// 地面に当たっているかどうか
 	// (true : 当たっている, false : 当たっていない)
 	bool m_isFieldHit = false;
+	// 地面判定用のY座標取得用
+	float m_fieldPosY;
 
 	// プレイヤーの向いている方向
 	float m_angle;
@@ -120,5 +125,8 @@ private:
 
 	VECTOR startPos = { 0.0f,0.0f ,0.0f };
 	VECTOR endPos   = { 0.0f,0.0f ,0.0f };
+
+	int m_tempScreenH = 0;
+	int handle = 0;
 };
 
