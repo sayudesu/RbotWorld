@@ -5,6 +5,7 @@
 #include "Util/Vec3.h"
 
 class CreateText;
+class DrawTitleModel;
 class SceneTitle:public SceneBase
 {
 public:
@@ -24,5 +25,6 @@ private:
 	// 決まった数なのでvectorからarrayに変更します
 	// テキスト描画用
 	std::vector<std::shared_ptr<CreateText>>m_pText;
+	DrawTitleModel* m_pDrawModel;
 };
 

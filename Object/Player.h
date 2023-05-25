@@ -3,7 +3,7 @@
 #include <memory>
 
 class SceneTest;
-class Animation;
+class Model;
 
 class Player
 {
@@ -66,7 +66,7 @@ private:
 	void (Player::*m_updateFunc)();
 
 	// プレイヤーのモデル
-	std::shared_ptr<Animation> m_pModel;
+	std::shared_ptr<Model> m_pModel;
 	
 	// ジャンプできるかどうか
 	// (true : ジャンプできる, false : ジャンプできない)

@@ -1,5 +1,5 @@
 #include "Enemy.h"
-#include "Animation.h"
+#include "Model.h"
 #include "Vec3.h"
 
 namespace
@@ -20,7 +20,7 @@ Enemy::Enemy() :
 	m_upddateFunc(&Enemy::Update)
 {
 	// 3Dモデルの生成
-	m_pAnimation = std::make_shared<Animation>(kModelName);// モデルのハンドルを渡す
+	m_pAnimation = std::make_shared<Model>(kModelName);// モデルのハンドルを渡す
 	m_pAnimation->SetAnimation(0,true,true);// モデルの動きをセット
 }
 

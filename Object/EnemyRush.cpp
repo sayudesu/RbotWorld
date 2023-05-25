@@ -26,7 +26,7 @@ namespace
 EnemyRush::EnemyRush(Vec3 pos)
 {
 	// 3Dモデルの生成
-	m_pAnimation = std::make_shared<Animation>(kModelName);// モデルのハンドルを渡す
+	m_pAnimation = std::make_shared<Model>(kModelName);// モデルのハンドルを渡す
 	m_pAnimation->SetAnimation(kAnimNoRush,true,true);// モデルの動きをセット
 
 	m_pos = pos;

@@ -1,9 +1,9 @@
-#include "Animation.h"
+#include "Model.h"
 #include <assert.h>
 
 
 
-Animation::Animation(const char* fileName):
+Model::Model(const char* fileName):
 	m_isUseCllision(false),
 	m_isUpdateCollision(false),
 	m_animChangeFrame(0),
@@ -18,7 +18,7 @@ Animation::Animation(const char* fileName):
 	clearAnimData(m_animNext);
 }
 
-Animation::Animation(int orgModel):
+Model::Model(int orgModel):
 	m_isUseCllision(false),
 	m_isUpdateCollision(false),
 	m_animChangeFrame(0),
@@ -32,7 +32,7 @@ Animation::Animation(int orgModel):
 	clearAnimData(m_animNext);
 }
 
-Animation::~Animation()
+Model::~Model()
 {
 	if (m_isUseCllision)
 	{
@@ -43,7 +43,7 @@ Animation::~Animation()
 	MV1DeleteModel(m_modelHandle);
 }
 
-void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
+void Model::SetUseCollision(bool isUse, bool isNeedUpdate)
 {
 	assert(isUse || (!isNeedUpdate));
 
@@ -74,7 +74,7 @@ void Animation::SetUseCollision(bool isUse, bool isNeedUpdate)
 	m_isUpdateCollision = isNeedUpdate;
 }
 
-void Animation::Update()
+void Model::Update()
 {
 	updateAnim(m_animPrev);
 	updateAnim(m_animNext);
@@ -95,28 +95,28 @@ void Animation::Update()
 	}
 }
 
-void Animation::Draw()
+void Model::Draw()
 {
 	MV1DrawModel(m_modelHandle);
 }
 
-void Animation::SetPos(VECTOR pos)
+void Model::SetPos(VECTOR pos)
 {
 	m_pos = pos;
 	MV1SetPosition(m_modelHandle,pos);
 }
 
-void Animation::SetRot(VECTOR rot)
+void Model::SetRot(VECTOR rot)
 {
 	MV1SetRotationXYZ(m_modelHandle, rot);
 }
 
-void Animation::SetSize(VECTOR size)
+void Model::SetSize(VECTOR size)
 {
 	MV1SetScale(m_modelHandle, size);
 }
 
-void Animation::SetAnimation(int animNo, bool isLoop, bool isForceChange)
+void Model::SetAnimation(int animNo, bool isLoop, bool isForceChange)
 {
 	if (!isForceChange)
 	{
@@ -147,7 +147,7 @@ void Animation::SetAnimation(int animNo, bool isLoop, bool isForceChange)
 	m_animChangeFrame = 1;
 }
 
-void Animation::ChangeAnimation(int animNo, bool isLoop, bool isForceChange, int changeFrame)
+void Model::ChangeAnimation(int animNo, bool isLoop, bool isForceChange, int changeFrame)
 {
 	if (!isForceChange)
 	{
@@ -178,7 +178,7 @@ void Animation::ChangeAnimation(int animNo, bool isLoop, bool isForceChange, int
 	updateAnimBlendRate();
 }
 
-bool Animation::IsAnimEnd()
+bool Model::IsAnimEnd()
 {
 	// Loopアニメの場合は常にfalseを返す
 	if (m_animNext.isLoop) return false;
@@ -192,7 +192,7 @@ bool Animation::IsAnimEnd()
 	return false;
 }
 
-void Animation::clearAnimData(AnimData& anim)
+void Model::clearAnimData(AnimData& anim)
 {
 	anim.animNo = -1;
 	anim.attachNo = -1;
@@ -200,7 +200,7 @@ void Animation::clearAnimData(AnimData& anim)
 	anim.isLoop = false;
 }
 
-void Animation::updateAnim(AnimData anim, float dt)
+void Model::updateAnim(AnimData anim, float dt)
 {
 	// アニメーションが設定されていない場合は何もしない
 	if (anim.attachNo == -1) return;
@@ -223,7 +223,7 @@ void Animation::updateAnim(AnimData anim, float dt)
 	MV1SetAttachAnimTime(m_modelHandle, anim.attachNo, time);
 }
 
-void Animation::updateAnimBlendRate()
+void Model::updateAnimBlendRate()
 {	
 	// アニメーション変化のフレーム数に応じたブレンド率を設定する
 	float rate = static_cast<float>(m_animChangeFrame) / static_cast<float>(m_animChangeFrameTotal);

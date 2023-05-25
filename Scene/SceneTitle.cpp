@@ -2,6 +2,7 @@
 #include "SceneDebug.h"
 #include <DxLib.h>
 #include "CreateText.h"
+#include "DrawTitleModel.h"
 #include "game.h"
 #include "Pad.h"
 #include "Sound.h"
@@ -23,11 +24,13 @@ SceneTitle::SceneTitle():
 {
 	m_pText.push_back(std::make_shared<CreateText>());
 	m_pText.push_back(std::make_shared<CreateText>());
+
+	m_pDrawModel = new DrawTitleModel;
 }
 
 SceneTitle::~SceneTitle()
 {
-
+	delete m_pDrawModel;
 }
 
 void SceneTitle::Init()
@@ -45,6 +48,8 @@ void SceneTitle::End()
 SceneBase* SceneTitle::Update()
 {
 
+	m_pDrawModel->Update();
+
 	if (Pad::isTrigger(PAD_INPUT_1))
 	{
 		return(new SceneDebug);
@@ -55,6 +60,8 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
+
+	m_pDrawModel->Draw();
 
 	// Ç±Ç±Çç°å„Å@forÅ@Ç≈âÒÇµÇ‹Ç∑ÅB
 	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 250.0f;

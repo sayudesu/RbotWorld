@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <DxLib.h>
 #include "Pad.h"
-#include "Animation.h"
+#include "Model.h"
 #include "game.h"
 #include <cassert>
 
@@ -62,7 +62,7 @@ Player::Player():
 
 {
 	// 3Dモデルの生成
-	m_pModel = std::make_shared<Animation>(kFileName);
+	m_pModel = std::make_shared<Model>(kFileName);
 	m_pModel->SetAnimation(m_animNo, true, true);
 
 	m_slowSpeed = 1.0f;
@@ -252,8 +252,8 @@ void Player::UpdateCamera()
 	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
-//	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x - 300.0f, m_pos.y + 400.0f, m_pos.z), 
-//									  VGet(cameraTarget.x, m_pos.y   + 400.0f, cameraTarget.z));
+//	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x + 125, m_pos.y + 400.0f, m_pos.z), 
+//							  VGet(cameraTarget.x, m_pos.y   + 400.0f, cameraTarget.z));
 }
 
 void Player::UpdateRun()
@@ -332,12 +332,7 @@ void Player::UpdateJump()
 					m_jumpAcc = kJumpPower;
 
 					m_isSecondJumping = true;
-				}
-			
-			}
-			else
-			{
-
+				}			
 			}
 		}
 	}
@@ -345,8 +340,9 @@ void Player::UpdateJump()
 	if (m_isSecondJumping)
 	{
 		if (m_angle > -360.0f)m_angle -= 10.0f;
-		if (m_rad   > -360.0f)m_rad -= 0.15f;
+		if (m_rad   > -4.5f)m_rad -= 0.2f;
 	}
+	printfDx("%f\n",m_rad);
 
 	UpdateMove();// 移動用関数
 	UpdateCamera();// カメラ用関数
@@ -362,6 +358,7 @@ void Player::UpdateMove()
 	// プレイヤーの進行方向
 	MATRIX playerRotMtx = MGetRotY(-90 * DX_PI_F / 180.0f);
 	VECTOR move = VTransform(kPlayerVec, playerRotMtx);
+
 	//移動量
 	m_pos = VAdd(m_pos, move);
 
@@ -372,19 +369,15 @@ void Player::UpdateMove()
 	m_posColl = { m_pos.x - 25.0f, m_pos.y + 50.0f,      m_pos.z };
 	m_size = { m_posColl.x,     m_posColl.y + 300.0f, m_posColl.z };
 
-	
-
-//	printfDx("%f\n", m_rad);
-
 	// カプセルの座標を計算
 	m_size.x = m_posColl.x + cosf(m_rad) * 100.0f;
 	m_size.y = (m_posColl.y + sinf(m_rad) * 100.0f) + 100.0f;
 	m_size.z = m_posColl.z;
 
-	// カプセルの描画
-	DrawCapsule3D(m_posColl, m_size, kColRaidus, 20, 0xffffff, 0xffffff, true);
 
 #if true	
+	// カプセルの描画
+	DrawCapsule3D(m_posColl, m_size, kColRaidus, 20, 0xffffff, 0xffffff, true);
 	//// プレイヤー判定確認用
 	//DrawCapsule3D(
 	//	m_posColl,

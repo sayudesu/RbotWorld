@@ -10,14 +10,14 @@ namespace
 	const char* const kCollsionEnemyFrameName = "Coll";
 }
 
-class Animation
+class Model
 {
 public:
 	// ファイル名を指定してロードを行う
-	Animation(const char* fileName);
+	Model(const char* fileName);
 	// 指定されたハンドルのモデルをDuplicateModelして生成する
-	Animation(int orgModel);
-	virtual ~Animation();
+	Model(int orgModel);
+	virtual ~Model();
 
 	// 当たり判定設定
 	void SetUseCollision(bool isUse, bool isNeedUpdate);

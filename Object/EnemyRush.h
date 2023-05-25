@@ -4,7 +4,7 @@
 
 #include "EnemyBase.h"
 
-class Animation;
+class Model;
 class EnemyRush : public EnemyBase
 {
 public:
@@ -21,7 +21,7 @@ public:
 	int GetModelHandle();
 private:
 
-	std::shared_ptr<Animation> m_pAnimation;
+	std::shared_ptr<Model> m_pAnimation;
 
 	void(EnemyRush::* m_upddateFunc)();
 };

@@ -3,7 +3,7 @@
 #include <memory>
 #include "EnemyBase.h"
 
-class Animation;
+class Model;
 class Enemy : public EnemyBase
 {
 public:
@@ -16,7 +16,7 @@ public:
 	void Draw();
 private:
 
-	std::shared_ptr<Animation> m_pAnimation;
+	std::shared_ptr<Model> m_pAnimation;
 
 	void(Enemy::* m_upddateFunc)();
 };

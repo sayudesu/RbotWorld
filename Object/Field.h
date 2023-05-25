@@ -3,7 +3,14 @@
 #include <array>
 #include <memory>
 
-class Animation;
+namespace 
+{
+	// 地面に敷き詰めるブロックの数
+	constexpr int kBlockNumX = 151;
+	constexpr int kBlockNumY = 6;
+}
+
+class Model;
 class Field
 {
 public:
@@ -26,8 +33,6 @@ public:
 	int GetColFrameIndex(int y, int x)const;
 
 private:
-	std::shared_ptr<Animation> m_pModel[5][350];
-//	std::vector<std::shared_ptr<Animation>> m_pModel;
-//	std::vector<std::vector<std::shared_ptr<Animation>>> m_pModel;
+	std::shared_ptr<Model> m_pModel[kBlockNumY][kBlockNumX];
 };
 
