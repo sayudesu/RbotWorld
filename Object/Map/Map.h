@@ -22,7 +22,9 @@ public:
 	static const int	ChipPixelSize;
 
 private:
-	WorldSprite* sprite;
+	// 画像ハンドル
 	int handle = -1;
+	// 画像処理メンバ変数ポインタ
+	WorldSprite* sprite;
 };
 

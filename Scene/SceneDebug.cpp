@@ -1,11 +1,13 @@
 #include "SceneDebug.h"
+#include "SceneTitle.h"
+#include "SceneGameOver.h"
+#include "SceneGameClear.h"
 #include <DxLib.h>
 #include "game.h"
 #include "Object/Player.h"
 #include "Object/Enemy.h"
 #include "Object/EnemyRush.h"
 #include "Object/Field.h"
-#include "SceneTitle.h"
 #include "Object/Map/Map.h"
 
 #include "Util/Vec3.h"
@@ -84,22 +86,16 @@ void SceneDebug::End()
 // 更新 //
 SceneBase* SceneDebug::Update()
 {
+
+	// フェイド処理
+	UpdateFade();
+
 	m_pField->Update();
 
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		enemyRush->Update();
-	}
-
-//	printfDx("%d\n", m_pPlayer->GetSlowWorld());
-	// スローモーション処理
-	
-	///////////////////////////////
-	// ここはプレイヤーcppに置く //
-	//     プレイヤーの操作      //
-	///////////////////////////////
+	// プレイヤーの操作
 	m_pPlayer->UpdateControl();
 
+	// ゲームスロー再生用
 	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
 
 	if (m_slowCount == 0)
@@ -141,18 +137,17 @@ SceneBase* SceneDebug::Update()
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
-
-	
-	// フェイド処理
-	UpdateFade();
-
+	// ゴールに到達するとゲームクリア画面に移動
 	if (m_pPlayer->GetPos().x > 30000)
 	{
-		return(new SceneTitle);
+		return(new SceneGameClear);
 	}
-	if (m_pPlayer->GetPos().y < -1000.0f)
+
+	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
+	if (m_pPlayer->GetPos().y < -1000.0f ||
+		m_pPlayer->GetIsDead())
 	{
-		return(new SceneTitle);
+		return(new SceneGameOver);
 	}
 	return this;
 }

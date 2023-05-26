@@ -16,7 +16,7 @@ public:
 	void Draw();
 private:
 
-	std::shared_ptr<Model> m_pAnimation;
+	std::shared_ptr<Model> m_pModel;
 
 	void(Enemy::* m_upddateFunc)();
 };

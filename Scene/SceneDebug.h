@@ -25,7 +25,7 @@ public:
 	void fieldCheckHit();
 
 private:
-
+	
 	int m_slowCount;
 
 	int m_enemyCount;

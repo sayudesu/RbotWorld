@@ -90,7 +90,7 @@ void Field::Draw()
 			m_pModel[y][x]->Draw();
 		}
 	}
-#if _DEBUG	
+#if false		
 	// ‰E‚ÉˆÚ“®—pƒ‰ƒCƒ“
 	const float xMax = 30000.0f;
 	const float yMax = 1200.0f;

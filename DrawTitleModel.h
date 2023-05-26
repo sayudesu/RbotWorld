@@ -10,5 +10,7 @@ public:
 	void Draw();
 private:
 	Model* m_pModel;
+	float posZ;
+	bool m_isAnim = true;
 };
 

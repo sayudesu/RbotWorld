@@ -23,8 +23,12 @@ public:
 	// プレイヤーの当たり判定用位置を取得する
 	VECTOR GetPosColl() const { return m_posColl; }
 	VECTOR GetSize()    const { return m_size;    }
+	// スローの加減を渡す
+	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }
+	// 死んでいるかどうかを渡す
+	bool GetIsDead() { return m_isDead; }
 
-	int GetSlowWorld() { return static_cast<int>(m_slowSpeed); }// スローの加減を渡す
+
 
 	// 地面に当たっているかどうかを取得する
 	void FieldCheckHit(bool hit) { m_isFieldHit = hit; }
@@ -112,8 +116,8 @@ private:
 	// 無敵時間
 	int m_damageFrame;
 
-	//float rad = 0.0f;
-	//float radcounter = 0.0f;
+	// 死んだかどうか(true : 死んでいる,false : 死んでいない)
+	bool m_isDead;
 
 	bool m_isDamage = false;// ダメージを受けたかどうか
 	int m_tempDamage = 0;// 前回受けたダメージを保存する

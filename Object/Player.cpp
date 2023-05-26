@@ -57,6 +57,7 @@ Player::Player():
 	m_angle(0.0f),
 	m_cameraAngle(m_angle),
 	m_slowSpeed(0.0f),
+	m_isDead(false),// 死んでいるかどうか
 	m_hp(kMaxHp),
 	m_damageFrame(0)
 
@@ -65,6 +66,7 @@ Player::Player():
 	m_pModel = std::make_shared<Model>(kFileName);
 	m_pModel->SetAnimation(m_animNo, true, true);
 
+	// スロースピード設定(1は標準スピード)
 	m_slowSpeed = 1.0f;
 
 	// 回転角度
@@ -106,7 +108,7 @@ void Player::Draw()
 	
 
 	// 点滅
-//	if (m_ultimateTimer % 2 == 0)return;
+	if (m_ultimateTimer % 2 == 0)return;
 
 	//handle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
 
@@ -180,7 +182,7 @@ void Player::UpdateHitPoint()
 			// HPを0に設定
 			m_hp = 0;
 			// 死んだ
-		//	m_isDead = true;
+			m_isDead = true;
 		}
 		else if (m_hp > m_tempHp - m_tempDamage)
 		{
@@ -234,7 +236,7 @@ void Player::UpdateCamera()
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
 
-	VECTOR cameraTrans = { m_pos.x,0.0f,m_pos.z };
+	VECTOR cameraTrans = { m_pos.x + 200.0f,0.0f,m_pos.z };
 
 	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
@@ -306,10 +308,10 @@ void Player::UpdateJump()
 	// モデルの更新
 	m_pModel->Update();
 
-	// 地面に当たったら
-//	if (m_pos.y <= 0.0f)// 座標が0とは限らないので修正待ち
+	// 飛んでいない場合
 	if (m_jumpAcc <= 0)
 	{
+		// 地面に当たったら
 		if(m_isFieldHit)
 		{
 			// 走るアニメに変更する
@@ -337,12 +339,12 @@ void Player::UpdateJump()
 		}
 	}
 
+	// 二段階ジャンプ時の回転処理
 	if (m_isSecondJumping)
 	{
 		if (m_angle > -360.0f)m_angle -= 10.0f;
 		if (m_rad   > -4.5f)m_rad -= 0.2f;
 	}
-	printfDx("%f\n",m_rad);
 
 	UpdateMove();// 移動用関数
 	UpdateCamera();// カメラ用関数
@@ -375,18 +377,9 @@ void Player::UpdateMove()
 	m_size.z = m_posColl.z;
 
 
-#if true	
+#if false	
 	// カプセルの描画
 	DrawCapsule3D(m_posColl, m_size, kColRaidus, 20, 0xffffff, 0xffffff, true);
-	//// プレイヤー判定確認用
-	//DrawCapsule3D(
-	//	m_posColl,
-	//	m_size,
-	//	kColRaidus,
-	//	8,
-	//	0xffffff,
-	//	0xffffff,
-	//	true);
 #endif
 }
 

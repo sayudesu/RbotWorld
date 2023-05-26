@@ -21,7 +21,7 @@ public:
 	int GetModelHandle();
 private:
 
-	std::shared_ptr<Model> m_pAnimation;
+	std::shared_ptr<Model> m_pModel;
 
 	void(EnemyRush::* m_upddateFunc)();
 };

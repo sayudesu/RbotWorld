@@ -143,7 +143,9 @@
     <ClCompile Include="DrawTitleModel.cpp" />
     <ClCompile Include="Object\Map\Map.cpp" />
     <ClCompile Include="Object\Map\WorldSprite.cpp" />
-    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Scene\SceneGameClear.cpp" />
+    <ClCompile Include="Scene\SceneGameOver.cpp" />
+    <ClCompile Include="Util\Sound.cpp" />
     <ClCompile Include="Util\Model.cpp" />
     <ClCompile Include="Util\CreateText.cpp" />
     <ClCompile Include="Object\EnemyBase.cpp" />
@@ -164,7 +166,9 @@
     <ClInclude Include="DrawTitleModel.h" />
     <ClInclude Include="Object\Map\Map.h" />
     <ClInclude Include="Object\Map\WorldSprite.h" />
-    <ClInclude Include="Sound.h" />
+    <ClInclude Include="Scene\SceneGameClear.h" />
+    <ClInclude Include="Scene\SceneGameOver.h" />
+    <ClInclude Include="Util\Sound.h" />
     <ClInclude Include="Util\Model.h" />
     <ClInclude Include="Util\CreateText.h" />
     <ClInclude Include="Object\EnemyBase.h" />

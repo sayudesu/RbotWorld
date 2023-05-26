@@ -64,9 +64,9 @@ void SceneTitle::Draw()
 	m_pDrawModel->Draw();
 
 	// ここを今後　for　で回します。
-	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 250.0f;
-	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f - 300.0f;
-	m_size = 100;
+	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 450.0f;
+	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f - 350.0f;
+	m_size = 150;
 	m_color = 0xffff00;
 
 	//// タイトル表示

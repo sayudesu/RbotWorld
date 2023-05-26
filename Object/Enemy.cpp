@@ -20,8 +20,8 @@ Enemy::Enemy() :
 	m_upddateFunc(&Enemy::Update)
 {
 	// 3Dモデルの生成
-	m_pAnimation = std::make_shared<Model>(kModelName);// モデルのハンドルを渡す
-	m_pAnimation->SetAnimation(0,true,true);// モデルの動きをセット
+	m_pModel = std::make_shared<Model>(kModelName);// モデルのハンドルを渡す
+	m_pModel->SetAnimation(0,true,true);// モデルの動きをセット
 }
 
 Enemy::~Enemy()
@@ -31,21 +31,21 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	m_pAnimation->Init();
+	m_pModel->Init();
 }
 
 void Enemy::End()
 {
-	m_pAnimation->End();
+	m_pModel->End();
 }
 
 void Enemy::Update()
 {
-	m_pAnimation->SetPos(VGet(m_pos.x, m_pos.y, m_pos.z));
-	m_pAnimation->Update();
+	m_pModel->SetPos(VGet(m_pos.x, m_pos.y, m_pos.z));
+	m_pModel->Update();
 }
 
 void Enemy::Draw()
 {
-	m_pAnimation->Draw();
+	m_pModel->Draw();
 }
