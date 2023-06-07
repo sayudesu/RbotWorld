@@ -58,7 +58,6 @@ void Map::Load()
 {
 	// とりあえずマップロード
 	handle = LoadGraph("Data/Img/map.png");
-	printfDx("%d\n", handle);
 
 	// WorldSprite実体設定と位置初期化
 	sprite = new WorldSprite();

@@ -7,6 +7,8 @@
 #include "Pad.h"
 #include "Sound.h"
 
+#include "Shadow.h"
+
 namespace
 {
 	// タイトル
@@ -15,6 +17,9 @@ namespace
 	const char* const kTextStart = "「 A 」ボタンで開始！";
 	// テスト用
 	const char* const kTextTest = "揺れながら文字を上昇して消える～";
+
+	const char* const kFileName = "Data/Img/org2.png";
+	const char* const kFileName2= "Data/Img/org2Test2_n.png";
 }
 
 SceneTitle::SceneTitle():
@@ -26,6 +31,7 @@ SceneTitle::SceneTitle():
 	m_pText.push_back(std::make_shared<CreateText>());
 
 	m_pDrawModel = new DrawTitleModel;
+	m_pShadow = new Shadow(kFileName, kFileName2);
 }
 
 SceneTitle::~SceneTitle()
@@ -47,6 +53,8 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
+
+	m_pShadow->Update();
 
 	m_pDrawModel->Update();
 
@@ -90,4 +98,6 @@ void SceneTitle::Draw()
 	//// 文字テスト
 	m_pText[0]->DrawUp(m_pos,
 		kTextTest, m_size, 8.0f,m_color);
+
+	m_pShadow->Draw();
 }

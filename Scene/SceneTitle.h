@@ -6,6 +6,9 @@
 
 class CreateText;
 class DrawTitleModel;
+
+class Shadow;
+
 class SceneTitle:public SceneBase
 {
 public:
@@ -26,5 +29,7 @@ private:
 	// テキスト描画用
 	std::vector<std::shared_ptr<CreateText>>m_pText;
 	DrawTitleModel* m_pDrawModel;
+
+	Shadow* m_pShadow;
 };
 

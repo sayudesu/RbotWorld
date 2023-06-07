@@ -131,9 +131,9 @@ SceneBase* SceneDebug::Update()
 	}
 
 	// プレイヤーとエネミーの当たり判定
-	playerCheckHit();
+	PlayerCheckHit();
 	// プレイヤーと地面の当たり判定
-	fieldCheckHit();
+	FieldCheckHit();
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
@@ -168,7 +168,7 @@ void SceneDebug::Draw()
 	SceneBase::DrawFade();
 }
 
-void SceneDebug::playerCheckHit()
+void SceneDebug::PlayerCheckHit()
 {
 	// 当たり判定の情報
 	if (!m_isInvincible)
@@ -201,7 +201,7 @@ void SceneDebug::playerCheckHit()
 	}
 }
 
-void SceneDebug::fieldCheckHit()
+void SceneDebug::FieldCheckHit()
 {
 	// 地面判定の情報を渡す
 	m_pPlayer->FieldCheckHit(false);

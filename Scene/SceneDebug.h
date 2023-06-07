@@ -21,8 +21,8 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
 
-	void playerCheckHit();
-	void fieldCheckHit();
+	void PlayerCheckHit();
+	void FieldCheckHit();
 
 private:
 	

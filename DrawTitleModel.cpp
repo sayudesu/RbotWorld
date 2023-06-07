@@ -40,7 +40,7 @@ void DrawTitleModel::Update()
 	m_pModel->Update();
 	m_pModel->SetPos(VGet(0.0f, 0.0f, posZ));
 
-	posZ -= 10.0f;
+	if(posZ > -1000.0f)posZ -= 10.0f;
 }
 
 void DrawTitleModel::Draw()

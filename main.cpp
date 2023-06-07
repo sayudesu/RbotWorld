@@ -33,8 +33,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	pScene->Init();
 
-
-
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG  time = GetNowHiPerformanceCount();
