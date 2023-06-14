@@ -44,6 +44,7 @@ namespace
 }
 
 Player::Player():
+	m_hJump(-1),
 	m_updateFunc(&Player::UpdateRun),
 	m_isJumping(false),
 	m_animNo(kWalkAnimNo),
@@ -80,11 +81,12 @@ Player::~Player()
 
 void Player::Init()
 {
+	m_hJump = DxLib::LoadGraph("Data/Img/jumpEffect2.png");
 }
 
 void Player::End()
 {
-
+	DxLib::DeleteGraph(m_hJump);
 }
 
 void Player::Update()
@@ -106,29 +108,27 @@ void Player::Draw()
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
 	
+	// エフェクト描画
+	JumpEffect();
 
 	// 点滅
-	if (m_ultimateTimer % 2 == 0)return;
+	if (m_ultimateTimer % 2 != 0)
+	{
+		// 画像の描画
+		// プレイヤーモデルの描画
+		m_pModel->Draw();
+	}
 
-	//handle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
 
-	//// 作成した画像を描画対象にする
-	//SetDrawScreen(handle);
+	if (m_isFastJumping)
+	{
+		DrawString(100, 80, "ジャンプ中", 0xffffff);
+	}
+	if (m_isSecondJumping)
+	{
+		DrawString(100, 100, "二段ジャンプ中", 0xffffff);
+	}
 
-	//// ブレンドモードを設定
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);  // 透明度128で半透明ブレンディング
-
-	// 画像の描画
-	// プレイヤーモデルの描画
-	m_pModel->Draw();
-
-	//DrawExtendGraph(100, 100, Game::kScreenWidth, Game::kScreenHeight, handle, true);
-
-	//// メインバッファを画面に描画
-	//SetDrawScreen(DX_SCREEN_BACK);
-
-	//// バッファの解放
-	//DeleteGraph(handle);
 
 }
 
@@ -197,6 +197,56 @@ void Player::UpdateHitPoint()
 	}
 }
 
+void Player::JumpEffect()
+{
+	int num = 32;
+	int num2 = 140;
+	if (m_isFastJumping)
+	{
+		if (m_isJumpPos)
+		{
+			pos = { m_pModel->GetModelPos().x,m_pModel->GetModelPos().y ,m_pModel->GetModelPos().z };
+			m_isJumpPos = false;
+			screenPos = ConvWorldPosToScreenPos(pos);
+		}
+
+		m_isJumpImg = true;
+		m_jumpImgCount++;
+		if (m_jumpImgCount == 3)
+		{
+			m_jumpImgCount = 0;
+			if (m_jumpImgX < 140 * 6)
+			{
+				m_jumpImgX += 140;
+			}
+			else
+			{
+				m_isJumpImg = false;		
+			}
+		}
+	}
+	else
+	{
+		m_jumpImgX = 0;
+		m_isJumpImg = false;
+	}
+	screenPos.x -= 20.0f;
+	if (m_isJumpImg)
+	{
+		DrawRectRotaGraph
+		(
+			screenPos.x, screenPos.y - 100.0f,
+			m_jumpImgX, 0,
+			140, 50,
+			5,
+			DX_PI / 180.0f,
+			m_hJump,
+			true
+		);
+	}
+
+}
+
 // 操作処理 //
 void Player::UpdateControl()
 {
@@ -224,6 +274,7 @@ void Player::UpdateControl()
 	if (Pad::isTrigger(PAD_INPUT_1))// XBox : A
 	{
 		m_isFastJumping = true;
+		m_isJumpPos = true;
 	}
 }
 

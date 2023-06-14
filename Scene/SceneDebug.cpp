@@ -140,14 +140,22 @@ SceneBase* SceneDebug::Update()
 	// ゴールに到達するとゲームクリア画面に移動
 	if (m_pPlayer->GetPos().x > 30000)
 	{
-		return(new SceneGameClear);
+		StartFadeOut();
+		//SceneBase::UpdateFade();
+		
+		{
+			return(new SceneGameClear);
+		}
 	}
 
 	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
 	if (m_pPlayer->GetPos().y < -1000.0f ||
 		m_pPlayer->GetIsDead())
 	{
-		return(new SceneGameOver);
+		if (!IsFading())
+		{
+			return(new SceneGameOver);
+		}
 	}
 	return this;
 }

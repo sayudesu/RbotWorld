@@ -28,8 +28,6 @@ public:
 	// 死んでいるかどうかを渡す
 	bool GetIsDead() { return m_isDead; }
 
-
-
 	// 地面に当たっているかどうかを取得する
 	void FieldCheckHit(bool hit) { m_isFieldHit = hit; }
 
@@ -47,6 +45,7 @@ public:
 private:
 	void UpdateInvincible();// 
 	void UpdateHitPoint();// 体力管理
+	void JumpEffect();
 private:
 	// カメラの更新
 	void UpdateCamera();
@@ -63,6 +62,15 @@ private:
 	// 地面に当たった場合の処理
 	void UpdateHitField();
 private:
+	// ジャンプエフェクト画像
+	int m_hJump;
+	int m_jumpImgCount;
+	int m_jumpImgX = 0;
+	bool m_isJumpImg = false;
+	bool m_isJumpPos = false;
+
+	VECTOR screenPos = {};
+	VECTOR pos = {};
 	// 
 	SceneTest* m_pScene;
 
