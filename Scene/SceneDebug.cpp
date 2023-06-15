@@ -10,9 +10,11 @@
 #include "Object/Field.h"
 #include "Object/Map/Map.h"
 
-#include "Util/Vec3.h"
+#include "Coin.h"
 
 #include "Sound.h"
+
+#include <cassert>
 
 namespace
 {
@@ -23,12 +25,14 @@ namespace
 SceneDebug::SceneDebug():
 	m_slowCount(0),
 	m_enemyCount(0),
+	m_tempRand(0),
 	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr),
 	m_pMap(nullptr)
 {
 	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
+
 	m_pPlayer = new Player;
 	m_pField = new Field;
 	m_pMap = new Map;
@@ -57,6 +61,43 @@ void SceneDebug::Init()
 	m_pField->Init();
 
 	m_pMap->Load();
+	
+	//int handle = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
+	handle = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
+	//assert(m_hItem != 0);
+
+	m_pItem.push_back(std::make_shared<Coin>(handle));
+
+	for (int y = 0; y < m_pField->GetModelNumY(); y++)
+	{
+		for (int x = 0; x < m_pField->GetModelNumX(); x++)
+		{
+			if (m_pField->GetCoinPosX(y, x) != 0 && m_pField->GetCoinPosY(y, x) != 0)
+			{
+				int posX = m_pField->GetCoinPosX(y, x);
+				int posY = m_pField->GetCoinPosY(y, x);
+				m_testI++;
+				// 位置
+				m_pItem[m_testI]->SetPos(VGet(posX, posY + 150.0f, 0.0f));
+				// サイズ
+				m_pItem[m_testI]->SetSize(VGet(10.0f, 10.0f, 10.0f));
+				// 角度
+				m_pItem[m_testI]->SetRota(VGet(90 * DX_PI_F / 180.0f, 0.0f, 0.0f));
+
+				m_pItem.push_back(std::make_shared<Coin>(handle));
+
+				if (m_testI >= m_pField->GetCoinNum())
+				{
+					m_testI = 0;
+				}
+
+			}
+		}
+	}
+	
+	int coinNum = m_pField->GetCoinNum();
+	printfDx("%d\n", coinNum);
+
 
 	for (auto& enemyRush : m_pEnemyRush)
 	{
@@ -70,9 +111,6 @@ void SceneDebug::Init()
 
 void SceneDebug::End()
 {
-
-	Sound::stopBgm(Sound::SoundId_Main);
-
 	for (auto& enemyRush : m_pEnemyRush)
 	{
 		enemyRush->End();
@@ -81,12 +119,13 @@ void SceneDebug::End()
 	m_pPlayer->End();
 
 	m_pField->End();
+
+	Sound::stopBgm(Sound::SoundId_Main);
 }
 
 // 更新 //
 SceneBase* SceneDebug::Update()
 {
-
 	// フェイド処理
 	UpdateFade();
 
@@ -95,6 +134,11 @@ SceneBase* SceneDebug::Update()
 	// プレイヤーの操作
 	m_pPlayer->UpdateControl();
 
+	for (auto& coin : m_pItem)
+	{
+		coin->Update();
+	}
+
 	// ゲームスロー再生用
 	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
 
@@ -102,32 +146,32 @@ SceneBase* SceneDebug::Update()
 	{
 		// プレイヤーの更新
 		m_pPlayer->Update();
-		for (auto& enemyRush : m_pEnemyRush)
-		{
-			enemyRush->Update();
+		//for (auto& enemyRush : m_pEnemyRush)
+		//{
+		//	enemyRush->Update();
 
-			//// 敵が画面座標から出たら削除
-			if (enemyRush->GetPos().x < 0)
-			{
-				enemyRush->End();
-			}
-		}
+		//	//// 敵が画面座標から出たら削除
+		//	if (enemyRush->GetPos().x < 0)
+		//	{
+		//		enemyRush->End();
+		//	}
+		//}
 
-		// 敵を生成(まだ完全なエネミー削除処理なし)
-		m_enemyCount++;
-		if (m_enemyCount > 60 * m_tempRand)
-		{
-			m_enemyCount = 0;
-			Vec3 pos = { m_pPlayer->GetPos().x,0.0f,0.0f};
-			pos.x += 3000;
-			m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
-		}
+		//// 敵を生成(まだ完全なエネミー削除処理なし)
+		//m_enemyCount++;
+		//if (m_enemyCount > 60 * m_tempRand)
+		//{
+		//	m_enemyCount = 0;
+		//	Vec3 pos = { m_pPlayer->GetPos().x,0.0f,0.0f};
+		//	pos.x += 3000;
+		//	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
+		//}
 
-		// 次のエネミーをランダム秒に出現
-		if (m_enemyCount == 0)
-		{
-			m_tempRand = GetRand(2);
-		}
+		//// 次のエネミーをランダム秒に出現
+		//if (m_enemyCount == 0)
+		//{
+		//	m_tempRand = GetRand(2);
+		//}
 	}
 
 	// プレイヤーとエネミーの当たり判定
@@ -142,10 +186,9 @@ SceneBase* SceneDebug::Update()
 	{
 		StartFadeOut();
 		//SceneBase::UpdateFade();
+
+		return(new SceneGameClear);
 		
-		{
-			return(new SceneGameClear);
-		}
 	}
 
 	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
@@ -171,6 +214,24 @@ void SceneDebug::Draw()
 	m_pPlayer->Draw();
 
 	m_pField->Draw();
+
+	for (int y = 0; y < m_pField->GetModelNumY(); y++)
+	{
+		for (int x = 0; x < m_pField->GetModelNumX(); x++)
+		{
+			if (m_pField->GetCoinPosX(y, x) != 0)
+			{
+				int posX = m_pField->GetCoinPosX(y, x);
+				int posY = m_pField->GetCoinPosY(y, x);
+				DrawSphere3D(VGet(posX, posY, 5.0f), 80.0f, 32.0f, 0xffffff, 0xffffff, true);
+			}
+		}
+	}
+
+	for (auto& coin : m_pItem)
+	{
+		coin->Draw();
+	}
 
 	// フェイド処理
 	SceneBase::DrawFade();

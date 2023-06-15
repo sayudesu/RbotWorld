@@ -4,6 +4,7 @@
 
 class SceneTest;
 class Model;
+class GraphAnimation;
 
 class Player
 {
@@ -79,6 +80,8 @@ private:
 
 	// プレイヤーのモデル
 	std::shared_ptr<Model> m_pModel;
+
+	GraphAnimation* m_pGraphAnimation;
 	
 	// ジャンプできるかどうか
 	// (true : ジャンプできる, false : ジャンプできない)

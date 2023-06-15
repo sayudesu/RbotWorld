@@ -4,6 +4,7 @@
 #include "Model.h"
 #include "game.h"
 #include <cassert>
+#include "GraphAnimation.h"
 
 #include <cmath>
 
@@ -73,6 +74,8 @@ Player::Player():
 	// 回転角度
 	m_rad = 90.0f * DX_PI_F / 180.0f;
 
+	m_pGraphAnimation = new GraphAnimation;
+
 }
 
 Player::~Player()
@@ -81,12 +84,16 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_hJump = DxLib::LoadGraph("Data/Img/jumpEffect2.png");
+	// ジャンプエフェクト用画像をロード
+	m_hJump = DxLib::LoadGraph("Data/Img/jumpEffect.png");
 }
 
 void Player::End()
 {
+	// ジャンプエフェクト用ハンドルを削除
 	DxLib::DeleteGraph(m_hJump);
+
+	delete m_pGraphAnimation;
 }
 
 void Player::Update()
@@ -108,28 +115,33 @@ void Player::Draw()
 		0x0ffff0, true);//メーター
 	//長さ * HP / HPMAX
 	
-	// エフェクト描画
-	JumpEffect();
+	// ジャンプのエフェクトを表示
+	if (m_isJumpImg)
+	{
+		int imgX = 140;
+		int imgY = 50;
+		int size = 5;
+		float rota = DX_PI / 180.0f;
+
+		DrawRectRotaGraph
+		(
+			screenPos.x, screenPos.y - 100.0f,// 画像位置
+			m_jumpImgX, 0,					  // 画像の左上
+			imgX, imgY,						  // 画像の右下
+			size,							  // サイズ
+			rota,							  // 角度
+			m_hJump,					      // 画像ハンドル
+			true							  // 透過
+		);
+	}
+
 
 	// 点滅
 	if (m_ultimateTimer % 2 != 0)
 	{
-		// 画像の描画
 		// プレイヤーモデルの描画
 		m_pModel->Draw();
 	}
-
-
-	if (m_isFastJumping)
-	{
-		DrawString(100, 80, "ジャンプ中", 0xffffff);
-	}
-	if (m_isSecondJumping)
-	{
-		DrawString(100, 100, "二段ジャンプ中", 0xffffff);
-	}
-
-
 }
 
 float Player::GetRadius() const
@@ -137,6 +149,7 @@ float Player::GetRadius() const
 	return kColRaidus;
 }
 
+// ダメージを受け取る //
 void Player::OnDamage(int damage)
 {
 	m_isDamage = true;
@@ -151,6 +164,7 @@ void Player::OnDamage(int damage)
 	m_tempHp = m_hp;// 一つ前の体力を保存
 }
 
+// 攻撃を受けたか // 
 bool Player::GetInvincible()
 {
 	if (m_ultimateTimer != 1)	return true;// 攻撃を受けていたら
@@ -158,6 +172,7 @@ bool Player::GetInvincible()
 	return false;// 受けていなかったら
 }
 
+// 点滅処理 //
 void Player::UpdateInvincible()
 {
 	// 点滅処理
@@ -171,6 +186,7 @@ void Player::UpdateInvincible()
 	}
 }
 
+// 体力管理　//
 void Player::UpdateHitPoint()
 {
 	// HPバー体力 - ダメージ分を徐々に減らす
@@ -197,32 +213,46 @@ void Player::UpdateHitPoint()
 	}
 }
 
+// ジャンプエフェクト //
 void Player::JumpEffect()
 {
-	int num = 32;
-	int num2 = 140;
+	constexpr int imageSizeX    = 140; // 画像1枚の大きさ
+	constexpr int imageNum      = 6;   // 画像描画数
+	constexpr int frameCountMax = 3;   // 画像を読み込みフレーム
+
+	// ジャンプをしているかどうか
 	if (m_isFastJumping)
 	{
+		// ジャンプした一度だけその場の位置を取得
+		// ワールド座標からスクリーン座標に変換
 		if (m_isJumpPos)
 		{
 			pos = { m_pModel->GetModelPos().x,m_pModel->GetModelPos().y ,m_pModel->GetModelPos().z };
-			m_isJumpPos = false;
 			screenPos = ConvWorldPosToScreenPos(pos);
+			m_isJumpPos = false;
 		}
 
+		// 画像表示させる
 		m_isJumpImg = true;
+
+		// アニメーションを再生
 		m_jumpImgCount++;
-		if (m_jumpImgCount == 3)
+		
+		// 画像内の位置を調整
+		// 表示用カウントの初期化
+		if (m_jumpImgCount == frameCountMax)
 		{
+			m_pGraphAnimation->Animation(m_jumpImgX, imageSizeX, imageNum);
 			m_jumpImgCount = 0;
-			if (m_jumpImgX < 140 * 6)
-			{
-				m_jumpImgX += 140;
-			}
-			else
-			{
-				m_isJumpImg = false;		
-			}
+			//if (m_jumpImgX < imageSizeX * imageNum)
+			//{
+			//	m_jumpImgX += imageSizeX;
+			//}
+			//else
+			//{
+			//	// アニメーションが終わったら画像を非表示
+			//	m_isJumpImg = false;		
+			//}
 		}
 	}
 	else
@@ -230,21 +260,9 @@ void Player::JumpEffect()
 		m_jumpImgX = 0;
 		m_isJumpImg = false;
 	}
-	screenPos.x -= 20.0f;
-	if (m_isJumpImg)
-	{
-		DrawRectRotaGraph
-		(
-			screenPos.x, screenPos.y - 100.0f,
-			m_jumpImgX, 0,
-			140, 50,
-			5,
-			DX_PI / 180.0f,
-			m_hJump,
-			true
-		);
-	}
 
+	// 画像が同じ位置にとどまらない様に
+	screenPos.x -= 30.0f;
 }
 
 // 操作処理 //
@@ -404,6 +422,7 @@ void Player::UpdateJump()
 	UpdateHitPoint();// 体力の計算処理
 	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
+	JumpEffect();// エフェクト描画
 }
 
 void Player::UpdateMove()
