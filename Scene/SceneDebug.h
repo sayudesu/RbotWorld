@@ -50,7 +50,7 @@ private:
 
 
 	// test //
-	int m_testI = -1;
+
 	int handle = -1;
 	//int posX[6][151];
 	//int posY[6][151]; 

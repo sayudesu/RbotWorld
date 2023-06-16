@@ -11,7 +11,7 @@ public:
 	virtual ~ItemManegaer();
 
 	void Load();
-	void Create();
+	void Create(int coinNum);
 	void Delete();
 	void Update();
 	void Draw();
@@ -34,5 +34,5 @@ private:
 	VECTOR m_rota;
 
 	// コインクラス
-	std::shared_ptr<ItemBase> m_pCoin;
+	std::vector<std::shared_ptr<ItemBase>> m_pCoin;
 };

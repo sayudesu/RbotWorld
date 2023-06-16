@@ -18,16 +18,19 @@ void ItemManegaer::Load()
 {
 }
 
-void ItemManegaer::Create()
+void ItemManegaer::Create(int coinNum)
 {
 	m_hItem = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
 	assert(m_hItem != 0);
 
-	m_pCoin = std::make_shared<Coin>(m_hItem);
+	for (int i = 0; i < coinNum; i++)
+	{
+		m_pCoin.push_back(std::make_shared<Coin>(m_hItem));
+		m_pCoin[i]->SetPos(m_pos);
+		m_pCoin[i]->SetSize(m_size);
+		m_pCoin[i]->SetRota(m_rota);
+	}
 
-	m_pCoin->SetPos (m_pos);
-	m_pCoin->SetSize(m_size);
-	m_pCoin->SetRota(m_rota);
 
 }
 

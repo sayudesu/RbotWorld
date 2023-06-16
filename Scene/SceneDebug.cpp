@@ -68,15 +68,25 @@ void SceneDebug::Init()
 
 	m_pItem.push_back(std::make_shared<Coin>(handle));
 
+	int coinNum = m_pField->GetCoinNum();
+	const int coin = coinNum;
+	//printfDx("%d\n", coinNum);
+
+	int m_testI = -1;
+
+	int posX[coin];
+	int posY[coin];
+
 	for (int y = 0; y < m_pField->GetModelNumY(); y++)
 	{
 		for (int x = 0; x < m_pField->GetModelNumX(); x++)
 		{
 			if (m_pField->GetCoinPosX(y, x) != 0 && m_pField->GetCoinPosY(y, x) != 0)
 			{
-				int posX = m_pField->GetCoinPosX(y, x);
-				int posY = m_pField->GetCoinPosY(y, x);
 				m_testI++;
+
+				int posX[m_testI] = m_pField->GetCoinPosX(y, x);
+				int posY[m_testI] = m_pField->GetCoinPosY(y, x);
 				// 位置
 				m_pItem[m_testI]->SetPos(VGet(posX, posY + 150.0f, 0.0f));
 				// サイズ
@@ -95,8 +105,7 @@ void SceneDebug::Init()
 		}
 	}
 	
-	int coinNum = m_pField->GetCoinNum();
-	printfDx("%d\n", coinNum);
+
 
 
 	for (auto& enemyRush : m_pEnemyRush)
