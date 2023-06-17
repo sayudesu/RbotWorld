@@ -176,3 +176,4 @@ int Field::GetColFrameIndex(int y,int x)const
 {
 	return m_pModel[y][x]->GetColFrameIndex();
 }
+

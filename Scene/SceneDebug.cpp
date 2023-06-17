@@ -11,6 +11,7 @@
 #include "Object/Map/Map.h"
 
 #include "Coin.h"
+#include "ItemManegaer.h"
 
 #include "Sound.h"
 
@@ -31,7 +32,8 @@ SceneDebug::SceneDebug():
 	m_pField(nullptr),
 	m_pMap(nullptr)
 {
-	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(kPos));
+	// インスタンス作成
+	m_pItem = std::make_shared<ItemManegaer>();
 
 	m_pPlayer = new Player;
 	m_pField = new Field;
@@ -40,10 +42,12 @@ SceneDebug::SceneDebug():
 
 SceneDebug::~SceneDebug()
 {
+
+	m_pItem.reset();
+
 	delete m_pPlayer;
 	delete m_pField;
 	delete m_pMap;
-
 }
 
 void SceneDebug::Init()
@@ -61,57 +65,42 @@ void SceneDebug::Init()
 	m_pField->Init();
 
 	m_pMap->Load();
+
+	// コインの数
+	const int coinNum = static_cast<int>(m_pField->GetCoinNum());
+	// コインの数分の配列浅間
+	int* posX = new int[coinNum];
+	int* posY = new int[coinNum];
+	// コインカウント用
+	int coinCount = -1;
 	
-	//int handle = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
-	handle = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
-	//assert(m_hItem != 0);
-
-	m_pItem.push_back(std::make_shared<Coin>(handle));
-
-	int coinNum = m_pField->GetCoinNum();
-	const int coin = coinNum;
-	//printfDx("%d\n", coinNum);
-
-	int m_testI = -1;
-
-	int posX[coin];
-	int posY[coin];
-
+	// コインの数をカウント
+	// コインの位置を取得
+	// コインの数を超えたら初期化
 	for (int y = 0; y < m_pField->GetModelNumY(); y++)
 	{
 		for (int x = 0; x < m_pField->GetModelNumX(); x++)
 		{
 			if (m_pField->GetCoinPosX(y, x) != 0 && m_pField->GetCoinPosY(y, x) != 0)
-			{
-				m_testI++;
+			{				
+				coinCount++;
 
-				int posX[m_testI] = m_pField->GetCoinPosX(y, x);
-				int posY[m_testI] = m_pField->GetCoinPosY(y, x);
-				// 位置
-				m_pItem[m_testI]->SetPos(VGet(posX, posY + 150.0f, 0.0f));
-				// サイズ
-				m_pItem[m_testI]->SetSize(VGet(10.0f, 10.0f, 10.0f));
-				// 角度
-				m_pItem[m_testI]->SetRota(VGet(90 * DX_PI_F / 180.0f, 0.0f, 0.0f));
-
-				m_pItem.push_back(std::make_shared<Coin>(handle));
-
-				if (m_testI >= m_pField->GetCoinNum())
+				posX[coinCount] = m_pField->GetCoinPosX(y, x);
+				posY[coinCount] = m_pField->GetCoinPosY(y, x);
+		
+				if (coinCount >= m_pField->GetCoinNum())
 				{
-					m_testI = 0;
+					coinCount = 0;
 				}
-
 			}
 		}
 	}
-	
 
-
-
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		enemyRush->Init();
-	}
+	// コインを作成
+	m_pItem->CreateCoin(posX, posY, coinCount);
+	// 配列の要素を削除
+	delete[] posX;
+	delete[] posY;
 
 	m_isInvincible = true;
 
@@ -120,11 +109,6 @@ void SceneDebug::Init()
 
 void SceneDebug::End()
 {
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		enemyRush->End();
-	}
-
 	m_pPlayer->End();
 
 	m_pField->End();
@@ -143,10 +127,7 @@ SceneBase* SceneDebug::Update()
 	// プレイヤーの操作
 	m_pPlayer->UpdateControl();
 
-	for (auto& coin : m_pItem)
-	{
-		coin->Update();
-	}
+	m_pItem->Update();
 
 	// ゲームスロー再生用
 	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
@@ -155,38 +136,13 @@ SceneBase* SceneDebug::Update()
 	{
 		// プレイヤーの更新
 		m_pPlayer->Update();
-		//for (auto& enemyRush : m_pEnemyRush)
-		//{
-		//	enemyRush->Update();
-
-		//	//// 敵が画面座標から出たら削除
-		//	if (enemyRush->GetPos().x < 0)
-		//	{
-		//		enemyRush->End();
-		//	}
-		//}
-
-		//// 敵を生成(まだ完全なエネミー削除処理なし)
-		//m_enemyCount++;
-		//if (m_enemyCount > 60 * m_tempRand)
-		//{
-		//	m_enemyCount = 0;
-		//	Vec3 pos = { m_pPlayer->GetPos().x,0.0f,0.0f};
-		//	pos.x += 3000;
-		//	m_pEnemyRush.push_back(std::make_shared<EnemyRush>(pos));
-		//}
-
-		//// 次のエネミーをランダム秒に出現
-		//if (m_enemyCount == 0)
-		//{
-		//	m_tempRand = GetRand(2);
-		//}
 	}
 
 	// プレイヤーとエネミーの当たり判定
 	PlayerCheckHit();
 	// プレイヤーと地面の当たり判定
 	FieldCheckHit();
+
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
@@ -196,8 +152,7 @@ SceneBase* SceneDebug::Update()
 		StartFadeOut();
 		//SceneBase::UpdateFade();
 
-		return(new SceneGameClear);
-		
+		return(new SceneGameClear);	
 	}
 
 	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
@@ -215,15 +170,11 @@ SceneBase* SceneDebug::Update()
 void SceneDebug::Draw()
 {
 	m_pMap->Draw();
-	for (auto& enemyRush : m_pEnemyRush)
-	{
-		enemyRush->Draw();
-	}
-
 	m_pPlayer->Draw();
-
 	m_pField->Draw();
+	m_pItem->Draw();
 
+#if false
 	for (int y = 0; y < m_pField->GetModelNumY(); y++)
 	{
 		for (int x = 0; x < m_pField->GetModelNumX(); x++)
@@ -236,12 +187,7 @@ void SceneDebug::Draw()
 			}
 		}
 	}
-
-	for (auto& coin : m_pItem)
-	{
-		coin->Draw();
-	}
-
+#endif
 	// フェイド処理
 	SceneBase::DrawFade();
 }
@@ -305,8 +251,6 @@ void SceneDebug::FieldCheckHit()
 			}
 			// 当たり判定情報の後始末
 			MV1CollResultPolyDimTerminate(result);
-
-		//	printfDx("%f\n", m_pPlayer->FieldPosY(m_pField->SetPosY(y, x)));
 		}
 	}
 

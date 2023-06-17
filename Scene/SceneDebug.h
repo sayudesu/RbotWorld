@@ -8,7 +8,8 @@ class Enemy;
 class EnemyRush;
 class Field;
 class Map;
-class Coin;
+
+class ItemManegaer;
 
 
 class SceneDebug : public SceneBase
@@ -38,10 +39,8 @@ private:
 
 	// プレイヤーのポインタ
 	Player* m_pPlayer;
-
-	//ItemManegaer* m_pItem;
-	std::vector<std::shared_ptr<Coin>>m_pItem;
-
+	// アイテムのポインタ
+	std::shared_ptr<ItemManegaer>m_pItem;
 	// エネミーのポインタの配列
 	std::vector<std::shared_ptr<EnemyRush>>m_pEnemyRush;
 	// マップのポインタ
@@ -52,7 +51,8 @@ private:
 	// test //
 
 	int handle = -1;
-	//int posX[6][151];
-	//int posY[6][151]; 
+
+	std::vector<int> m_CoinPosX;
+	std::vector<int> m_CoinPosY;
 
 };
