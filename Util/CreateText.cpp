@@ -1,53 +1,64 @@
 #include "CreateText.h"
 #include <DxLib.h>
 
-CreateText::CreateText():
-	m_posUp(0.0f, 0.0f, 0.0f),
-	m_isTempDef(false),
-	m_isTempUp(false)
+//////////////////////
+// CreateTextクラス //
+//////////////////////
+CreateText::CreateText()
 {
 
 }
 
 CreateText::~CreateText()
 {
-	SetFontSize(17);
+
 }
 
-void CreateText::DrawDef(Vec3 pos,const char* text, int size,int color)
+void CreateText::Add(int x, int y, const char* text, int color, int size,bool frame)
 {
-	// 一度だけ保存
-	if (!m_isTempDef)
-	{
-		m_hDef = CreateFontToHandle(NULL, size, -1);
-		m_isTempDef = true;
-	}
-
-	// 表示
-	DrawStringToHandle(pos.x, pos.y, text, color, m_hDef);
+	// インスタンスを作成
+	m_pText.push_back(std::make_shared<Text>(x,y,text,color,size,frame));
 }
 
-void CreateText::DrawUp(Vec3 pos, const char* text, int size,float speedUp, int color)
+void CreateText::Update()
 {
-	// 一度だけ保存
-	if (!m_isTempUp)
+	
+}
+
+void CreateText::Draw()
+{
+	for (auto& text : m_pText)
 	{
-		m_posUp.x = pos.x;
-		m_posUp.y = pos.y;
-		m_hTextUp = CreateFontToHandle(NULL, size, -1);
-		m_isTempUp = true;
+		text->Draw();
 	}
+}
 
-	// 上昇
-	m_posUp.y -= speedUp;
+////////////////
+// Textクラス //
+////////////////
+Text::Text(int x, int y, const char* text, int color, int size, bool frame) :
+	m_x(x),
+	m_y(y),
+	m_text(text),
+	m_color(color),
+	m_isFrame(frame)
+{
+	// フォントデータを作成
+	m_fontHandle = CreateFontToHandle(NULL, size, 3);
+}
 
-	m_posUp.x += GetRand(3) + 1;
-	m_posUp.x -= GetRand(3) + 1;
+Text::~Text()
+{
+}
 
-	// 画面外に出るまで表示
-	if (m_posUp.y > 0 - size)
+void Text::Draw()
+{
+	if (m_isFrame)
 	{
-		// 表示
-		DrawStringToHandle(m_posUp.x, m_posUp.y, text, color, m_hTextUp);
+		DrawBox(m_x - 1, m_y - 1, m_x + 500 + 1, m_y + 50 + 1, 0xff0000, true);
+		DrawBox(m_x, m_y, m_x + 500, m_y + 50, 0xffffff, true);
 	}
+	
+	// フォントデータを使い文字を描画
+	DrawStringToHandle(m_x, m_y, m_text, m_color, m_fontHandle);
 }

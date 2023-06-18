@@ -12,26 +12,22 @@
 namespace
 {
 	// タイトル
-	const char* const kTextTitle = "[RobotWorld]";
+	const char* kTextTitle = "[RobotWorld]";
 	// ボタン誘導
-	const char* const kTextStart = "「 A 」ボタンで開始！";
+	const char* const kTextStart = "A ボタンで開始！";
 	// テスト用
-	const char* const kTextTest = "揺れながら文字を上昇して消える～";
+	const char* const kTextTest = "クレジット";
+	const char* const kTextTest2 = "設定";
 
 	const char* const kFileName = "Data/Img/org2.png";
 	const char* const kFileName2= "Data/Img/org2Test2_n.png";
 }
 
-SceneTitle::SceneTitle():
-	m_size(0),
-	m_color(0),
-	m_pos(0.0f, 0.0f, 0.0f)
+SceneTitle::SceneTitle()
 {
-	m_pText.push_back(std::make_shared<CreateText>());
-	m_pText.push_back(std::make_shared<CreateText>());
-
 	m_pDrawModel = new DrawTitleModel;
 	m_pShadow = new Shadow(kFileName, kFileName2);
+	m_pText = new CreateText;
 }
 
 SceneTitle::~SceneTitle()
@@ -43,6 +39,17 @@ void SceneTitle::Init()
 {
 	// BGM 再生
 	Sound::startBgm(Sound::SoundId_Title, 50);
+
+
+	// テキスト追加 //
+	// タイトル
+	m_pText->Add(Game::kScreenWidth/2 - 400,250 ,kTextTitle,0xffff00,130,false);
+	// スタート
+	m_pText->Add(Game::kScreenWidth / 2 - 300,Game::kScreenHeight / 2 + 100, kTextStart,0x000000, 50, true);
+	// クレジット
+	m_pText->Add(Game::kScreenWidth / 2 - 300, Game::kScreenHeight / 2 + 100 + 50 + 2, kTextTest, 0x000000, 50, true);
+	// 設定
+	m_pText->Add(Game::kScreenWidth / 2 - 300, Game::kScreenHeight / 2 + 100 + 50 + 50 + 4, kTextTest2, 0x000000, 50, true);
 }
 
 void SceneTitle::End()
@@ -68,36 +75,10 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-
+	// 3Dモデル描画
 	m_pDrawModel->Draw();
-
-	// ここを今後　for　で回します。
-	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 450.0f;
-	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f - 350.0f;
-	m_size = 150;
-	m_color = 0xffff00;
-
-	//// タイトル表示
-	m_pText[0]->DrawDef(m_pos,
-		kTextTitle, m_size, m_color);
-
-	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 200.0f;
-	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f + 300.0f;
-	m_size = 32;
-	m_color = 0xff0000;
-
-	//// スタートボタン表示
-	m_pText[1]->DrawDef(m_pos,
-		kTextStart, m_size, m_color);
-
-	m_pos.x = static_cast<float>(Game::kScreenWidth) / 2.0f - 200.0f;
-	m_pos.y = static_cast<float>(Game::kScreenHeight) / 2.0f + 300.0f;
-	m_size = 32;
-	m_color = 0xff0000;
-
-	//// 文字テスト
-	m_pText[0]->DrawUp(m_pos,
-		kTextTest, m_size, 8.0f,m_color);
-
+	// 2Dシェーダー描画
 	m_pShadow->Draw();
+	// テキスト描画
+	m_pText->Draw();
 }

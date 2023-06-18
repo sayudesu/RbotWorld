@@ -20,16 +20,11 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw();
 private:
-	int m_size;
-	int m_color;
-
-	Vec3 m_pos;
-
-	// 決まった数なのでvectorからarrayに変更します
-	// テキスト描画用
-	std::vector<std::shared_ptr<CreateText>>m_pText;
+	// テキスト用のクラス
+	CreateText* m_pText;
+	// 3Dモデル表示用クラス
 	DrawTitleModel* m_pDrawModel;
-
+	// 2Dシェーダー用クラス
 	Shadow* m_pShadow;
 };
 

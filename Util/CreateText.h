@@ -1,5 +1,8 @@
 #pragma once
 #include "Util/Vec3.h"
+#include <vector>
+#include <memory>
+class Text;
 /// <summary>
 /// 文字を描画させるクラス
 /// </summary>
@@ -9,22 +12,52 @@ public:
 	CreateText();
 	virtual ~CreateText();
 
-	// シンプルなテキスト表示
-	// 座標、文字、サイズ、色(何も色を指定しないと白)
-	virtual void DrawDef(Vec3 pos,const char* text,int size,int color = 0xffffff);//文字を表示
-
-	// 揺れながら上に文字が上がって行き徐々に消える
-	// 座標、文字、サイズ、上昇する速さ、色(何も色を指定しないと白)
-	virtual void DrawUp(Vec3 pos, const char* text, int size,float speedUp, int color = 0xffffff);
+	/// <summary>
+	/// テキストの数分のTextクラスをインスタンスを作成する
+	/// </summary>
+	/// <param name="x">    位置  </param>
+	/// <param name="y">    位置  </param>
+	/// <param name="text"> 文字  </param>
+	/// <param name="color">色	  </param>
+	/// <param name="size"> サイズ</param>
+	/// <param name="frame">枠　　</param>
+	void Add(int x,int y,const char* text,int color,int size, bool frame);
+	void Update();
+	/// <summary>
+	/// テキストを描画する
+	/// </summary>
+	void Draw();
 private:
-	// 文字の位置
-	Vec3 m_posUp;
+	std::vector<std::shared_ptr<Text>> m_pText;
+};
 
-	int m_hDef;
-	int m_hTextUp;
+class Text
+{
+public:
+	/// <summary>
+	/// テキスト作成
+	/// </summary>
+	/// <param name="x">    位置  </param>
+	/// <param name="y">    位置  </param>
+	/// <param name="text"> 文字  </param>
+	/// <param name="color">色    </param>
+	/// <param name="size"> サイズ</param>
+	/// <param name="frame">枠　　</param>
+	Text(int x, int y, const char* text, int color, int size,bool frame);
+	virtual ~Text();
 
-	// 一度だけの処理
-	bool m_isTempDef;
-	bool m_isTempUp;
+	void Draw();
+private:
+	// 位置
+	int m_x;
+	int m_y;
+	// 文字
+	const char* m_text;
+	// 色
+	int m_color;
+	// 枠を表示するかどうか
+	bool m_isFrame;
+	// 文字データ
+	int m_fontHandle;
 };
 
