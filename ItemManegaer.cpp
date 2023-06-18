@@ -22,6 +22,7 @@ void ItemManegaer::CreateCoin(int coinPosX[], int coinPosY[], int coinNum)
 {
 	// コインのモデルハンドル
 	m_hItem = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
+	assert(m_hItem != -1);
 
 	// コインの数分要素を追加
 	// コインの位置を取得
@@ -48,6 +49,7 @@ void ItemManegaer::CreateCoin(int coinPosX[], int coinPosY[], int coinNum)
 	}
 }
 
+// メモリの解放
 void ItemManegaer::Delete()
 {
 	DeleteGraph(m_hItem);

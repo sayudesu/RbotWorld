@@ -9,20 +9,35 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
-	// 位置を受け取る
+	/// <summary>
+	/// オブジェクトを回転させます
+	/// </summary>
+	virtual void UpdateRota();
+
+	/// <summary>
+	/// 位置を受け取る
+	/// </summary>
+	/// <param name="pos">位置</param>
 	void SetPos(VECTOR pos) { m_pos = pos; }
-	// サイズを受け取る
+	/// <summary>
+	/// サイズを受け取る
+	/// </summary>
+	/// <param name="size">サイズ</param>
 	void SetSize(VECTOR size) { m_size = size; }
-	// 角度を受け取る
-	void SetRota(VECTOR rota) { m_rota = rota; }
+	/// <summary>
+	/// 角度を受け取る
+	/// </summary>
+	/// <param name="rota">角度</param>
+	void SetRota(VECTOR rota){ m_rota = rota; }
 
 protected:
+	// アイテムのハンドル
 	int m_hItem;
 	// 位置
 	VECTOR m_pos;
 	// サイズ
 	VECTOR m_size;
-	// 角度
+	// 回転
 	VECTOR m_rota;
 };
 

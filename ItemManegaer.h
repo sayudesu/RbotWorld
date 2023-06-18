@@ -34,6 +34,7 @@ private:
 	// 角度
 	VECTOR m_rota;
 
+	// コインの位置を一時的に受け取る
 	std::vector<int>m_coinPosX;
 	std::vector<int>m_coinPosY;
 
