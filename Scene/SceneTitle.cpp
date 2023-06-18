@@ -14,10 +14,10 @@ namespace
 	// タイトル
 	const char* kTextTitle = "[RobotWorld]";
 	// ボタン誘導
-	const char* const kTextStart = "A ボタンで開始！";
+	const char* const kTextStart = "Start";
 	// テスト用
-	const char* const kTextTest = "クレジット";
-	const char* const kTextTest2 = "設定";
+	const char* const kTextTest = "Credit";
+	const char* const kTextTest2 = "Setting";
 
 	const char* const kFileName = "Data/Img/org2.png";
 	const char* const kFileName2= "Data/Img/org2Test2_n.png";
@@ -39,7 +39,6 @@ void SceneTitle::Init()
 {
 	// BGM 再生
 	Sound::startBgm(Sound::SoundId_Title, 50);
-
 
 	// テキスト追加 //
 	// タイトル
@@ -65,9 +64,19 @@ SceneBase* SceneTitle::Update()
 
 	m_pDrawModel->Update();
 
-	if (Pad::isTrigger(PAD_INPUT_1))
+	m_pText->Update();
+
+	if (m_pText->SelectNo() == 0)
 	{
 		return(new SceneDebug);
+	}
+	if (m_pText->SelectNo() == 1)
+	{
+		DrawString(1000, 100, "まだクレジット表記はできていません。", 0xffffff);
+	}
+	if (m_pText->SelectNo() == 2)
+	{ 
+		DrawString(1000, 100, "まだ設定画面はできていません。", 0xffffff);
 	}
 
 	return this;

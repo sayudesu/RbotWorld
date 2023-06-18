@@ -77,6 +77,15 @@ namespace Pad
 		bool isLast = (padLog[padNo][1] & button);	// １フレーム前の状態
 		return (isNow && !isLast);
 	}
+
+	// 離した判定
+	bool isRelase(int button,int padNo)
+	{
+		bool isNow = (padLog[padNo][0] & button);    // 現在の状態
+		bool isLast = (padLog[padNo][1] & button);    // １フレーム前の状態
+		return (!isNow && isLast);
+	}
+
 	void startRecordLog()
 	{
 		isRecordLog = true;

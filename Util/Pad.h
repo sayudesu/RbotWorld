@@ -10,6 +10,8 @@ namespace Pad
 	bool isPress(int button, int padNo = 0);
 	// トリガー判定
 	bool isTrigger(int button, int padNo = 0);
+	// 離した判定
+	bool isRelase(int button, int padNo = 0);
 
 	// ログ記録開始、終了
 	void startRecordLog();
