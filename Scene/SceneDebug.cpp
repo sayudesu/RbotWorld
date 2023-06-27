@@ -71,36 +71,20 @@ void SceneDebug::Init()
 	// コインの数分の配列浅間
 	int* posX = new int[coinNum];
 	int* posY = new int[coinNum];
-	// コインカウント用
-	int coinCount = -1;
-	
-	// コインの数をカウント
-	// コインの位置を取得
-	// コインの数を超えたら初期化
-	for (int y = 0; y < m_pField->GetModelNumY(); y++)
-	{
-		for (int x = 0; x < m_pField->GetModelNumX(); x++)
-		{
-			if (m_pField->GetCoinPosX(y, x) != 0 && m_pField->GetCoinPosY(y, x) != 0)
-			{				
-				coinCount++;
 
-				posX[coinCount] = m_pField->GetCoinPosX(y, x);
-				posY[coinCount] = m_pField->GetCoinPosY(y, x);
-		
-				if (coinCount >= m_pField->GetCoinNum())
-				{
-					coinCount = 0;
-				}
-			}
-		}
+	// コインの数
+	m_coinNum = coinNum;
+
+	// コインの数分
+	// コインの位置を代入
+	for (int i = 0; i < coinNum; i++)
+	{
+		m_CoinPosX.push_back(m_pField->GetCoinX()[i]);
+		m_CoinPosY.push_back(m_pField->GetCoinY()[i]);
 	}
 
 	// コインを作成
-	m_pItem->CreateCoin(posX, posY, coinCount);
-	// 配列の要素を削除
-	delete[] posX;
-	delete[] posY;
+	m_pItem->CreateCoin(m_CoinPosX, m_CoinPosY, coinNum);
 
 	m_isInvincible = true;
 
@@ -143,6 +127,8 @@ SceneBase* SceneDebug::Update()
 	// プレイヤーと地面の当たり判定
 	FieldCheckHit();
 
+//	CoinCheckHit();
+
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
@@ -174,6 +160,15 @@ void SceneDebug::Draw()
 	m_pField->Draw();
 	m_pItem->Draw();
 
+	for (int i = 0; i < m_coinNum; i++)
+	{
+		DrawBox(m_CoinPosX[i], m_CoinPosY[i],
+			m_CoinPosX[i] + 1000, m_CoinPosY[i] + 1000,
+			0xffffff, true);
+		VECTOR pos = VGet(m_CoinPosX[i], m_CoinPosY[i], -0.5f);
+		DrawSphere3D(pos, 32, 32, 0xffffff, 0xffffff, true);
+		printfDx("%f\n", pos.x);
+	}
 #if false
 	for (int y = 0; y < m_pField->GetModelNumY(); y++)
 	{
@@ -254,4 +249,48 @@ void SceneDebug::FieldCheckHit()
 		}
 	}
 
+}
+
+bool SceneDebug::CoinCheckHit(const VECTOR& capsulePos, float capsuleRadius, float capsuleHeight, const VECTOR& spherePos, float sphereRadius)
+{
+
+	// カプセルの上下端のY座標を計算
+	float capsuleTopY = capsulePos.y - capsuleHeight / 2.0f;
+	float capsuleBottomY = capsulePos.y + capsuleHeight / 2.0f;
+
+	// カプセルの中心軸と球体の中心との距離を計算
+	float distance = VDist(capsulePos, spherePos);
+
+	// カプセルと球体の半径の和を計算
+	float sumRadius = capsuleRadius + sphereRadius;
+
+	// カプセルと球体が接触しているか判定
+	if (distance <= sumRadius)
+	{
+		// カプセルと球体が接触している場合、Y座標の範囲内にあるか判定
+		if (spherePos.y >= capsuleTopY && spherePos.y <= capsuleBottomY)
+		{
+			return true;  // 接触している
+		}
+
+		// カプセルの上下の球体との距離を計算
+		float topDistance = VDist(capsulePos, VGet(capsulePos.x, capsuleTopY, capsulePos.z));
+		float bottomDistance = VDist(capsulePos, VGet(capsulePos.x, capsuleBottomY, capsulePos.z));
+
+		// カプセルの上下の球体との距離が球体の半径以下であれば接触している
+		if (topDistance <= sphereRadius || bottomDistance <= sphereRadius)
+		{
+			return true;  // 接触している
+		}
+	}
+
+	return false;  // 接触していない
+}
+
+float SceneDebug::VDist(const VECTOR& v1, const VECTOR& v2)
+{
+	float dx = v1.x - v2.x;
+	float dy = v1.y - v2.y;
+	float dz = v1.z - v2.z;
+	return sqrtf(dx * dx + dy * dy + dz * dz);
 }

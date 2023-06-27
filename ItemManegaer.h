@@ -18,12 +18,11 @@ public:
 	/// <param name="coinPosX">コインのX位置</param>
 	/// <param name="coinPosY">コインのY位置</param>
 	/// <param name="coinNum"> コインの数   </param>
-	void CreateCoin(int coinPosX[], int coinPosY[], int coinNum);
+	void CreateCoin(std::vector<int> coinPosX, std::vector<int>coinPosY, int coinNum);
 
 	void Delete();
 	void Update();
 	void Draw();
-
 private:
 	// モデルハンドル
 	int m_hItem;

@@ -40,6 +40,8 @@ public:
 
 	int GetCoinPosX(int y, int x) { return m_CoinPosX[y][x]; }
 	int GetCoinPosY(int y, int x) { return m_CoinPosY[y][x]; }
+	std::vector<int> GetCoinX() { return m_coinX; }
+	std::vector<int> GetCoinY() { return m_coinY; }
 
 	// ÉRÉCÉìÇÃêî
 	int GetCoinNum()const { return coinNum; }
@@ -50,6 +52,9 @@ private:
 	int m_CoinPosX[kBlockNumY][kBlockNumX];
 	int m_CoinPosY[kBlockNumY][kBlockNumX];
 
-	int coinNum = 0;
+	std::vector<int> m_coinX;
+	std::vector<int> m_coinY;
+
+	int coinNum = -1;
 };
 

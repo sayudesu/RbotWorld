@@ -18,7 +18,7 @@ void ItemManegaer::Load()
 {
 }
 
-void ItemManegaer::CreateCoin(int coinPosX[], int coinPosY[], int coinNum)
+void ItemManegaer::CreateCoin(std::vector<int> coinPosX, std::vector<int>coinPosY, int coinNum)
 {
 	// コインのモデルハンドル
 	m_hItem = MV1LoadModel("Data/Model/Item/CoinCrown.mv1");
@@ -69,6 +69,12 @@ void ItemManegaer::Draw()
 	{
 		coin->Draw();
 	}
+#if false	
+	for (int i = 0; i < m_pCoin.size(); i++)
+	{
+		DrawSphere3D(VGet(m_coinPosX[i], m_coinPosY[i] + 150.0f, 5.0f), 80.0f, 32.0f, 0xffffff, 0xffffff, true);
+	}
+#endif
 }
 
 

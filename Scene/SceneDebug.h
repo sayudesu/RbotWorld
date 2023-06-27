@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 #include <memory>
+#include <DxLib.h>
 
 class Player;
 class Enemy;
@@ -26,7 +27,8 @@ public:
 
 	void PlayerCheckHit();
 	void FieldCheckHit();
-
+	bool CoinCheckHit(const VECTOR& capsulePos, float capsuleRadius, float capsuleHeight, const VECTOR& spherePos, float sphereRadius);
+	float VDist(const VECTOR& v1, const VECTOR& v2);
 private:
 	
 	int m_slowCount;
@@ -50,9 +52,8 @@ private:
 
 	// test //
 
-	int handle = -1;
-
+//	int handle = -1;
+	int m_coinNum;
 	std::vector<int> m_CoinPosX;
 	std::vector<int> m_CoinPosY;
-
 };

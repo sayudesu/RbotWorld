@@ -61,15 +61,21 @@ void CreateText::Update()
 		}
 	}
 	
-
+	// 選択をする
 	if (Pad::isRelase(PAD_INPUT_1))
 	{
 		m_isSelect = true;
 	}
 
+	// 選択したら100フレーム後にその画面に切り替わる
 	if (m_isSelect)
 	{
 		m_pText[selectNow + 1]->SetSelectRadius(selectRad += 10);
+
+		for (int i = 0; i < m_pText.size(); i++)
+		{
+			m_pText[selectNow + 1]->BlendMode();
+		}
 
 		if (selectRad > 100)
 		{
@@ -85,7 +91,6 @@ void CreateText::Update()
 	// 選択中の文字は選択フレームを表示させる
 	m_pText[selectNow + 1]->SetSelectFrame(true);
 
-
 #if true
 	// デバッグ用
 	if (selectRad > 100)
@@ -100,7 +105,6 @@ void CreateText::Update()
 	}
 
 #endif
-
 }
 
 void CreateText::Draw()
@@ -121,7 +125,8 @@ Text::Text(int x, int y, const char* text, int color, int size, bool frame) :
 	m_color(color),
 	m_isFrame(frame),
 	m_isSelect(false),
-	m_rad(0)
+	m_rad(0),
+	m_blend(255)
 {
 	// フォントデータを作成
 	m_fontHandle = CreateFontToHandle(NULL, size, 3);
@@ -145,9 +150,12 @@ void Text::Draw()
 		DrawBox(m_x, m_y, m_x + 500, m_y + 50, 0x00ffff, true);
 	}
 
+	// 描画ブレンドモードをαブレンドにする
+	SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, m_blend);
 	// フォントデータを使い文字を描画
 	DrawStringToHandle(m_x, m_y, m_text, m_color, m_fontHandle);
-
+	// 描画ブレンドモードをノーブレンドにする
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	if(m_rad != 0)DrawCircle(m_x + 10, m_y + 10, m_rad, 0xffffff,false);
 }
 
@@ -160,4 +168,9 @@ void Text::SetSelectFrame(bool isSelect)
 void Text::SetSelectRadius(int rad)
 {
 	m_rad = rad;
+}
+
+void Text::BlendMode()
+{
+	m_blend --;
 }

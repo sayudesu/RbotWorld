@@ -7,5 +7,4 @@ Coin::Coin(int handle):
 
 Coin::~Coin()
 {
-	// Šî’êƒNƒ‰ƒX‚Åˆ—
 }

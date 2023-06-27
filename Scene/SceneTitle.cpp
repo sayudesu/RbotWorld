@@ -21,6 +21,9 @@ namespace
 
 	const char* const kFileName = "Data/Img/org2.png";
 	const char* const kFileName2= "Data/Img/org2Test2_n.png";
+
+
+	const char* const kTextQuit= "QUIT";
 }
 
 SceneTitle::SceneTitle()
@@ -44,11 +47,21 @@ void SceneTitle::Init()
 	// タイトル
 	m_pText->Add(Game::kScreenWidth/2 - 400,250 ,kTextTitle,0xffff00,130,false);
 	// スタート
-	m_pText->Add(Game::kScreenWidth / 2 - 300,Game::kScreenHeight / 2 + 100, kTextStart,0x000000, 50, true);
+	int x = Game::kScreenWidth / 2 - 300;
+	int y = Game::kScreenHeight / 2 + 100;
+	int addFrame = 50 + 2;
+	int color = 0x000000;
+	int size = 50;
+	m_pText->Add(x,y, kTextStart, color, size, true);
 	// クレジット
-	m_pText->Add(Game::kScreenWidth / 2 - 300, Game::kScreenHeight / 2 + 100 + 50 + 2, kTextTest, 0x000000, 50, true);
+	y += addFrame;
+	m_pText->Add(x, y, kTextTest, color, size, true);
+	y += addFrame;
 	// 設定
-	m_pText->Add(Game::kScreenWidth / 2 - 300, Game::kScreenHeight / 2 + 100 + 50 + 50 + 4, kTextTest2, 0x000000, 50, true);
+	m_pText->Add(x, y, kTextTest2, color, size, true);
+	// QUIT
+	y += addFrame;
+	m_pText->Add(x, y, kTextQuit, color, size, true);
 }
 
 void SceneTitle::End()
@@ -77,6 +90,10 @@ SceneBase* SceneTitle::Update()
 	if (m_pText->SelectNo() == 2)
 	{ 
 		DrawString(1000, 100, "まだ設定画面はできていません。", 0xffffff);
+	}
+	if (m_pText->SelectNo() == 3)
+	{
+		DxLib::DxLib_End();
 	}
 
 	return this;

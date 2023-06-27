@@ -69,6 +69,7 @@ public:
 
 	void SetSelectFrame(bool isSelect);
 	void SetSelectRadius(int rad);
+	void BlendMode();
 private:
 	// 位置
 	int m_x;
@@ -85,5 +86,7 @@ private:
 	bool m_isSelect;
 	// 選択後のエフェクト円の大きさ
 	int m_rad;
+	// ブレンド率
+	int m_blend;
 };
 

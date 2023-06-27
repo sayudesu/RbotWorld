@@ -21,7 +21,7 @@ public:
 protected:
 	Vec3 m_pos = {0.0f,0.0f ,0.0f };// 位置
 
-	VECTOR m_angle;// 角度
+	VECTOR m_angle = { 0.0f,0.0f,0.0f };// 角度
 
 	int m_hitDamage = 0;//与えるダメージ
 };
