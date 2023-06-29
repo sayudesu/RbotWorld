@@ -9,7 +9,7 @@ class Enemy;
 class EnemyRush;
 class Field;
 class Map;
-
+class UI;
 class ItemManegaer;
 
 
@@ -48,12 +48,19 @@ private:
 	// マップのポインタ
 	Field* m_pField;
 	Map* m_pMap;
-
+	UI* m_pUi;
 
 	// test //
 
 //	int handle = -1;
 	int m_coinNum;
+	int m_diamondNum;
 	std::vector<int> m_CoinPosX;
 	std::vector<int> m_CoinPosY;
+
+	std::vector<int> m_diamondPosX;
+	std::vector<int> m_diamondPosY;
+
+	int m_coinCount = 0;
+	int m_diamondCount = 0;
 };

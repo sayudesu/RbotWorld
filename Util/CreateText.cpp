@@ -17,7 +17,10 @@ CreateText::CreateText():
 
 CreateText::~CreateText()
 {
-
+	for (auto& text : m_pText)
+	{
+		text.reset();
+	}
 }
 
 void CreateText::Add(int x, int y, const char* text, int color, int size,bool frame)
@@ -134,6 +137,7 @@ Text::Text(int x, int y, const char* text, int color, int size, bool frame) :
 
 Text::~Text()
 {
+	DeleteFontToHandle(m_fontHandle);
 }
 
 void Text::Draw()

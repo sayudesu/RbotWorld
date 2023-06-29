@@ -9,9 +9,11 @@
 #include "Object/EnemyRush.h"
 #include "Object/Field.h"
 #include "Object/Map/Map.h"
+#include "UI.h"
 
 #include "Coin.h"
 #include "ItemManegaer.h"
+#include "ItemName.h"
 
 #include "Sound.h"
 
@@ -30,7 +32,8 @@ SceneDebug::SceneDebug():
 	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr),
-	m_pMap(nullptr)
+	m_pMap(nullptr),
+	m_pUi(nullptr)
 {
 	// インスタンス作成
 	m_pItem = std::make_shared<ItemManegaer>();
@@ -38,6 +41,7 @@ SceneDebug::SceneDebug():
 	m_pPlayer = new Player;
 	m_pField = new Field;
 	m_pMap = new Map;
+	m_pUi = new UI;
 }
 
 SceneDebug::~SceneDebug()
@@ -68,26 +72,42 @@ void SceneDebug::Init()
 
 	// コインの数
 	const int coinNum = static_cast<int>(m_pField->GetCoinNum());
-	// コインの数分の配列浅間
-	int* posX = new int[coinNum];
-	int* posY = new int[coinNum];
-
 	// コインの数
-	m_coinNum = coinNum;
+	m_coinNum = coinNum + 1;
 
 	// コインの数分
 	// コインの位置を代入
-	for (int i = 0; i < coinNum; i++)
+	for (int i = 0; i < m_coinNum; i++)
 	{
 		m_CoinPosX.push_back(m_pField->GetCoinX()[i]);
 		m_CoinPosY.push_back(m_pField->GetCoinY()[i]);
 	}
 
 	// コインを作成
-	m_pItem->CreateCoin(m_CoinPosX, m_CoinPosY, coinNum);
+	m_pItem->CreateCoin(m_CoinPosX, m_CoinPosY, m_coinNum);
+
+	// ダイヤの数
+	const int diamondNum = static_cast<int>(m_pField->GetDiamondNum());
+	// ダイヤの数
+	m_diamondNum = diamondNum + 1;
+
+	// ダイヤの数分
+	// ダイヤの位置を代入
+	for (int i = 0; i < m_diamondNum; i++)
+	{
+		m_diamondPosX.push_back(m_pField->GetDiamondX()[i]);
+		m_diamondPosY.push_back(m_pField->GetDiamondY()[i]);
+	}
+
+	// コインを作成
+	m_pItem->CreateDiamond(m_diamondPosX, m_diamondPosY, m_diamondNum);
+
+
+	m_pUi->SetItemMaxNum(Item::coin, m_coinNum);
+	m_pUi->SetItemMaxNum(Item::diamond, m_diamondNum);
 
 	m_isInvincible = true;
-
+	// BGM再生
 	Sound::startBgm(Sound::SoundId_Main, 50);
 }
 
@@ -127,8 +147,6 @@ SceneBase* SceneDebug::Update()
 	// プレイヤーと地面の当たり判定
 	FieldCheckHit();
 
-//	CoinCheckHit();
-
 	// 無敵時間の調整
 	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
 
@@ -150,6 +168,59 @@ SceneBase* SceneDebug::Update()
 			return(new SceneGameOver);
 		}
 	}
+
+
+	// 関数化します //
+
+	// プレイヤーの判定用座標
+	VECTOR pos = { m_pPlayer->GetPos().x,m_pPlayer->GetPos().y + 250.0f ,m_pPlayer->GetPos().z };
+	// コインとプレイヤーの当たり判定
+	for (int i = 0; i < m_coinNum; i++)
+	{
+		// コインの位置
+		VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
+		// プレイヤーの位置からコインの位置を引く
+		VECTOR vec = VSub(pos, coinPos);
+		// ベクトルのサイズを取得する
+		float del = VSize(vec);
+		if (del < 128 * 2 + 62)
+		{
+			// コインに当たっている場合は判定を行わない
+			if (!m_pItem->isErase(Item::coin,i))
+			{
+				// 触れたコインの番号を渡す
+				m_pItem->SetEraseNo(Item::coin,i);
+				// 触れたコインの数をカウントする
+				m_coinCount++;
+			}
+		}
+	}
+
+	// コインとプレイヤーの当たり判定
+	for (int i = 0; i < m_diamondNum; i++)
+	{
+		// コインの位置
+		VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
+		// プレイヤーの位置からコインの位置を引く
+		VECTOR vec = VSub(pos, diamondPos);
+		// ベクトルのサイズを取得する
+		float del = VSize(vec);
+		if (del < 128 * 2 + 62)
+		{
+			// コインに当たっている場合は判定を行わない
+			if (!m_pItem->isErase(Item::diamond,i))
+			{
+				// 触れたコインの番号を渡す
+				m_pItem->SetEraseNo(Item::diamond,i);
+				// 触れたコインの数をカウントする
+				m_diamondCount++;
+			}
+		}
+	}
+	m_pUi->Update();
+	m_pUi->SetItemNum(Item::coin, m_coinCount);
+	m_pUi->SetItemNum(Item::diamond, m_diamondCount);
+
 	return this;
 }
 // 描画 //
@@ -159,29 +230,21 @@ void SceneDebug::Draw()
 	m_pPlayer->Draw();
 	m_pField->Draw();
 	m_pItem->Draw();
-
+	m_pUi->Draw();
+#if false			
 	for (int i = 0; i < m_coinNum; i++)
 	{
-		DrawBox(m_CoinPosX[i], m_CoinPosY[i],
-			m_CoinPosX[i] + 1000, m_CoinPosY[i] + 1000,
-			0xffffff, true);
-		VECTOR pos = VGet(m_CoinPosX[i], m_CoinPosY[i], -0.5f);
-		DrawSphere3D(pos, 32, 32, 0xffffff, 0xffffff, true);
-		printfDx("%f\n", pos.x);
+		DrawSphere3D(VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, -0.5f),
+			62, 32, 0xffff00, 0xffff00, true);
 	}
-#if false
-	for (int y = 0; y < m_pField->GetModelNumY(); y++)
+	for (int i = 0; i < m_diamondNum; i++)
 	{
-		for (int x = 0; x < m_pField->GetModelNumX(); x++)
-		{
-			if (m_pField->GetCoinPosX(y, x) != 0)
-			{
-				int posX = m_pField->GetCoinPosX(y, x);
-				int posY = m_pField->GetCoinPosY(y, x);
-				DrawSphere3D(VGet(posX, posY, 5.0f), 80.0f, 32.0f, 0xffffff, 0xffffff, true);
-			}
-		}
+		DrawSphere3D(VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, -0.5f),
+			62, 32, 0x0000ff, 0x0000ff, true);
 	}
+
+	DrawSphere3D(VGet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y + 250.0f, m_pPlayer->GetPos().z),
+		128 * 2, 32, 0xffffff, 0xffffff, true);
 #endif
 	// フェイド処理
 	SceneBase::DrawFade();

@@ -7,8 +7,11 @@ public:
 	virtual ~ItemBase();
 
 	virtual void Update();
+	virtual void StartUpdate();
 	virtual void Draw();
 
+	virtual void Erase();
+	virtual void ItemState();
 	/// <summary>
 	/// オブジェクトを回転させます
 	/// </summary>
@@ -29,6 +32,15 @@ public:
 	/// </summary>
 	/// <param name="rota">角度</param>
 	void SetRota(VECTOR rota){ m_rota = rota; }
+	
+	/// <summary>
+	/// アイテムが消えるかどうか
+	/// </summary>
+	/// <param name="isErase"></param>
+	void SetEraseItem(bool isErase) { m_isErase = isErase; }
+
+	// アイテムが消えているかどうか
+	bool isGetItem() { return m_isErase; }
 
 protected:
 	// アイテムのハンドル
@@ -39,5 +51,10 @@ protected:
 	VECTOR m_size;
 	// 回転
 	VECTOR m_rota;
+	// アイテムを消すための処理
+	bool m_isErase;
+
+	// メンバ関数ポインタ
+	void (ItemBase::*m_updateFunc)();
 };
 

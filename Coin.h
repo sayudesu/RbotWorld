@@ -5,5 +5,7 @@ class Coin :public ItemBase
 public:
 	Coin(int handle);
 	virtual ~Coin();
+
+	
 };
 

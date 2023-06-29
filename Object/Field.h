@@ -42,9 +42,12 @@ public:
 	int GetCoinPosY(int y, int x) { return m_CoinPosY[y][x]; }
 	std::vector<int> GetCoinX() { return m_coinX; }
 	std::vector<int> GetCoinY() { return m_coinY; }
+	std::vector<int> GetDiamondX() { return m_diomondX; }
+	std::vector<int> GetDiamondY() { return m_diomondY; }
 
 	// ÉRÉCÉìÇÃêî
 	int GetCoinNum()const { return coinNum; }
+	int GetDiamondNum()const { return diomondNum; }
 
 private:
 	std::shared_ptr<Model> m_pModel[kBlockNumY][kBlockNumX];
@@ -54,7 +57,10 @@ private:
 
 	std::vector<int> m_coinX;
 	std::vector<int> m_coinY;
+	std::vector<int> m_diomondX;
+	std::vector<int> m_diomondY;
 
 	int coinNum = -1;
+	int diomondNum = -1;
 };
 
