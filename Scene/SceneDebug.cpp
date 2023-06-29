@@ -178,11 +178,11 @@ SceneBase* SceneDebug::Update()
 	for (int i = 0; i < m_coinNum; i++)
 	{
 		// コインの位置
-		VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
+		const VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
 		// プレイヤーの位置からコインの位置を引く
-		VECTOR vec = VSub(pos, coinPos);
+		const VECTOR vec = VSub(pos, coinPos);
 		// ベクトルのサイズを取得する
-		float del = VSize(vec);
+		const float del = VSize(vec);
 		if (del < 128 * 2 + 62)
 		{
 			// コインに当たっている場合は判定を行わない
@@ -200,11 +200,11 @@ SceneBase* SceneDebug::Update()
 	for (int i = 0; i < m_diamondNum; i++)
 	{
 		// コインの位置
-		VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
+		const VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
 		// プレイヤーの位置からコインの位置を引く
-		VECTOR vec = VSub(pos, diamondPos);
+		const VECTOR vec = VSub(pos, diamondPos);
 		// ベクトルのサイズを取得する
-		float del = VSize(vec);
+		const float del = VSize(vec);
 		if (del < 128 * 2 + 62)
 		{
 			// コインに当たっている場合は判定を行わない

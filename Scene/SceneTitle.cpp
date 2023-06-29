@@ -72,7 +72,6 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
-
 	m_pShadow->Update();
 
 	m_pDrawModel->Update();
