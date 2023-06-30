@@ -140,68 +140,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Coin.cpp" />
-    <ClCompile Include="Diamond.cpp" />
-    <ClCompile Include="DrawTitleModel.cpp" />
-    <ClCompile Include="GraphAnimation.cpp" />
-    <ClCompile Include="ItemBase.cpp" />
-    <ClCompile Include="ItemManegaer.cpp" />
+    <ClCompile Include="Object\Coin.cpp" />
+    <ClCompile Include="Object\Diamond.cpp" />
+    <ClCompile Include="Util\DrawTitleModel.cpp" />
+    <ClCompile Include="Util\GraphAnimation.cpp" />
+    <ClCompile Include="Object\ItemBase.cpp" />
+    <ClCompile Include="Object\ItemManegaer.cpp" />
     <ClCompile Include="Object\Map\Map.cpp" />
     <ClCompile Include="Object\Map\WorldSprite.cpp" />
     <ClCompile Include="Scene\SceneGameClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
-    <ClCompile Include="Shadow.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="Util\Shadow.cpp" />
+    <ClCompile Include="Util\UI.cpp" />
     <ClCompile Include="Util\Sound.cpp" />
     <ClCompile Include="Util\Model.cpp" />
     <ClCompile Include="Util\CreateText.cpp" />
-    <ClCompile Include="Object\EnemyBase.cpp" />
-    <ClCompile Include="Object\EnemyRush.cpp" />
     <ClCompile Include="Object\Field.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\DrawFunctions.cpp" />
-    <ClCompile Include="Object\Enemy.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
-    <ClCompile Include="Scene\SceneDebug.cpp" />
+    <ClCompile Include="Scene\SceneMain.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="util\Pad.cpp" />
     <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Coin.h" />
-    <ClInclude Include="Diamond.h" />
-    <ClInclude Include="DrawTitleModel.h" />
-    <ClInclude Include="GraphAnimation.h" />
-    <ClInclude Include="ItemBase.h" />
-    <ClInclude Include="ItemManegaer.h" />
-    <ClInclude Include="ItemName.h" />
+    <ClInclude Include="Object\Coin.h" />
+    <ClInclude Include="Object\Diamond.h" />
+    <ClInclude Include="Util\DrawTitleModel.h" />
+    <ClInclude Include="Util\GraphAnimation.h" />
+    <ClInclude Include="Object\ItemBase.h" />
+    <ClInclude Include="Object\ItemManegaer.h" />
+    <ClInclude Include="Util\ItemName.h" />
     <ClInclude Include="Object\Map\Map.h" />
     <ClInclude Include="Object\Map\WorldSprite.h" />
     <ClInclude Include="Scene\SceneGameClear.h" />
     <ClInclude Include="Scene\SceneGameOver.h" />
-    <ClInclude Include="Shadow.h" />
-    <ClInclude Include="UI.h" />
+    <ClInclude Include="Util\Shadow.h" />
+    <ClInclude Include="Util\UI.h" />
     <ClInclude Include="Util\Sound.h" />
     <ClInclude Include="Util\Model.h" />
     <ClInclude Include="Util\CreateText.h" />
-    <ClInclude Include="Object\EnemyBase.h" />
-    <ClInclude Include="Object\EnemyRush.h" />
     <ClInclude Include="Object\Field.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\DrawFunctions.h" />
-    <ClInclude Include="Object\Enemy.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="scene\SceneBase.h" />
-    <ClInclude Include="scene\SceneDebug.h" />
+    <ClInclude Include="scene\SceneMain.h" />
     <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="Util\game.h" />
     <ClInclude Include="util\Pad.h" />
     <ClInclude Include="util\Vec3.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="Util\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -209,7 +203,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).pso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="PSDistortion.hlsl">
+    <FxCompile Include="Util\PSDistortion.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

@@ -1,5 +1,5 @@
 #include "SceneTitle.h"
-#include "SceneDebug.h"
+#include "SceneMain.h"
 #include <DxLib.h>
 #include "CreateText.h"
 #include "DrawTitleModel.h"
@@ -80,7 +80,7 @@ SceneBase* SceneTitle::Update()
 
 	if (m_pText->SelectNo() == 0)
 	{
-		return(new SceneDebug);
+		return(new SceneMain);
 	}
 	if (m_pText->SelectNo() == 1)
 	{

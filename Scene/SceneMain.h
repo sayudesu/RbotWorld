@@ -5,19 +5,17 @@
 #include <DxLib.h>
 
 class Player;
-class Enemy;
-class EnemyRush;
 class Field;
 class Map;
 class UI;
 class ItemManegaer;
 
 
-class SceneDebug : public SceneBase
+class SceneMain : public SceneBase
 {
 public:
-	SceneDebug();
-	virtual ~SceneDebug();
+	SceneMain();
+	virtual ~SceneMain();
 
 	virtual void Init() override;
 	virtual void End() override;
@@ -25,7 +23,6 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
 
-	void PlayerCheckHit();
 	void FieldCheckHit();
 private:
 	
@@ -41,8 +38,6 @@ private:
 	Player* m_pPlayer;
 	// アイテムのポインタ
 	std::shared_ptr<ItemManegaer>m_pItem;
-	// エネミーのポインタの配列
-	std::vector<std::shared_ptr<EnemyRush>>m_pEnemyRush;
 	// マップのポインタ
 	Field* m_pField;
 	Map* m_pMap;
