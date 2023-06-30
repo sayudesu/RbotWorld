@@ -36,6 +36,7 @@ SceneTitle::SceneTitle()
 SceneTitle::~SceneTitle()
 {
 	delete m_pDrawModel;
+	delete m_pText;
 }
 
 void SceneTitle::Init()

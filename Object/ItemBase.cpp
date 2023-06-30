@@ -1,5 +1,6 @@
 #include "ItemBase.h"
 #include <cassert>
+#include "Util/Sound.h"
 
 namespace
 {
@@ -92,4 +93,12 @@ void ItemBase::UpdateRota()
 	{
 		m_rota.y = 0.00f;
 	}
+}
+
+void ItemBase::SetEraseItem(bool isErase)
+{
+	m_isErase = isErase;
+	Sound::play(Sound::SoundId_Coin);
+	// âπó ê›íË	0~255
+	Sound::setVolume(Sound::SoundId_Coin, 100);
 }

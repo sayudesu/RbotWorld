@@ -37,7 +37,7 @@ public:
 	/// アイテムが消えるかどうか
 	/// </summary>
 	/// <param name="isErase"></param>
-	void SetEraseItem(bool isErase) { m_isErase = isErase; }
+	void SetEraseItem(bool isErase);
 
 	// アイテムが消えているかどうか
 	bool isGetItem() { return m_isErase; }

@@ -9,6 +9,8 @@ namespace Sound
 		SoundId_Title,		// タイトル画面のBGM
 		SoundId_Main,		// メイン(ゲームプレイ)画面のBGM
 
+		SoundId_Coin,
+
 		SoundId_Num
 	}SoundId;
 

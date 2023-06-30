@@ -21,6 +21,7 @@ CreateText::~CreateText()
 	{
 		text.reset();
 	}
+	printfDx("è¡Ç¶Ç‹ÇµÇΩÅE");
 }
 
 void CreateText::Add(int x, int y, const char* text, int color, int size,bool frame)

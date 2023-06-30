@@ -13,6 +13,8 @@ namespace
 		// BGM
 		"Data/Sound/Bgm/Title.mp3",
 		"Data/Sound/Bgm/Main.ogg",
+
+		"Data/Sound/SE/coin.wav",
 	};
 }
 
