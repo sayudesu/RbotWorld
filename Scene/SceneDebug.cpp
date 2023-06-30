@@ -154,9 +154,8 @@ SceneBase* SceneDebug::Update()
 	if (m_pPlayer->GetPos().x > 30000)
 	{
 		StartFadeOut();
-		//SceneBase::UpdateFade();
-
-		return(new SceneGameClear);	
+		// スコアを渡す
+		return new SceneGameClear{ m_pUi->GetScore() };
 	}
 
 	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
@@ -165,7 +164,7 @@ SceneBase* SceneDebug::Update()
 	{
 		if (!IsFading())
 		{
-			return(new SceneGameOver);
+			return new SceneGameOver;
 		}
 	}
 
@@ -173,51 +172,58 @@ SceneBase* SceneDebug::Update()
 	// 関数化します //
 
 	// プレイヤーの判定用座標
+	// コインの位置
+	// プレイヤーの位置からコインの位置を引く
+	// 触れたコインの数をカウントする
 	VECTOR pos = { m_pPlayer->GetPos().x,m_pPlayer->GetPos().y + 250.0f ,m_pPlayer->GetPos().z };
 	// コインとプレイヤーの当たり判定
 	for (int i = 0; i < m_coinNum; i++)
 	{
-		// コインの位置
 		const VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
-		// プレイヤーの位置からコインの位置を引く
+
 		const VECTOR vec = VSub(pos, coinPos);
-		// ベクトルのサイズを取得する
+
 		const float del = VSize(vec);
+
+		// ベクトルのサイズを取得する
+		// コインに当たっている場合は判定を行わない
+		// 触れたコインの番号を渡す
 		if (del < 128 * 2 + 62)
 		{
-			// コインに当たっている場合は判定を行わない
 			if (!m_pItem->isErase(Item::coin,i))
 			{
-				// 触れたコインの番号を渡す
 				m_pItem->SetEraseNo(Item::coin,i);
-				// 触れたコインの数をカウントする
 				m_coinCount++;
 			}
 		}
 	}
 
 	// コインとプレイヤーの当たり判定
+	// プレイヤーの位置からコインの位置を引く
+	// ベクトルのサイズを取得する
+	// コインの位置
 	for (int i = 0; i < m_diamondNum; i++)
 	{
-		// コインの位置
 		const VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
-		// プレイヤーの位置からコインの位置を引く
+
 		const VECTOR vec = VSub(pos, diamondPos);
-		// ベクトルのサイズを取得する
+
 		const float del = VSize(vec);
+
+		// コインに当たっている場合は判定を行わない
+		// 触れたコインの番号を渡す
+		// 触れたコインの数をカウントする
 		if (del < 128 * 2 + 62)
 		{
-			// コインに当たっている場合は判定を行わない
 			if (!m_pItem->isErase(Item::diamond,i))
 			{
-				// 触れたコインの番号を渡す
 				m_pItem->SetEraseNo(Item::diamond,i);
-				// 触れたコインの数をカウントする
 				m_diamondCount++;
 			}
 		}
 	}
 	m_pUi->Update();
+	// 取得したアイテムの数を渡す。
 	m_pUi->SetItemNum(Item::coin, m_coinCount);
 	m_pUi->SetItemNum(Item::diamond, m_diamondCount);
 
@@ -312,48 +318,4 @@ void SceneDebug::FieldCheckHit()
 		}
 	}
 
-}
-
-bool SceneDebug::CoinCheckHit(const VECTOR& capsulePos, float capsuleRadius, float capsuleHeight, const VECTOR& spherePos, float sphereRadius)
-{
-
-	// カプセルの上下端のY座標を計算
-	float capsuleTopY = capsulePos.y - capsuleHeight / 2.0f;
-	float capsuleBottomY = capsulePos.y + capsuleHeight / 2.0f;
-
-	// カプセルの中心軸と球体の中心との距離を計算
-	float distance = VDist(capsulePos, spherePos);
-
-	// カプセルと球体の半径の和を計算
-	float sumRadius = capsuleRadius + sphereRadius;
-
-	// カプセルと球体が接触しているか判定
-	if (distance <= sumRadius)
-	{
-		// カプセルと球体が接触している場合、Y座標の範囲内にあるか判定
-		if (spherePos.y >= capsuleTopY && spherePos.y <= capsuleBottomY)
-		{
-			return true;  // 接触している
-		}
-
-		// カプセルの上下の球体との距離を計算
-		float topDistance = VDist(capsulePos, VGet(capsulePos.x, capsuleTopY, capsulePos.z));
-		float bottomDistance = VDist(capsulePos, VGet(capsulePos.x, capsuleBottomY, capsulePos.z));
-
-		// カプセルの上下の球体との距離が球体の半径以下であれば接触している
-		if (topDistance <= sphereRadius || bottomDistance <= sphereRadius)
-		{
-			return true;  // 接触している
-		}
-	}
-
-	return false;  // 接触していない
-}
-
-float SceneDebug::VDist(const VECTOR& v1, const VECTOR& v2)
-{
-	float dx = v1.x - v2.x;
-	float dy = v1.y - v2.y;
-	float dz = v1.z - v2.z;
-	return sqrtf(dx * dx + dy * dy + dz * dz);
 }

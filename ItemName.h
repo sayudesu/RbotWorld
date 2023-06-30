@@ -2,5 +2,7 @@
 enum class Item
 {
 	coin,
-	diamond
+	diamond,
+
+	itemMaxNum
 };

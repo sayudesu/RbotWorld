@@ -7,7 +7,7 @@ namespace
 {
 	// 地面に敷き詰めるブロックの数
 	constexpr int kBlockNumX = 151;
-	constexpr int kBlockNumY = 6;
+	constexpr int kBlockNumY = 7;
 }
 
 class Model;

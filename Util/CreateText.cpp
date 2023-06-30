@@ -65,7 +65,7 @@ void CreateText::Update()
 	}
 	
 	// ‘I‘ð‚ð‚·‚é
-	if (Pad::isRelase(PAD_INPUT_1))
+	if (Pad::isTrigger(PAD_INPUT_1))
 	{
 		m_isSelect = true;
 	}

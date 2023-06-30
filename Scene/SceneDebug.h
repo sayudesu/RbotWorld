@@ -27,8 +27,6 @@ public:
 
 	void PlayerCheckHit();
 	void FieldCheckHit();
-	bool CoinCheckHit(const VECTOR& capsulePos, float capsuleRadius, float capsuleHeight, const VECTOR& spherePos, float sphereRadius);
-	float VDist(const VECTOR& v1, const VECTOR& v2);
 private:
 	
 	int m_slowCount;
