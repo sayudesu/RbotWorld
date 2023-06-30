@@ -1,18 +1,17 @@
-#include "SceneDebug.h"
+#include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneGameOver.h"
 #include "SceneGameClear.h"
 #include <DxLib.h>
 #include "game.h"
 #include "Object/Player.h"
-#include "Object/Enemy.h"
-#include "Object/EnemyRush.h"
+
 #include "Object/Field.h"
 #include "Object/Map/Map.h"
 #include "UI.h"
 
-#include "Coin.h"
-#include "ItemManegaer.h"
+#include "Object/Coin.h"
+#include "Object/ItemManegaer.h"
 #include "ItemName.h"
 
 #include "Sound.h"
@@ -25,7 +24,7 @@ namespace
 	Vec3 kPos = { static_cast<float>(Game::kScreenWidth),0.0f ,0.0f };
 }
 
-SceneDebug::SceneDebug():
+SceneMain::SceneMain():
 	m_slowCount(0),
 	m_enemyCount(0),
 	m_tempRand(0),
@@ -37,14 +36,14 @@ SceneDebug::SceneDebug():
 {
 	// インスタンス作成
 	m_pItem = std::make_shared<ItemManegaer>();
-
+	
 	m_pPlayer = new Player;
 	m_pField = new Field;
 	m_pMap = new Map;
 	m_pUi = new UI;
 }
 
-SceneDebug::~SceneDebug()
+SceneMain::~SceneMain()
 {
 
 	m_pItem.reset();
@@ -54,7 +53,7 @@ SceneDebug::~SceneDebug()
 	delete m_pMap;
 }
 
-void SceneDebug::Init()
+void SceneMain::Init()
 {
 	// 3D関連の設定
 	// Zバッファを使用する
@@ -111,7 +110,7 @@ void SceneDebug::Init()
 	Sound::startBgm(Sound::SoundId_Main, 50);
 }
 
-void SceneDebug::End()
+void SceneMain::End()
 {
 	m_pPlayer->End();
 
@@ -121,7 +120,7 @@ void SceneDebug::End()
 }
 
 // 更新 //
-SceneBase* SceneDebug::Update()
+SceneBase* SceneMain::Update()
 {
 	// フェイド処理
 	UpdateFade();
@@ -142,8 +141,6 @@ SceneBase* SceneDebug::Update()
 		m_pPlayer->Update();
 	}
 
-	// プレイヤーとエネミーの当たり判定
-	PlayerCheckHit();
 	// プレイヤーと地面の当たり判定
 	FieldCheckHit();
 
@@ -230,7 +227,7 @@ SceneBase* SceneDebug::Update()
 	return this;
 }
 // 描画 //
-void SceneDebug::Draw()
+void SceneMain::Draw()
 {
 	m_pMap->Draw();
 	m_pPlayer->Draw();
@@ -256,40 +253,7 @@ void SceneDebug::Draw()
 	SceneBase::DrawFade();
 }
 
-void SceneDebug::PlayerCheckHit()
-{
-	// 当たり判定の情報
-	if (!m_isInvincible)
-	{
-		// 敵との判定
-		for (auto& enemy : m_pEnemyRush)
-		{
-			// DxLibの関数を利用して当たり判定をとる
-			MV1_COLL_RESULT_POLY_DIM result;		//あたりデータ
-
-			result = MV1CollCheck_Capsule(
-				enemy->GetModelHandle(),
-				enemy->GetColFrameIndex(),
-				m_pPlayer->GetPos(),
-				m_pPlayer->GetSize(),
-				m_pPlayer->GetRadius());
-			if (result.HitNum > 0)	//1枚以上のポリゴンと当たっていたらモデルにあっている設定
-			{
-				// ダメージ量を渡す
-				m_pPlayer->OnDamage(enemy->GetAttackDamage());
-				// 振動開始
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
-				// ダメージをくらった
-				m_isInvincible = true;
-			}
-
-			// 当たり判定情報の後始末
-			MV1CollResultPolyDimTerminate(result);
-		}
-	}
-}
-
-void SceneDebug::FieldCheckHit()
+void SceneMain::FieldCheckHit()
 {
 	// 地面判定の情報を渡す
 	m_pPlayer->FieldCheckHit(false);

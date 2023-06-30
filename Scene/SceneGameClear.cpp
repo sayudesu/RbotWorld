@@ -1,6 +1,6 @@
 #include "SceneGameClear.h"
 #include "SceneTitle.h"
-#include "SceneDebug.h"
+#include "SceneMain.h"
 #include "game.h"
 #include "Util/Pad.h"
 

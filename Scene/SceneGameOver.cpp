@@ -1,6 +1,6 @@
 #include "SceneGameOver.h"
 #include "SceneTitle.h"
-#include "SceneDebug.h"
+#include "SceneMain.h"
 
 SceneGameOver::SceneGameOver()
 {

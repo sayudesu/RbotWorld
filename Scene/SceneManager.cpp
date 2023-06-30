@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "SceneBase.h"
-#include "SceneDebug.h"
+#include "SceneMain.h"
 #include "SceneTitle.h"
 #include "Pad.h"
 
