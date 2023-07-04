@@ -151,6 +151,7 @@
     <ClCompile Include="Scene\SceneGameClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="Util\Shadow.cpp" />
+    <ClCompile Include="Util\StringFunction.cpp" />
     <ClCompile Include="Util\UI.cpp" />
     <ClCompile Include="Util\Sound.cpp" />
     <ClCompile Include="Util\Model.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Scene\SceneGameClear.h" />
     <ClInclude Include="Scene\SceneGameOver.h" />
     <ClInclude Include="Util\Shadow.h" />
+    <ClInclude Include="Util\StringFunction.h" />
     <ClInclude Include="Util\UI.h" />
     <ClInclude Include="Util\Sound.h" />
     <ClInclude Include="Util\Model.h" />

@@ -166,6 +166,11 @@ SceneBase* SceneMain::Update()
 	}
 
 
+	if (DxLib::CheckHitKey(KEY_INPUT_M))
+	{
+		m_pUi->SetItemMaxNum(Item::coin, 3);
+	}
+
 	// 関数化します //
 
 	// プレイヤーの判定用座標

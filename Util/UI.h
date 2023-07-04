@@ -1,5 +1,18 @@
 #pragma once
 #include "ItemName.h"
+#include "Vec3.h"
+
+#define DEBUG_ true;
+
+namespace
+{
+	// チャレンジの数
+	constexpr int kCharengeNum = 2;
+	// アイテムの最大値
+	constexpr int kItemNum = static_cast<int>(Item::itemMaxNum);
+}
+
+class StringFunction;
 
 class UI
 {
@@ -27,16 +40,35 @@ public:
 	// スコアを返す
 	int GetScore() { return m_score; }
 private:
-	void Score();
+	// チャレンジ-----------------------------------
+	void ItemMaxCharenge();// アイテムマックスチャレンジ	
+
+	// スコア用-------------------------------------
+	void Score();// スコアの計算
 private:
-	// 現在のアイテム取得数
-	int m_itemNum[static_cast<int>(Item::itemMaxNum)];
-	// 最大アイテム数
-	int m_itemMaxNum[static_cast<int>(Item::itemMaxNum)];
-	// スコア用
+	// アイテム管理----------------------------------
+	int m_itemNum[kItemNum];// 現在のアイテム取得数
+	int m_itemMaxNum[kItemNum];// 最大アイテム数
+
+	// チャレンジ用---------------------------------
+	Vec3 m_charengePos[kCharengeNum];// 位置
+	int m_drawCount[kCharengeNum];// 描画時間カウント
+	int m_charengeColor[kCharengeNum];// 色指定
+	bool m_isCharenge[kCharengeNum];// 文字描画処理
+	bool m_isCharengeDraw[kCharengeNum];// 文字を描画
+	const char* m_charengeString[kCharengeNum];// 文字
+
+	// スコア用-------------------------------------
 	int m_score;
-	// 描画処理関係
-	int drawCount[3];
-	bool m_isCharenge[3];
+
+	// 文字描画クラス-------------------------------
+	StringFunction* m_pString;
+
+	//----------------------------------------------
+
+#if DEBUG_
+	Vec3 m_scorePos[kItemNum];// 位置
+	const char* m_scoreString[kItemNum];// 文字
+#endif
 };
 
