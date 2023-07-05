@@ -6,45 +6,54 @@ namespace
 {
 	// チャレンジ
 	constexpr int kCharengeItemMax = kCharengeNum;// アイテムマックスかどうかを見る数
-	// アイテムの数
-	constexpr int kItemMax = kItemNum;
 
-	const char* kFont = "Data/Fonts/Valentina-Regular.ttf";
+	// アイテムの数
+	constexpr int kItemMax = kItemNum;// アイテムの最大数
+
+	// フォント関連
+	const char* kFont     = "Data/Fonts/851letrogo_007.ttf";// フォントパス
+	const char* kFontName = "851レトロゴ";// フォントの名前
+
+	// チャレンジ用文字
+	const char* kCharengeCoin    = "コインをすべてかいしゅうした！";
+	constexpr int kCharengeCoinColor = 0xffff00;
+	const char* kCharengeDaimond = "ダイヤをすべてかいしゅうした！";
+	constexpr int kCharengeDiamondColor = 0x0000ff;
+	constexpr int kStringCount = 60 * 3;// 文字の描画時間
 }
 
 UI::UI() :
 	m_score(0)
 {
+	// アイテム数の初期化
 	for (int i = 0; i < kItemMax; i++)
 	{
 		m_itemNum[i] = 0;
 		m_itemMaxNum[i] = 0;
 	}
 
+	// チャレンジ用変数の初期化
 	for (int i = 0; i < kCharengeItemMax; i++)
 	{
 		m_charengePos[i] = {0.0f,0.0f ,0.0f};
-		m_drawCount[i] = 60 * 3;
+		m_drawCount[i] = kStringCount;
 		m_isCharenge[i] = false;
 		m_isCharengeDraw[i] = false;
 	}
-	m_charengeColor[0] = 0xffff00;
-	m_charengeColor[1] = 0x0000ff;
-	m_charengeString[0] = "コインを全て回収した！";
-//	m_charengeString[0] = "777";
-	m_charengeString[1] = "ダイヤを全て回収した！";
-//	m_charengeString[1] = "777";
+	m_charengeColor[0] = kCharengeCoinColor;
+	m_charengeColor[1] = kCharengeDiamondColor;
+	m_charengeString[0] = kCharengeCoin;
+	m_charengeString[1] = kCharengeDaimond;
 
-	
-	// ＤＸフォントデータファイルを読み込み、フォントハンドルを変数 FontHandle に保存する
 	// 文字用関数のインスタンスを作成
 	// 文字の設定をして文字を作成
 	m_pString = new StringFunction;
+	m_pString->InitFont(kFont, kFontName);
 	for (int i = 0; i < kCharengeItemMax; i++)
 	{
-		m_pString->Add(m_charengePos[i].x, m_charengePos[i].y, m_charengeString[i], m_charengeColor[i], 64, "Valentina");
+		m_pString->Add(m_charengePos[i].x, m_charengePos[i].y, m_charengeString[i], m_charengeColor[i], 64);
 	}
-	
+	m_pString->AddStatic(200, 320, "得点 = %d",0, 0xffffff, 64);
 #if DEBUG_
 	for (int i = 0; i < 2; i++)
 	{
@@ -66,9 +75,12 @@ void UI::Update()
 {
 	// チャレンジ
 	ItemMaxCharenge();
-	m_pString->Update(static_cast<int>(Item::coin),m_charengePos[0].x, m_charengePos[0].y);
-	m_pString->Update(static_cast<int>(Item::diamond),m_charengePos[1].x, m_charengePos[1].y);
-	// スコアの計算
+	for (int i = 0; i < kCharengeItemMax; i++)
+	{
+		m_pString->Update(i,m_charengePos[i].x, m_charengePos[i].y);
+	}
+	
+	// スコア
 	Score();
 }
 
@@ -84,6 +96,7 @@ void UI::Draw()
 		}
 	}
 
+	m_pString->DrawStatic(2);
 	// スコア
 	DrawFormatString(200, 320, 0xffffff, "得点 = %d", m_score);
 
@@ -106,19 +119,21 @@ void UI::Draw()
 	}
 #endif
 }
-
+// アイテムの取得数
 void UI::SetItemNum(Item name, int num)
 {
 	if (name == Item::coin)   m_itemNum[static_cast<int>(Item::coin)]    = num;
 	if (name == Item::diamond)m_itemNum[static_cast<int>(Item::diamond)] = num;
 }
 
+// アイテムの最大数
 void UI::SetItemMaxNum(Item name, int num)
 {
 	if (name == Item::coin)   m_itemMaxNum[static_cast<int>(Item::coin)]    = num;
 	if (name == Item::diamond)m_itemMaxNum[static_cast<int>(Item::diamond)] = num;
 }
 
+// チャレンジアップデート
 void UI::ItemMaxCharenge()
 {
 	// チャレンジ
@@ -134,9 +149,11 @@ void UI::ItemMaxCharenge()
 		if (m_isCharengeDraw[i])
 		{
 			m_isCharenge[i] = true;
-			if (m_charengePos[i].x < 500.0f)m_charengePos[i].x += 20.0f;
+
+			if (m_charengePos[i].x < 450.0f)m_charengePos[i].x += 20.0f;
 			if (m_charengePos[i].y < 300.0f)m_charengePos[i].y += 20.0f;
-			if (m_charengePos[i].x == 500.0f && m_charengePos[i].y == 300.0f)
+
+			if (m_charengePos[i].x >= 450.0f && m_charengePos[i].y >= 300.0f)
 			{
 				m_drawCount[i]--;
 			}
@@ -147,7 +164,9 @@ void UI::ItemMaxCharenge()
 		if (m_drawCount[i] < 0)
 		{
 			m_isCharengeDraw[i] = false;
+
 			if (m_charengePos[i].y > 0.0f)m_charengePos[i].y -= 20.0f;
+
 			if (m_charengePos[i].y <= 0.0f)
 			{
 				m_isCharenge[i] = false;
@@ -157,9 +176,9 @@ void UI::ItemMaxCharenge()
 	}
 }
 
+// スコア計算
 void UI::Score()
 {
-	// スコア計算
 	m_score = ((m_itemNum[static_cast<int>(Item::coin)] * 5 +
 		m_itemNum[static_cast<int>(Item::diamond)] * 5)) * 15;
 }
