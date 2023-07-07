@@ -68,6 +68,7 @@ void Shadow::DrawGraphWithShader(int x, int y, int texH, int normH, int psH, int
 {
 	int w = 0, h = 0;
 	GetGraphSize(texH, &w, &h);
+
 	array<VERTEX2DSHADER, 4> verts;
 	// ’¸“_‚ğZ‚Ìš‚É‚È‚é‚æ‚¤‚É
 	// ¶ã

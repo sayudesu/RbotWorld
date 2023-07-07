@@ -1,6 +1,7 @@
 #include "UI.h"
 #include <DxLib.h>
 #include "Util/StringFunction.h"
+#include "Util/game.h"
 
 namespace
 {
@@ -16,9 +17,9 @@ namespace
 
 	// チャレンジ用文字
 	const char* kCharengeCoin    = "コインをすべてかいしゅうした！";
-	constexpr int kCharengeCoinColor = 0xffff00;
+	constexpr int kCharengeCoinColor = 0xFFFFFF11;
 	const char* kCharengeDaimond = "ダイヤをすべてかいしゅうした！";
-	constexpr int kCharengeDiamondColor = 0x0000ff;
+	constexpr int kCharengeDiamondColor = 0x1111FF;
 	constexpr int kStringCount = 60 * 3;// 文字の描画時間
 }
 
@@ -47,13 +48,17 @@ UI::UI() :
 
 	// 文字用関数のインスタンスを作成
 	// 文字の設定をして文字を作成
-	m_pString = new StringFunction;
+	m_pString = new Achievement;
 	m_pString->InitFont(kFont, kFontName);
 	for (int i = 0; i < kCharengeItemMax; i++)
 	{
 		m_pString->Add(m_charengePos[i].x, m_charengePos[i].y, m_charengeString[i], m_charengeColor[i], 64);
 	}
-	m_pString->AddStatic(200, 320, "得点 = %d",0, 0xffffff, 64);
+
+	m_pStringStatic = new StringStatic;
+	m_pStringStatic->InitFont(kFont, kFontName);
+	m_pStringStatic->AddStatic(Game::kScreenWidth/2 - 500, 100, "得点 = %d",0, 0xffffff, 100);
+
 #if DEBUG_
 	for (int i = 0; i < 2; i++)
 	{
@@ -68,20 +73,27 @@ UI::UI() :
 
 UI::~UI()
 {
-
+	delete m_pString;
+	delete m_pStringStatic;
 }
 
 void UI::Update()
 {
-	// チャレンジ
+	// チャレンジ文字の移動-----------------------------------------------------------------------------
+	// 文字の制御
 	ItemMaxCharenge();
+	// 移動処理
 	for (int i = 0; i < kCharengeItemMax; i++)
 	{
 		m_pString->Update(i,m_charengePos[i].x, m_charengePos[i].y);
 	}
-	
-	// スコア
+	// -------------------------------------------------------------------------------------------------
+
+	// スコアの更新-------------------------------------------------------------------------------------
 	Score();
+	m_pStringStatic->UpdateStatic(0, m_score);
+	// -------------------------------------------------------------------------------------------------
+	
 }
 
 void UI::Draw()
@@ -91,22 +103,19 @@ void UI::Draw()
 	{
 		if (m_isCharenge[i])
 		{
-			DrawFormatString(m_charengePos[i].x, m_charengePos[i].y, 0xffffff, m_charengeString[i]);
 			m_pString->Draw(i);
 		}
 	}
 
-	m_pString->DrawStatic(2);
 	// スコア
-	DrawFormatString(200, 320, 0xffffff, "得点 = %d", m_score);
-
+	m_pStringStatic->DrawStatic(0);
 
 #if DEBUG_		
-	DrawFormatString(500, 500, 0xffffff, "diamond = %d", m_itemNum[static_cast<int>(Item::diamond)]);
-	DrawFormatString(500, 530, 0xffffff, "MAXdiamond = %d", m_itemMaxNum[static_cast<int>(Item::diamond)]);
+	DrawFormatString(200, 500, 0xffffff, "diamond = %d", m_itemNum[static_cast<int>(Item::diamond)]);
+	DrawFormatString(200, 530, 0xffffff, "MAXdiamond = %d", m_itemMaxNum[static_cast<int>(Item::diamond)]);
 
-	DrawFormatString(500, 560, 0xffffff, "coin = %d", m_itemNum[static_cast<int>(Item::coin)]);
-	DrawFormatString(500, 590, 0xffffff, "MAXcoin = %d", m_itemMaxNum[static_cast<int>(Item::coin)]);
+	DrawFormatString(200, 560, 0xffffff, "coin = %d", m_itemNum[static_cast<int>(Item::coin)]);
+	DrawFormatString(200, 590, 0xffffff, "MAXcoin = %d", m_itemMaxNum[static_cast<int>(Item::coin)]);
 
 	// アイテム個々の取得数
 	DrawFormatString(200, 200, 0xffffff, "コイン取得数 = %d", m_itemNum[static_cast<int>(Item::coin)]);

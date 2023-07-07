@@ -142,6 +142,8 @@ void Player::Draw()
 		// プレイヤーモデルの描画
 		m_pModel->Draw();
 	}
+	DrawSphere3D(m_pos, 16, 32, 0xffffff, 0xffffff, true);
+	DrawCapsule3D(m_posColl, m_size, kColRaidus, 32, 0xffffff, 0xffffff, true);
 }
 
 float Player::GetRadius() const
@@ -338,6 +340,7 @@ void Player::UpdateRun()
 	// ジャンプできるかどうか
 	if(m_isFastJumping)
 	{
+
 		// ジャンプ力
 		m_jumpAcc = kJumpPower;
 		// ジャンプアニメーションに変更
@@ -476,17 +479,19 @@ void Player::UpdateHitField()
 		if (m_isFieldHit)
 		{
 			// 座標を地面に戻す
-		//	m_pos.y = 0.0f;
 			m_pos.y = m_fieldPosY + 100.0f;
 			// ジャンプ加速をなくす
 			m_jumpAcc = 0.0f;
+			// 次にまたジャンプ出来るようにする
+			m_isFastJumping = false;
+			m_isSecondJumping = false;
+
 			// X軸の角度を0に戻す
 			m_angle = 0.0f;
 			// 当たり判定の回転角度
 			m_rad = 90.0f * DX_PI_F / 180.0f;
-			// 次にまたジャンプ出来るようにする
-			m_isFastJumping = false;
-			m_isSecondJumping = false;
+	
+
 		}
 	}
 }
@@ -498,3 +503,4 @@ void Player::UpdateGravity()
 	m_jumpAcc += kGravity;
 	m_pos.y += m_jumpAcc;
 }
+

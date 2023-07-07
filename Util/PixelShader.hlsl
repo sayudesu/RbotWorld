@@ -18,9 +18,11 @@ float4 main(PSInput input) : SV_TARGET
 
     // 法線マップの値を取ってくる
     float3 n = norm.Sample(smp,input.uv).rgb;
+
     // もとの法線ベクトルの値を復元している
     n.xy *= 2.0;// 2倍
     n.xy -= 1.0;// -1 = -1～1
+
     // zはxとyから計算できる。なお、ベクトルは
     // こっちに向いている前提なので、左手系
     // マイナスをかけておきます

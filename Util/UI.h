@@ -12,7 +12,9 @@ namespace
 	constexpr int kItemNum = static_cast<int>(Item::itemMaxNum);
 }
 
-class StringFunction;
+class Achievement;
+class StringStatic;
+
 
 class UI
 {
@@ -62,7 +64,8 @@ private:
 	int m_score;
 
 	// •¶Žš•`‰æƒNƒ‰ƒX-------------------------------
-	StringFunction* m_pString;
+	Achievement* m_pString;
+	StringStatic* m_pStringStatic;
 
 	//----------------------------------------------
 

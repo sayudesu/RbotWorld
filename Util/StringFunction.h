@@ -5,13 +5,13 @@
 class AddString;
 
 //////////////////
-// テキスト設定 //
+// テキスト描画クラス //
 //////////////////
-class StringFunction
+class Achievement
 {
 public:
-	StringFunction();
-	virtual ~StringFunction();
+	Achievement();
+	virtual ~Achievement();
 	virtual void InitFont(const char* fontPath, const char* fontName);
 	/// <summary>
 	/// 文字を追加する
@@ -23,8 +23,6 @@ public:
 	/// <param name="size">大きさ</param>
 	/// <param name="font">フォントパス</param>
 	virtual void Add(int x, int y, const char* text, int color, int size);
-
-	virtual void AddStatic(int x, int y, const char* text,int num, int color, int size);
 	/// <summary>
 	/// 文字の位置変更
 	/// </summary>
@@ -37,8 +35,26 @@ public:
 	/// </summary>
 	/// <param name="addNo">描画してい文字番号</param>
 	virtual void Draw(int addNo);
-	virtual void DrawStatic(int addNo);
 
+private:
+	const char* m_fontName;
+	const char* m_fontPathName;
+	std::vector<std::shared_ptr<AddString>>m_pAddString;
+};
+
+class StringStatic
+{
+public:
+	StringStatic();
+	virtual ~StringStatic();
+	// フォントの初期化(まだここでは初期はしていない別の場所でしている)
+	virtual void InitFont(const char* fontPath, const char* fontName);
+	// 文字を追加する
+	virtual void AddStatic(int x, int y, const char* text, int num, int color, int size);
+	// 文字位置の変更、描画したい数字を入力(文字の位置は変更できないようにする)
+	virtual void UpdateStatic(int addNo, int num);
+	// 描画
+	virtual void DrawStatic(int addNo);
 private:
 	const char* m_fontName;
 	const char* m_fontPathName;
@@ -69,8 +85,10 @@ public:
 	/// <param name="x"></param>
 	/// <param name="y"></param>
 	virtual void UpdateCharenge(int x, int y);
-	virtual void UpdateStatic(int x, int y);
 	virtual void Draw();
+
+	// 動きが無い文字用関数
+	virtual void UpdateStatic(int num);
 	virtual void DrawStatic();
 private:
 	int m_x;
@@ -81,8 +99,6 @@ private:
 	const char* m_font;
 	int m_fontHandle;
 
-	int m_xStatic;
-	int m_yStatic;
 	int m_num;
 };
 
