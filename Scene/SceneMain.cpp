@@ -152,9 +152,6 @@ SceneBase* SceneMain::Update()
 	// プレイヤーと地面の当たり判定
 	FieldCheckHit();
 
-	// 無敵時間の調整
-	if (!m_pPlayer->GetInvincible()) m_isInvincible = false;
-
 	// ゴールに到達するとゲームクリア画面に移動
 	if (m_pPlayer->GetPos().x > 30000)
 	{

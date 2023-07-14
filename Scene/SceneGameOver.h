@@ -10,6 +10,6 @@ public:
 	virtual SceneBase* Update() override;
 	void Draw();
 private:
-
+	bool m_isChangeScene;
 };
 

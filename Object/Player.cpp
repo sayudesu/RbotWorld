@@ -105,19 +105,7 @@ void Player::Update()
 }
 
 void Player::Draw()
-{
-	//体力を描画
-	DrawBox(100 - 1, 130 - 1,
-		100 + 400 + 1, 130 + 1 + 20,
-		0xff0000, true);//外枠
-	DrawBox(100 - 1, 130 - 1,
-		100 + 400 + 1, 130 + 1 + 20,
-		0xffff00, false);//外枠
-	DrawBox(100, 130,
-		100 + 400 * m_hp / kMaxHp, 130 + 20,
-		0x0ffff0, true);//メーター
-	//長さ * HP / HPMAX
-	
+{	
 	// ジャンプのエフェクトを表示
 	if (m_isJumpImg)
 	{
@@ -145,36 +133,11 @@ void Player::Draw()
 		// プレイヤーモデルの描画
 		m_pModel->Draw();
 	}
-	DrawSphere3D(m_pos, 16, 32, 0xffffff, 0xffffff, true);
-	DrawCapsule3D(m_posColl, m_size, kColRaidus, 32, 0xffffff, 0xffffff, true);
 }
 
 float Player::GetRadius() const
 {
 	return kColRaidus;
-}
-
-// ダメージを受け取る //
-void Player::OnDamage(int damage)
-{
-	m_isDamage = true;
-
-	m_tempDamage = damage;
-
-	if (m_tempHp != m_hp)// 新しく攻撃を受けたら
-	{
-		m_ultimateTimer = 30;//kInvincibleTime;
-	}
-
-	m_tempHp = m_hp;// 一つ前の体力を保存
-}
-
-// 攻撃を受けたか // 
-bool Player::GetInvincible()
-{
-	if (m_ultimateTimer != 1)	return true;// 攻撃を受けていたら
-
-	return false;// 受けていなかったら
 }
 
 // 点滅処理 //
@@ -188,33 +151,6 @@ void Player::UpdateInvincible()
 	else
 	{
 		m_ultimateTimer = 1;
-	}
-}
-
-// 体力管理　//
-void Player::UpdateHitPoint()
-{
-	// HPバー体力 - ダメージ分を徐々に減らす
-	if (m_isDamage)
-	{
-		// HPUIの枠を超えない様に + 1
-		if (m_hp < 0 + 1)
-		{
-			// HPを0に設定
-			m_hp = 0;
-			// 死んだ
-			m_isDead = true;
-		}
-		else if (m_hp > m_tempHp - m_tempDamage)
-		{
-			// 減らす
-			m_hp--;
-		}
-		else
-		{
-			// 減らし終わったら合図
-			m_isDamage = false;
-		}
 	}
 }
 
@@ -368,8 +304,6 @@ void Player::UpdateRun()
 	UpdateMove();// 移動用関数
 	UpdateCamera();// カメラ用関数
 	UpdateGravity();//重力系管理用関数
-
-	UpdateHitPoint();// 体力の計算処理
 	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
 }
@@ -425,7 +359,6 @@ void Player::UpdateJump()
 	UpdateCamera();// カメラ用関数
 	UpdateGravity();//重力系管理用関数
 	UpdateHitField();//地面に当たった場合の処理
-	UpdateHitPoint();// 体力の計算処理
 	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
 	JumpEffect();// エフェクト描画
@@ -452,12 +385,6 @@ void Player::UpdateMove()
 	m_size.x = m_posColl.x + cosf(m_rad) * 100.0f;
 	m_size.y = (m_posColl.y + sinf(m_rad) * 100.0f) + 100.0f;
 	m_size.z = m_posColl.z;
-
-
-#if false	
-	// カプセルの描画
-	DrawCapsule3D(m_posColl, m_size, kColRaidus, 20, 0xffffff, 0xffffff, true);
-#endif
 }
 
 // 角度管理用関数 //

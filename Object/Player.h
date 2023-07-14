@@ -42,15 +42,11 @@ public:
 	// 動けるかどうか
 	void SetMoveing(bool isMove) { m_isMove = isMove; }
 
-	// ダメージを受けた
-	void OnDamage(int damage);
-	bool GetInvincible();// 無敵時間
-
 private:
 	void UpdateInvincible();// 
-	void UpdateHitPoint();// 体力管理
+
 	void JumpEffect();
-private:
+
 	// カメラの更新
 	void UpdateCamera();
 	// 動き全体の更新用関数

@@ -1,6 +1,14 @@
 #include "CreateText.h"
 #include <DxLib.h>
 #include "Util/Pad.h"
+#include <cassert>
+
+namespace 
+{
+	// フォント関連
+	const char* kFont = "Data/Fonts/851letrogo_007.ttf";// フォントパス
+	const char* kFontName = "851レトロゴ";// フォントの名前
+}
 
 //////////////////////
 // CreateTextクラス //
@@ -132,7 +140,8 @@ Text::Text(int x, int y, const char* text, int color, int size, bool frame) :
 	m_blend(255)
 {
 	// フォントデータを作成
-	m_fontHandle = CreateFontToHandle(NULL, size, 3);
+	m_fontHandle = CreateFontToHandle(kFontName, size, 3);
+	assert(m_fontHandle != -1);
 }
 
 Text::~Text()

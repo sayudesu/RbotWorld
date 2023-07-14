@@ -25,6 +25,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);
+
+	// ********** フォントのロード **********
+	LPCSTR font_path = "Data/Fonts/851letrogo_007.ttf"; // 読み込むフォントファイルのパス
+	if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0) 
+	{
+		ChangeFont("851レトロゴ", DX_CHARSET_DEFAULT);
+	}
+	else
+	{
+		// フォント読込エラー処理
+		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
+	}
 	
 	// サウンド読み込み
 	Sound::load();
@@ -42,7 +54,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pScene->Update();
 
 		pScene->Draw();
-
+		
 		// 裏画面を表画面を入れ替える
 		ScreenFlip();
 
@@ -53,6 +65,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		while (GetNowHiPerformanceCount() - time < 16667)
 		{
 		}
+	}
+
+	// ********** フォントのアンロード **********
+	if (RemoveFontResourceEx(font_path, FR_PRIVATE, NULL)) {
+	}
+	else {
+		MessageBox(NULL, "remove failure", "", MB_OK);
 	}
 
 	pScene->End();

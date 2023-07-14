@@ -92,15 +92,6 @@ AddString::AddString(int x, int y, const char* text, int color, int size, const 
 	m_num(0)
 {
 
-	LPCTSTR font_path = reinterpret_cast<LPCTSTR>(fontPath); // 読み込むフォントファイルのパス
-	if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0) {
-	}
-	//フォントの読み込みが失敗したら読み込み失敗を出す
-	else {
-		// フォント読込エラー処理
-		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
-	}
-
 	// フォントハンドルデータ格納
 	m_fontHandle = CreateFontToHandle(m_font, m_size, 3);
 	assert(m_fontHandle != -1);
@@ -116,16 +107,6 @@ AddString::AddString(int x, int y, const char* text,int num, int color, int size
 	m_fontHandle(-1),
 	m_num(num)
 {
-
-	LPCTSTR font_path = reinterpret_cast<LPCTSTR>(fontPath); // 読み込むフォントファイルのパス
-	if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0)
-	{
-	}
-	else//フォントの読み込みが失敗したら読み込み失敗を出す
-	{
-		// フォント読込エラー処理
-		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
-	}
 
 	// フォントハンドルデータ格納
 	m_fontHandle = CreateFontToHandle(m_font, m_size, 3);

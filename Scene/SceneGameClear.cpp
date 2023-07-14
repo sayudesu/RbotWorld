@@ -66,10 +66,10 @@ SceneBase* SceneGameClear::Update()
 	if (m_isStringSlider && m_sliderPos < m_sliderEndPos)
 	{
 		m_sliderPos += 15;
-		m_pStringScore->UpdateStatic(0, Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 - 350.0f + m_sliderPos, m_score);
+		m_pStringScore->UpdateStatic(0, Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 - 350.0f + m_sliderPos, 0);
 		m_pStringScore->UpdateStatic(1, Game::kScreenWidth / 2 - 350.0f, Game::kScreenHeight / 2 - 50.0f + m_sliderPos, m_score);
-		m_pStringScore->UpdateStatic(2, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 150.0f + m_sliderPos, m_score);
-		m_pStringScore->UpdateStatic(3, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 250.0f + m_sliderPos, m_score);
+		m_pStringScore->UpdateStatic(2, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 150.0f + m_sliderPos, m_coinNum);
+		m_pStringScore->UpdateStatic(3, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 250.0f + m_sliderPos, m_diamondNum);
 
 	}
 
@@ -125,8 +125,6 @@ void SceneGameClear::Draw()
 	{
 		m_pStringScore->DrawStatic(i);
 	}
-
-	DrawBox(Game::kScreenWidth / 2 - 30, Game::kScreenHeight / 2 - 30, Game::kScreenWidth / 2 + 30, Game::kScreenHeight / 2 + 30, 0xffffff, true);
 
 	SceneBase::DrawSliderDoor();
 }

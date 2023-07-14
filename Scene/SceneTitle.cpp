@@ -15,18 +15,18 @@
 namespace
 {
 	// タイトル
-	const char* kTextTitle = "[RobotWorld]";
+	const char* kTextTitle = "ろぼっとわーるど";
 	// ボタン誘導
-	const char* const kTextStart = "Start";
+	const char* const kTextStart = "すたーと";
 	// テスト用
-	const char* const kTextTest = "Credit";
-	const char* const kTextTest2 = "Setting";
+	const char* const kTextTest = "くれじっと";
+	const char* const kTextTest2 = "せってい";
 
 	const char* const kFileName = "Data/Img/org2.png";
 	const char* const kFileName2= "Data/Img/org2Test2_n.png";
 
 
-	const char* const kTextQuit= "QUIT";
+	const char* const kTextQuit= "やめる";
 }
 
 SceneTitle::SceneTitle()
@@ -49,7 +49,7 @@ void SceneTitle::Init()
 
 	// テキスト追加 //
 	// タイトル
-	m_pText->Add(Game::kScreenWidth/2 - 400,250 ,kTextTitle,0xffff00,130,false);
+	m_pText->Add(Game::kScreenWidth/2 - 500,250 ,kTextTitle,0xffff00,130,false);
 	// スタート
 	int x = Game::kScreenWidth / 2 - 250;
 	int y = Game::kScreenHeight / 2 + 100;
@@ -126,6 +126,7 @@ SceneBase* SceneTitle::Update()
 		}
 	}
 
+	// スライドを開ける
 	SceneBase::UpdateSlider(m_isSliderOpen);
 
 	return this;
@@ -140,8 +141,6 @@ void SceneTitle::Draw()
 //	m_pShadow->Draw();
 	// テキスト描画
 	m_pText->Draw();
-
-	DrawBox(Game::kScreenWidth / 2 - 30, Game::kScreenHeight / 2 - 30, Game::kScreenWidth / 2 + 30, Game::kScreenHeight / 2 + 30, 0xffffff, true);
 
 	// スライドを描画
 	SceneBase::DrawSliderDoor();
