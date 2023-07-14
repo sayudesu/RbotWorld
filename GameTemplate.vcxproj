@@ -140,6 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FieldBase.cpp" />
+    <ClCompile Include="FieldOne.cpp" />
     <ClCompile Include="Object\Coin.cpp" />
     <ClCompile Include="Object\Diamond.cpp" />
     <ClCompile Include="Util\DrawTitleModel.cpp" />
@@ -151,7 +153,7 @@
     <ClCompile Include="Scene\SceneGameClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="Util\Shadow.cpp" />
-    <ClCompile Include="Util\StringFunction.cpp" />
+    <ClCompile Include="Util\Achievement.cpp" />
     <ClCompile Include="Util\UI.cpp" />
     <ClCompile Include="Util\Sound.cpp" />
     <ClCompile Include="Util\Model.cpp" />
@@ -168,6 +170,8 @@
     <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FieldBase.h" />
+    <ClInclude Include="FieldOne.h" />
     <ClInclude Include="Object\Coin.h" />
     <ClInclude Include="Object\Diamond.h" />
     <ClInclude Include="Util\DrawTitleModel.h" />
@@ -180,7 +184,7 @@
     <ClInclude Include="Scene\SceneGameClear.h" />
     <ClInclude Include="Scene\SceneGameOver.h" />
     <ClInclude Include="Util\Shadow.h" />
-    <ClInclude Include="Util\StringFunction.h" />
+    <ClInclude Include="Util\Achievement.h" />
     <ClInclude Include="Util\UI.h" />
     <ClInclude Include="Util\Sound.h" />
     <ClInclude Include="Util\Model.h" />

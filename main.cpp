@@ -1,10 +1,10 @@
 #include <DxLib.h>
 #include "game.h"
 #include "SceneManager.h"
-
 #include "Sound.h"
 
 #include <math.h>
+
 
 // ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çŽn‚Ü‚è‚Ü‚·
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SceneManager* pScene = new SceneManager;
 
 	pScene->Init();
-
+	
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG  time = GetNowHiPerformanceCount();

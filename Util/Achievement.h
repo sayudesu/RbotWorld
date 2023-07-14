@@ -4,9 +4,9 @@
 
 class AddString;
 
-//////////////////
-// テキスト描画クラス //
-//////////////////
+////////////////////
+// 実績描画クラス //
+/////////////////////
 class Achievement
 {
 public:
@@ -52,7 +52,7 @@ public:
 	// 文字を追加する
 	virtual void AddStatic(int x, int y, const char* text, int num, int color, int size);
 	// 文字位置の変更、描画したい数字を入力(文字の位置は変更できないようにする)
-	virtual void UpdateStatic(int addNo, int num);
+	virtual void UpdateStatic(int addNo, int x, int y, int num);
 	// 描画
 	virtual void DrawStatic(int addNo);
 private:
@@ -88,7 +88,7 @@ public:
 	virtual void Draw();
 
 	// 動きが無い文字用関数
-	virtual void UpdateStatic(int num);
+	virtual void UpdateStatic(int x, int y, int num);
 	virtual void DrawStatic();
 private:
 	int m_x;

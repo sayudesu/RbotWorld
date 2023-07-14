@@ -2,7 +2,7 @@
 #include "ItemName.h"
 #include "Vec3.h"
 
-#define DEBUG_ true;
+#define DEBUG_ false;
 
 namespace
 {

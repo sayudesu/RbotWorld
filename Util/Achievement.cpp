@@ -1,4 +1,4 @@
-#include "StringFunction.h"
+#include "Achievement.h"
 #include <DxLib.h>
 #include <cassert>
 
@@ -67,9 +67,9 @@ void StringStatic::AddStatic(int x, int y, const char* text, int num, int color,
 	m_pAddString.push_back(std::make_shared<AddString>(x, y, text, num,color, size, m_fontPathName, m_fontName));
 }
 
-void StringStatic::UpdateStatic(int addNo,int num)
+void StringStatic::UpdateStatic(int addNo,int x ,int y,int num)
 {
-	m_pAddString[addNo]->UpdateStatic(num);
+	m_pAddString[addNo]->UpdateStatic(x,y,num);
 }
 
 void StringStatic::DrawStatic(int addNo)
@@ -150,8 +150,10 @@ void AddString::Draw()
 	DrawStringToHandle(m_x, m_y, m_text, m_color, m_fontHandle);	
 }
 
-void AddString::UpdateStatic(int num)
+void AddString::UpdateStatic(int x,int y,int num)
 {
+	m_x = x;
+	m_y = y;
 	m_num = num;
 }
 

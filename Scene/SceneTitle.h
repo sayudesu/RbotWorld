@@ -5,8 +5,8 @@
 #include "Util/Vec3.h"
 
 class CreateText;
-class DrawTitleModel;
-
+class TitleDrawModeler;
+class FieldBase;
 class Shadow;
 
 class SceneTitle:public SceneBase
@@ -23,8 +23,10 @@ private:
 	// テキスト用のクラス
 	CreateText* m_pText;
 	// 3Dモデル表示用クラス
-	DrawTitleModel* m_pDrawModel;
+	TitleDrawModeler* m_pDrawModeler;
 	// 2Dシェーダー用クラス
 	Shadow* m_pShadow;
+
+	std::shared_ptr<FieldBase>m_pField;
 };
 

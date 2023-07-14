@@ -1,6 +1,6 @@
 #include "UI.h"
 #include <DxLib.h>
-#include "Util/StringFunction.h"
+#include "Util/Achievement.h"
 #include "Util/game.h"
 
 namespace
@@ -91,7 +91,7 @@ void UI::Update()
 
 	// スコアの更新-------------------------------------------------------------------------------------
 	Score();
-	m_pStringStatic->UpdateStatic(0, m_score);
+	m_pStringStatic->UpdateStatic(0, Game::kScreenWidth / 2 - 500, 100, m_score);
 	// -------------------------------------------------------------------------------------------------
 	
 }

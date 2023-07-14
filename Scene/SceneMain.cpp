@@ -14,6 +14,8 @@
 #include "Object/ItemManegaer.h"
 #include "ItemName.h"
 
+#include "FieldBase.h"
+
 #include "Sound.h"
 
 #include <cassert>
@@ -24,7 +26,7 @@ namespace
 	Vec3 kPos = { static_cast<float>(Game::kScreenWidth),0.0f ,0.0f };
 }
 
-SceneMain::SceneMain():
+SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
 	m_slowCount(0),
 	m_enemyCount(0),
 	m_tempRand(0),
@@ -32,7 +34,8 @@ SceneMain::SceneMain():
 	m_pPlayer(nullptr),
 	m_pField(nullptr),
 	m_pMap(nullptr),
-	m_pUi(nullptr)
+	m_pUi(nullptr),
+	m_pFieldOne(field)
 {
 	// インスタンス作成
 	m_pItem = std::make_shared<ItemManegaer>();
@@ -41,6 +44,7 @@ SceneMain::SceneMain():
 	m_pField = new Field;
 	m_pMap = new Map;
 	m_pUi = new UI;
+
 }
 
 SceneMain::~SceneMain()
@@ -106,6 +110,9 @@ void SceneMain::Init()
 	m_pUi->SetItemMaxNum(Item::diamond, m_diamondNum);
 
 	m_isInvincible = true;
+
+	m_hDoor = LoadGraph("Data/Img/DoorH.png");
+
 	// BGM再生
 	Sound::startBgm(Sound::SoundId_Main, 50);
 }
@@ -116,15 +123,16 @@ void SceneMain::End()
 
 	m_pField->End();
 
+	DeleteGraph(m_hDoor);
+
 	Sound::stopBgm(Sound::SoundId_Main);
 }
 
 // 更新 //
 SceneBase* SceneMain::Update()
 {
-	// フェイド処理
-	UpdateFade();
 
+	m_pFieldOne->Update();
 	m_pField->Update();
 
 	// プレイヤーの操作
@@ -150,21 +158,24 @@ SceneBase* SceneMain::Update()
 	// ゴールに到達するとゲームクリア画面に移動
 	if (m_pPlayer->GetPos().x > 30000)
 	{
-		StartFadeOut();
-		// スコアを渡す
-		return new SceneGameClear{ m_pUi->GetScore() };
+		m_pPlayer->SetMoveing(false);
+		if (SceneBase::UpdateSliderClose())
+		{
+			// スコアを渡す
+			return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
+		}
 	}
-
+//	return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
 	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
 	if (m_pPlayer->GetPos().y < -1000.0f ||
 		m_pPlayer->GetIsDead())
 	{
-		if (!IsFading())
+		m_pPlayer->SetMoveing(false);
+		if (SceneBase::UpdateSliderClose())
 		{
 			return new SceneGameOver;
 		}
 	}
-
 
 	if (DxLib::CheckHitKey(KEY_INPUT_M))
 	{
@@ -229,6 +240,9 @@ SceneBase* SceneMain::Update()
 	m_pUi->SetItemNum(Item::coin, m_coinCount);
 	m_pUi->SetItemNum(Item::diamond, m_diamondCount);
 
+	// スライドを開ける
+	SceneBase::UpdateSlider(m_isSliderOpen);
+
 	return this;
 }
 // 描画 //
@@ -236,26 +250,12 @@ void SceneMain::Draw()
 {
 	m_pMap->Draw();
 	m_pPlayer->Draw();
+	m_pFieldOne->Draw();
 	m_pField->Draw();
 	m_pItem->Draw();
 	m_pUi->Draw();
-#if false			
-	for (int i = 0; i < m_coinNum; i++)
-	{
-		DrawSphere3D(VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, -0.5f),
-			62, 32, 0xffff00, 0xffff00, true);
-	}
-	for (int i = 0; i < m_diamondNum; i++)
-	{
-		DrawSphere3D(VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, -0.5f),
-			62, 32, 0x0000ff, 0x0000ff, true);
-	}
 
-	DrawSphere3D(VGet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y + 250.0f, m_pPlayer->GetPos().z),
-		128 * 2, 32, 0xffffff, 0xffffff, true);
-#endif
-	// フェイド処理
-	SceneBase::DrawFade();
+	SceneBase::DrawSliderDoor();
 }
 
 void SceneMain::FieldCheckHit()

@@ -10,11 +10,12 @@ class Map;
 class UI;
 class ItemManegaer;
 
+class FieldBase;
 
 class SceneMain : public SceneBase
 {
 public:
-	SceneMain();
+	SceneMain(std::shared_ptr<FieldBase>field);
 	virtual ~SceneMain();
 
 	virtual void Init() override;
@@ -24,6 +25,8 @@ public:
 	virtual void Draw() override;
 
 	void FieldCheckHit();
+private:
+	void Door();
 private:
 	
 	int m_slowCount;
@@ -42,7 +45,7 @@ private:
 	Field* m_pField;
 	Map* m_pMap;
 	UI* m_pUi;
-
+	std::shared_ptr<FieldBase> m_pFieldOne;
 	// test //
 
 //	int handle = -1;
@@ -56,4 +59,6 @@ private:
 
 	int m_coinCount = 0;
 	int m_diamondCount = 0;
+
+	int m_hDoor;
 };

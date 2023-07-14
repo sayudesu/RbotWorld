@@ -76,6 +76,9 @@ Player::Player():
 
 	m_pGraphAnimation = new GraphAnimation;
 
+	// 動けます
+	m_isMove = true;
+
 }
 
 Player::~Player()
@@ -433,12 +436,13 @@ void Player::UpdateMove()
 	// プレイヤーの進行方向
 	MATRIX playerRotMtx = MGetRotY(-90 * DX_PI_F / 180.0f);
 	VECTOR move = VTransform(kPlayerVec, playerRotMtx);
-
-	//移動量
-	m_pos = VAdd(m_pos, move);
-
-	// プレイヤーの位置
-	m_pModel->SetPos(m_pos);
+	if (m_isMove)
+	{
+		//移動量
+		m_pos = VAdd(m_pos, move);
+		// プレイヤーの位置
+		m_pModel->SetPos(m_pos);
+	}
 
 	// 当たり判定用サイズ
 	m_posColl = { m_pos.x - 25.0f, m_pos.y + 50.0f,      m_pos.z };
@@ -490,8 +494,6 @@ void Player::UpdateHitField()
 			m_angle = 0.0f;
 			// 当たり判定の回転角度
 			m_rad = 90.0f * DX_PI_F / 180.0f;
-	
-
 		}
 	}
 }

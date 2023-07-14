@@ -21,7 +21,6 @@ CreateText::~CreateText()
 	{
 		text.reset();
 	}
-	printfDx("消えました・");
 }
 
 void CreateText::Add(int x, int y, const char* text, int color, int size,bool frame)
@@ -74,7 +73,7 @@ void CreateText::Update()
 	// 選択したら100フレーム後にその画面に切り替わる
 	if (m_isSelect)
 	{
-		m_pText[selectNow + 1]->SetSelectRadius(selectRad += 10);
+		m_pText[selectNow + 1]->SetSelectRadius(selectRad += 6);
 
 		for (int i = 0; i < m_pText.size(); i++)
 		{
@@ -161,7 +160,7 @@ void Text::Draw()
 	DrawStringToHandle(m_x, m_y, m_text, m_color, m_fontHandle);
 	// 描画ブレンドモードをノーブレンドにする
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	if(m_rad != 0)DrawCircle(m_x + 10, m_y + 10, m_rad, 0xffffff,false);
+	if(m_rad != 0)DrawCircle(m_x + 250, m_y + 25, m_rad, 0xff0000,false);
 }
 
 // 選択フレームを表示するかどうか
@@ -177,5 +176,5 @@ void Text::SetSelectRadius(int rad)
 
 void Text::BlendMode()
 {
-	m_blend --;
+	m_blend--;
 }

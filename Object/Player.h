@@ -39,6 +39,9 @@ public:
 	// “–‚½‚è”»’è‚Ì”¼Œa
 	float GetRadius()const;
 
+	// “®‚¯‚é‚©‚Ç‚¤‚©
+	void SetMoveing(bool isMove) { m_isMove = isMove; }
+
 	// ƒ_ƒ[ƒW‚ğó‚¯‚½
 	void OnDamage(int damage);
 	bool GetInvincible();// –³“GŠÔ
@@ -143,5 +146,7 @@ private:
 
 	int m_tempScreenH = 0;
 	int handle = 0;
+	// “®‚¯‚é‚©‚Ç‚¤‚©
+	bool m_isMove;
 };
 

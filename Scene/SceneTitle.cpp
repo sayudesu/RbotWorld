@@ -7,6 +7,9 @@
 #include "Pad.h"
 #include "Sound.h"
 
+#include "FieldOne.h"
+
+
 #include "Shadow.h"
 
 namespace
@@ -28,14 +31,14 @@ namespace
 
 SceneTitle::SceneTitle()
 {
-	m_pDrawModel = new DrawTitleModel;
+	m_pDrawModeler = new TitleDrawModeler;
 	m_pShadow = new Shadow(kFileName, kFileName2);
 	m_pText = new CreateText;
 }
 
 SceneTitle::~SceneTitle()
 {
-	delete m_pDrawModel;
+	delete m_pDrawModeler;
 	delete m_pText;
 }
 
@@ -48,7 +51,7 @@ void SceneTitle::Init()
 	// タイトル
 	m_pText->Add(Game::kScreenWidth/2 - 400,250 ,kTextTitle,0xffff00,130,false);
 	// スタート
-	int x = Game::kScreenWidth / 2 - 300;
+	int x = Game::kScreenWidth / 2 - 250;
 	int y = Game::kScreenHeight / 2 + 100;
 	int addFrame = 50 + 2;
 	int color = 0x000000;
@@ -73,38 +76,73 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
-	m_pShadow->Update();
-
-	m_pDrawModel->Update();
+	// 2Dシェーダーの更新
+//	m_pShadow->Update();
+	// モデルの更新
+	m_pDrawModeler->Update();
 
 	m_pText->Update();
-
+	// シーンを選択したら移動モデルの開始する
+	if (m_pText->SelectNo() != -1)
+	{
+		m_pDrawModeler->SetStartPos(true);
+	}
+	// ゲームプレイ画面に移動
 	if (m_pText->SelectNo() == 0)
 	{
-		return(new SceneMain);
+		m_isSliderOpen = true;
+		if (m_pDrawModeler->GetSceneChange())
+		{			
+			m_pField = std::make_shared<FieldBase>();
+			if (SceneBase::UpdateSliderClose())
+			{
+				return(new SceneMain(m_pField));
+				
+			}
+		}
 	}
+	// クレジット画面に移動
 	if (m_pText->SelectNo() == 1)
 	{
-		DrawString(1000, 100, "まだクレジット表記はできていません。", 0xffffff);
+		if (m_pDrawModeler->GetSceneChange())
+		{
+			DrawString(1000, 100, "まだクレジット表記はできていません。", 0xffffff);
+		}
 	}
+	// 設定画面に移動
 	if (m_pText->SelectNo() == 2)
 	{ 
-		DrawString(1000, 100, "まだ設定画面はできていません。", 0xffffff);
+		if (m_pDrawModeler->GetSceneChange())
+		{
+			DrawString(1000, 100, "まだ設定画面はできていません。", 0xffffff);
+		}
 	}
+	// ゲーム終了
 	if (m_pText->SelectNo() == 3)
 	{
-		DxLib::DxLib_End();
+		if (m_pDrawModeler->GetSceneChange())
+		{
+			DxLib::DxLib_End();
+		}
 	}
+
+	SceneBase::UpdateSlider(m_isSliderOpen);
 
 	return this;
 }
 
 void SceneTitle::Draw()
 {
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xaaaaaa, true);
 	// 3Dモデル描画
-	m_pDrawModel->Draw();
+	m_pDrawModeler->Draw();
 	// 2Dシェーダー描画
-	m_pShadow->Draw();
+//	m_pShadow->Draw();
 	// テキスト描画
 	m_pText->Draw();
+
+	DrawBox(Game::kScreenWidth / 2 - 30, Game::kScreenHeight / 2 - 30, Game::kScreenWidth / 2 + 30, Game::kScreenHeight / 2 + 30, 0xffffff, true);
+
+	// スライドを描画
+	SceneBase::DrawSliderDoor();
 }
