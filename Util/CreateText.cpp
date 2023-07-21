@@ -17,7 +17,7 @@ CreateText::CreateText():
 	m_isSelect(false),
 	selectNum(-1),
 	selectNow(0),
-	selectNo(-1),
+	m_selectNo(-1),
 	selectRad(0)
 {
 
@@ -90,7 +90,8 @@ void CreateText::Update()
 
 		if (selectRad > 100)
 		{
-			selectNo = selectNow;
+			m_selectNo = selectNow;
+			m_isSelect = false;
 		}
 	}
 
@@ -124,6 +125,11 @@ void CreateText::Draw()
 	{
 		text->Draw();
 	}
+}
+
+void CreateText::ResetSelectNo()
+{
+	m_selectNo = -1;
 }
 
 ////////////////

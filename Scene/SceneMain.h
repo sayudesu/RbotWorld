@@ -9,6 +9,7 @@ class Field;
 class Map;
 class UI;
 class ItemManegaer;
+class PauseScreen;
 
 class FieldBase;
 
@@ -24,41 +25,46 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
 
+private:
+	// 判定を確認
 	void FieldCheckHit();
+	void ItemCheckHit();
+	// ゲーム全体の更新処理
+	void UpdateMain();
+	void UpdateMenu();
 private:
-	void Door();
-private:
-	
 	int m_slowCount;
-
-	int m_enemyCount;
-
-	int m_tempRand;
-
-	bool m_isInvincible;
-
-	// プレイヤーのポインタ
+	// プレイヤークラスのポインタ
 	Player* m_pPlayer;
-	// アイテムのポインタ
+	// アイテムクラスのポインタ
 	std::shared_ptr<ItemManegaer>m_pItem;
-	// マップのポインタ
+	// マップクラスのポインタ
 	Field* m_pField;
-	Map* m_pMap;
+	// UIクラスのポインタ
 	UI* m_pUi;
+	// マップ情報クラスのポインタ
+	Map* m_pMap;
 	std::shared_ptr<FieldBase> m_pFieldOne;
-	// test //
-
-//	int handle = -1;
+	
+	// アイテムの数を取得
 	int m_coinNum;
 	int m_diamondNum;
+	// コインの位置を取得
 	std::vector<int> m_CoinPosX;
 	std::vector<int> m_CoinPosY;
-
+	// ダイヤモンドの位置を取得
 	std::vector<int> m_diamondPosX;
 	std::vector<int> m_diamondPosY;
 
+	// 入手してアイテムを各自でカウント
 	int m_coinCount = 0;
 	int m_diamondCount = 0;
 
-	int m_hDoor;
+	// メンバ関数ポインタ
+	void (SceneMain::* m_updateFunc)();
+	// ポーズ画面用クラス
+	PauseScreen* m_pPause;
+	bool m_isGameClear;
+	bool m_isGameOver;
+
 };

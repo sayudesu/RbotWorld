@@ -14,9 +14,12 @@
 #include "Object/ItemManegaer.h"
 #include "ItemName.h"
 
+#include "PauseScreen.h"
+
 #include "FieldBase.h"
 
 #include "Sound.h"
+#include "Util/Pad.h"
 
 #include <cassert>
 
@@ -28,22 +31,22 @@ namespace
 
 SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
 	m_slowCount(0),
-	m_enemyCount(0),
-	m_tempRand(0),
-	m_isInvincible(false),
 	m_pPlayer(nullptr),
 	m_pField(nullptr),
 	m_pMap(nullptr),
 	m_pUi(nullptr),
-	m_pFieldOne(field)
+	m_pFieldOne(field),
+	m_updateFunc(&SceneMain::UpdateMain),
+	m_isGameClear(false),
+	m_isGameOver(false)
 {
 	// インスタンス作成
 	m_pItem = std::make_shared<ItemManegaer>();
-	
 	m_pPlayer = new Player;
 	m_pField = new Field;
 	m_pMap = new Map;
 	m_pUi = new UI;
+	m_pPause = new PauseScreen;
 
 }
 
@@ -109,10 +112,6 @@ void SceneMain::Init()
 	m_pUi->SetItemMaxNum(Item::coin, m_coinNum);
 	m_pUi->SetItemMaxNum(Item::diamond, m_diamondNum);
 
-	m_isInvincible = true;
-
-	m_hDoor = LoadGraph("Data/Img/DoorH.png");
-
 	// BGM再生
 	Sound::startBgm(Sound::SoundId_Main, 50);
 }
@@ -123,138 +122,52 @@ void SceneMain::End()
 
 	m_pField->End();
 
-	DeleteGraph(m_hDoor);
-
 	Sound::stopBgm(Sound::SoundId_Main);
 }
 
 // 更新 //
 SceneBase* SceneMain::Update()
 {
-
-	m_pFieldOne->Update();
-	m_pField->Update();
-
-	// プレイヤーの操作
-	m_pPlayer->UpdateControl();
-
-	m_pItem->Update();
-
-	// ゲームスロー再生用
-	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
-
-	if (m_slowCount == 0)
+	
+	// ゲームをクリアしたか
+	// ゲームオーバーになったか
+	if (m_isGameClear)
 	{
-		// プレイヤーの更新
-		m_pPlayer->Update();
+		// スコアを渡す
+		// ゲームクリア画面に移行
+		return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
+	}
+	else if (m_isGameOver) 
+	{
+		// ゲームオーバー画面に移行
+		return new SceneGameOver;
 	}
 
-	// プレイヤーと地面の当たり判定
-	FieldCheckHit();
-
-	// ゴールに到達するとゲームクリア画面に移動
-	if (m_pPlayer->GetPos().x > 30000)
-	{
-		m_pPlayer->SetMoveing(false);
-		if (SceneBase::UpdateSliderClose())
-		{
-			// スコアを渡す
-			return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
-		}
-	}
-//	return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
-	// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
-	if (m_pPlayer->GetPos().y < -1000.0f ||
-		m_pPlayer->GetIsDead())
-	{
-		m_pPlayer->SetMoveing(false);
-		if (SceneBase::UpdateSliderClose())
-		{
-			return new SceneGameOver;
-		}
-	}
-
-	if (DxLib::CheckHitKey(KEY_INPUT_M))
-	{
-		m_pUi->SetItemMaxNum(Item::coin, 3);
-	}
-
-	// 関数化します //
-
-	// プレイヤーの判定用座標
-	// コインの位置
-	// プレイヤーの位置からコインの位置を引く
-	// 触れたコインの数をカウントする
-	VECTOR pos = { m_pPlayer->GetPos().x,m_pPlayer->GetPos().y + 250.0f ,m_pPlayer->GetPos().z };
-	// コインとプレイヤーの当たり判定
-	for (int i = 0; i < m_coinNum; i++)
-	{
-		const VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
-
-		const VECTOR vec = VSub(pos, coinPos);
-
-		const float del = VSize(vec);
-
-		// ベクトルのサイズを取得する
-		// コインに当たっている場合は判定を行わない
-		// 触れたコインの番号を渡す
-		if (del < 128 * 2 + 62)
-		{
-			if (!m_pItem->isErase(Item::coin,i))
-			{
-				m_pItem->SetEraseNo(Item::coin,i);
-				m_coinCount++;
-			}
-		}
-	}
-
-	// コインとプレイヤーの当たり判定
-	// プレイヤーの位置からコインの位置を引く
-	// ベクトルのサイズを取得する
-	// コインの位置
-	for (int i = 0; i < m_diamondNum; i++)
-	{
-		const VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
-
-		const VECTOR vec = VSub(pos, diamondPos);
-
-		const float del = VSize(vec);
-
-		// コインに当たっている場合は判定を行わない
-		// 触れたコインの番号を渡す
-		// 触れたコインの数をカウントする
-		if (del < 128 * 2 + 62)
-		{
-			if (!m_pItem->isErase(Item::diamond,i))
-			{
-				m_pItem->SetEraseNo(Item::diamond,i);
-				m_diamondCount++;
-			}
-		}
-	}
-	m_pUi->Update();
-	// 取得したアイテムの数を渡す。
-	m_pUi->SetItemNum(Item::coin, m_coinCount);
-	m_pUi->SetItemNum(Item::diamond, m_diamondCount);
-
-	// スライドを開ける
-	SceneBase::UpdateSlider(m_isSliderOpen);
-
+	// 現在の指定関数に移動する
+	(this->*m_updateFunc)();
 	return this;
 }
 // 描画 //
 void SceneMain::Draw()
 {
+	// マップチップの描画
 	m_pMap->Draw();
+	// プレイヤーの描画
 	m_pPlayer->Draw();
+	// 地面の描画
 	m_pFieldOne->Draw();
 	m_pField->Draw();
+	// アイテムの描画
 	m_pItem->Draw();
+	// UIの描画
 	m_pUi->Draw();
-
+	// スライドの描画
 	SceneBase::DrawSliderDoor();
+	// ポーズ画面の描画
+	m_pPause->Draw();
 }
 
+// 地面との判定
 void SceneMain::FieldCheckHit()
 {
 	// 地面判定の情報を渡す
@@ -284,4 +197,141 @@ void SceneMain::FieldCheckHit()
 		}
 	}
 
+}
+
+// アイテムの判定
+void SceneMain::ItemCheckHit()
+{
+	// プレイヤーの判定用座標
+// コインの位置
+// プレイヤーの位置からコインの位置を引く
+// 触れたコインの数をカウントする
+	VECTOR pos = { m_pPlayer->GetPos().x,m_pPlayer->GetPos().y + 250.0f ,m_pPlayer->GetPos().z };
+	// コインとプレイヤーの当たり判定
+	for (int i = 0; i < m_coinNum; i++)
+	{
+		const VECTOR coinPos = VGet(m_CoinPosX[i], m_CoinPosY[i] + 150.0f, m_pPlayer->GetPos().z);
+
+		const VECTOR vec = VSub(pos, coinPos);
+
+		const float del = VSize(vec);
+
+		// ベクトルのサイズを取得する
+		// コインに当たっている場合は判定を行わない
+		// 触れたコインの番号を渡す
+		if (del < 128 * 2 + 62)
+		{
+			if (!m_pItem->isErase(Item::coin, i))
+			{
+				m_pItem->SetEraseNo(Item::coin, i);
+				m_coinCount++;
+			}
+		}
+	}
+
+	// コインとプレイヤーの当たり判定
+	// プレイヤーの位置からコインの位置を引く
+	// ベクトルのサイズを取得する
+	// コインの位置
+	for (int i = 0; i < m_diamondNum; i++)
+	{
+		const VECTOR diamondPos = VGet(m_diamondPosX[i], m_diamondPosY[i] + 250.0f, m_pPlayer->GetPos().z);
+
+		const VECTOR vec = VSub(pos, diamondPos);
+
+		const float del = VSize(vec);
+
+		// コインに当たっている場合は判定を行わない
+		// 触れたコインの番号を渡す
+		// 触れたコインの数をカウントする
+		if (del < 128 * 2 + 62)
+		{
+			if (!m_pItem->isErase(Item::diamond, i))
+			{
+				m_pItem->SetEraseNo(Item::diamond, i);
+				m_diamondCount++;
+			}
+		}
+	}
+}
+// ゲ―ムメイン画面の処理
+void SceneMain::UpdateMain()
+{
+	// フィールドの判定(地面)
+	m_pFieldOne->Update();
+	m_pField->Update();
+
+	// プレイヤーの操作
+	m_pPlayer->UpdateControl();
+	// アイテムの更新処理
+	m_pItem->Update();
+
+	// ゲームスロー再生用
+	m_slowCount = (m_slowCount += 1) % m_pPlayer->GetSlowWorld();
+	if (m_slowCount == 0)
+	{
+		// プレイヤーの更新
+		m_pPlayer->Update();
+	}
+
+	// プレイヤーと地面の当たり判定
+	FieldCheckHit();
+
+	// ゴールに到達するとゲームクリア画面に移動
+	if (m_pPlayer->GetPos().x > 30000)
+	{
+		m_pPlayer->SetMoveing(false);
+		if (SceneBase::UpdateSliderClose())
+		{
+			m_isGameClear = true;
+		}
+	}
+	//	return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
+		// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
+	if (m_pPlayer->GetPos().y < -1000.0f ||
+		m_pPlayer->GetIsDead())
+	{
+		m_pPlayer->SetMoveing(false);
+		if (SceneBase::UpdateSliderClose())
+		{
+			m_isGameOver = true;
+		}
+	}
+
+	// アイテムの当たり判定処理
+	ItemCheckHit();
+	// UI更新処理
+	m_pUi->Update();
+	// 取得したアイテムの数を渡す。
+	m_pUi->SetItemNum(Item::coin, m_coinCount);
+	m_pUi->SetItemNum(Item::diamond, m_diamondCount);
+
+	// スライドを開ける
+	SceneBase::UpdateSlider(m_isSliderOpen);
+	
+	// メニュー画面を表示
+	if (Pad::isTrigger(PAD_INPUT_8))
+	{
+		m_updateFunc = &SceneMain::UpdateMenu;
+	}
+}
+
+// ポーズ画面処理
+void SceneMain::UpdateMenu()
+{
+	// ポーズ画面更新
+	m_pPause->Update();
+
+	// ポーズ画面終了
+	if (Pad::isTrigger(PAD_INPUT_8))
+	{
+		m_pPause->GetPauseEnd(true);
+	}
+	// ゲームプレイ用関数に移行する
+	if (m_pPause->isSetEnd())
+	{
+		m_updateFunc = &SceneMain::UpdateMain;
+		// デフォルトの状態に戻す
+		m_pPause->Reset();
+	}
 }

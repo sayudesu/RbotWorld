@@ -33,11 +33,14 @@ public:
 	/// </summary>
 	void Draw();
 
+	// セレクトナンバーをリセットする
+	void ResetSelectNo();
+
 	/// <summary>
 	/// 選択した番号
 	/// </summary>
 	/// <returns>何番目を選択しかたを返す</returns>
-	int SelectNo() { return selectNo; }
+	int GetSelectNo() { return m_selectNo; }
 private:
 	std::vector<std::shared_ptr<Text>> m_pText;
 	// 選択したかどうか
@@ -45,7 +48,7 @@ private:
 	// 選択肢の数
 	int selectNum;
 	int selectNow;
-	int selectNo;
+	int m_selectNo;
 	// 円の半径
 	int selectRad;
 };

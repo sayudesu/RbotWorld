@@ -6,7 +6,7 @@
 #include "game.h"
 #include "Pad.h"
 #include "Sound.h"
-
+#include "ButtonDrawer.h"
 #include "FieldOne.h"
 
 
@@ -20,7 +20,7 @@ namespace
 	const char* const kTextStart = "すたーと";
 	// テスト用
 	const char* const kTextTest = "くれじっと";
-	const char* const kTextTest2 = "せってい";
+	const char* const kTextTest2 = "ぼたんせつめい";
 
 	const char* const kFileName = "Data/Img/org2.png";
 	const char* const kFileName2= "Data/Img/org2Test2_n.png";
@@ -34,19 +34,21 @@ SceneTitle::SceneTitle()
 	m_pDrawModeler = new TitleDrawModeler;
 	m_pShadow = new Shadow(kFileName, kFileName2);
 	m_pText = new CreateText;
+	m_pButtonDrawer = new ButtonDrawer;
 }
 
 SceneTitle::~SceneTitle()
 {
 	delete m_pDrawModeler;
 	delete m_pText;
+	delete m_pButtonDrawer;
 }
 
 void SceneTitle::Init()
 {
 	// BGM 再生
 	Sound::startBgm(Sound::SoundId_Title, 50);
-
+	m_pButtonDrawer->Init();
 	// テキスト追加 //
 	// タイトル
 	m_pText->Add(Game::kScreenWidth/2 - 500,250 ,kTextTitle,0xffff00,130,false);
@@ -80,15 +82,18 @@ SceneBase* SceneTitle::Update()
 //	m_pShadow->Update();
 	// モデルの更新
 	m_pDrawModeler->Update();
+	if (m_pText->GetSelectNo() == -1)
+	{
+		m_pText->Update();
+	}
 
-	m_pText->Update();
 	// シーンを選択したら移動モデルの開始する
-	if (m_pText->SelectNo() != -1)
+	if (m_pText->GetSelectNo() != -1)
 	{
 		m_pDrawModeler->SetStartPos(true);
 	}
 	// ゲームプレイ画面に移動
-	if (m_pText->SelectNo() == 0)
+	if (m_pText->GetSelectNo() == 0)
 	{
 		m_isSliderOpen = true;
 		if (m_pDrawModeler->GetSceneChange())
@@ -102,23 +107,38 @@ SceneBase* SceneTitle::Update()
 		}
 	}
 	// クレジット画面に移動
-	if (m_pText->SelectNo() == 1)
+	if (m_pText->GetSelectNo() == 1)
 	{
 		if (m_pDrawModeler->GetSceneChange())
 		{
+			m_pText->ResetSelectNo();
 			DrawString(1000, 100, "まだクレジット表記はできていません。", 0xffffff);
 		}
 	}
 	// 設定画面に移動
-	if (m_pText->SelectNo() == 2)
+	if (m_pText->GetSelectNo() == 2)
 	{ 
 		if (m_pDrawModeler->GetSceneChange())
 		{
-			DrawString(1000, 100, "まだ設定画面はできていません。", 0xffffff);
+			// ボタン説明画面の座標
+			int x = Game::kScreenWidth / 2 + 100;
+			int y = Game::kScreenHeight / 2;
+			// ボタン説明画面の位置
+			m_pButtonDrawer->Update(x, y);
+
+			// 戻る
+			if (Pad::isTrigger(PAD_INPUT_1))
+			{
+				m_pText->ResetSelectNo();
+			}
 		}
 	}
+	else
+	{
+		m_pButtonDrawer->Update(-Game::kScreenWidth / 2 + 100, 1000);
+	}
 	// ゲーム終了
-	if (m_pText->SelectNo() == 3)
+	if (m_pText->GetSelectNo() == 3)
 	{
 		if (m_pDrawModeler->GetSceneChange())
 		{
@@ -141,7 +161,7 @@ void SceneTitle::Draw()
 //	m_pShadow->Draw();
 	// テキスト描画
 	m_pText->Draw();
-
+	m_pButtonDrawer->Draw();
 	// スライドを描画
 	SceneBase::DrawSliderDoor();
 }

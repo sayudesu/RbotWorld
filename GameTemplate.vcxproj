@@ -140,10 +140,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ButtonDrawer.cpp" />
     <ClCompile Include="FieldBase.cpp" />
     <ClCompile Include="FieldOne.cpp" />
     <ClCompile Include="Object\Coin.cpp" />
     <ClCompile Include="Object\Diamond.cpp" />
+    <ClCompile Include="PauseScreen.cpp" />
     <ClCompile Include="Util\DrawTitleModel.cpp" />
     <ClCompile Include="Util\GraphAnimation.cpp" />
     <ClCompile Include="Object\ItemBase.cpp" />
@@ -170,10 +172,12 @@
     <ClCompile Include="util\Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ButtonDrawer.h" />
     <ClInclude Include="FieldBase.h" />
     <ClInclude Include="FieldOne.h" />
     <ClInclude Include="Object\Coin.h" />
     <ClInclude Include="Object\Diamond.h" />
+    <ClInclude Include="PauseScreen.h" />
     <ClInclude Include="Util\DrawTitleModel.h" />
     <ClInclude Include="Util\GraphAnimation.h" />
     <ClInclude Include="Object\ItemBase.h" />

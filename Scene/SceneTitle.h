@@ -8,6 +8,7 @@ class CreateText;
 class TitleDrawModeler;
 class FieldBase;
 class Shadow;
+class ButtonDrawer;
 
 class SceneTitle:public SceneBase
 {
@@ -26,7 +27,8 @@ private:
 	TitleDrawModeler* m_pDrawModeler;
 	// 2Dシェーダー用クラス
 	Shadow* m_pShadow;
-
+	// ボタン説明用クラス
+	ButtonDrawer* m_pButtonDrawer;
 	std::shared_ptr<FieldBase>m_pField;
 };
 
