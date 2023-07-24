@@ -119,6 +119,14 @@ void CreateText::Update()
 #endif
 }
 
+void CreateText::UpdatePos(int x, int y)
+{
+	for (auto& text : m_pText)
+	{
+		text->UpdatePos(x, y);
+	}
+}
+
 void CreateText::Draw()
 {
 	for (auto& text : m_pText)
@@ -138,6 +146,8 @@ void CreateText::ResetSelectNo()
 Text::Text(int x, int y, const char* text, int color, int size, bool frame) :
 	m_x(x),
 	m_y(y),
+	m_changePosX(0),
+	m_changePosY(0),
 	m_text(text),
 	m_color(color),
 	m_isFrame(frame),
@@ -155,27 +165,36 @@ Text::~Text()
 	DeleteFontToHandle(m_fontHandle);
 }
 
+void Text::UpdatePos(int x,int y)
+{
+	m_changePosX = x;
+	m_changePosY = y;
+}
+
 void Text::Draw()
 {
 	// 枠組み
 	if (m_isFrame)
 	{
-		DrawBox(m_x - 1, m_y - 1, m_x + 500 + 1, m_y + 50 + 1, 0xff0000, true);
-		DrawBox(m_x, m_y, m_x + 500, m_y + 50, 0xffffff, true);
+		DrawBox(m_x + m_changePosX - 1, m_y + m_changePosY - 1,
+			m_x + m_changePosX + 500 + 1, m_y + m_changePosY + 50 + 1, 0xff0000, true);
+		DrawBox(m_x + m_changePosX, m_y + m_changePosY,
+			m_x + m_changePosX + 500, m_y + m_changePosY + 50, 0xffffff, true);
 	}
 	// 選択しているかを可視化
 	if (m_isSelect)
 	{
-		DrawBox(m_x, m_y, m_x + 500, m_y + 50, 0x00ffff, true);
+		DrawBox(m_x + m_changePosX, m_y + m_changePosY,
+			m_x + m_changePosX + 500, m_y + m_changePosY + 50, 0x00ffff, true);
 	}
 
 	// 描画ブレンドモードをαブレンドにする
 	SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, m_blend);
 	// フォントデータを使い文字を描画
-	DrawStringToHandle(m_x, m_y, m_text, m_color, m_fontHandle);
+	DrawStringToHandle(m_x + m_changePosX, m_y + m_changePosY, m_text, m_color, m_fontHandle);
 	// 描画ブレンドモードをノーブレンドにする
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	if(m_rad != 0)DrawCircle(m_x + 250, m_y + 25, m_rad, 0xff0000,false);
+	if(m_rad != 0)DrawCircle(m_x + m_changePosX + 250, m_y + m_changePosY + 25, m_rad, 0xff0000,false);
 }
 
 // 選択フレームを表示するかどうか

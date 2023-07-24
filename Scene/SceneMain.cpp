@@ -74,6 +74,8 @@ void SceneMain::Init()
 
 	m_pField->Init();
 
+	m_pPause->Init();
+
 	m_pMap->Load();
 
 	// コインの数
@@ -143,6 +145,25 @@ SceneBase* SceneMain::Update()
 		return new SceneGameOver;
 	}
 
+	if (m_pPause->isSetMainScene())
+	{
+		if (SceneBase::UpdateSliderClose())
+		{
+			std::shared_ptr<FieldBase>m_pField;
+			m_pField = std::make_shared<FieldBase>();
+			return new SceneMain(m_pField);
+		}
+	}
+
+	if (m_pPause->isSetTitleScene())
+	{
+		if (SceneBase::UpdateSliderClose())
+		{
+			return new SceneTitle();
+		}
+	}
+
+
 	// 現在の指定関数に移動する
 	(this->*m_updateFunc)();
 	return this;
@@ -161,10 +182,10 @@ void SceneMain::Draw()
 	m_pItem->Draw();
 	// UIの描画
 	m_pUi->Draw();
-	// スライドの描画
-	SceneBase::DrawSliderDoor();
 	// ポーズ画面の描画
 	m_pPause->Draw();
+	// スライドの描画
+	SceneBase::DrawSliderDoor();
 }
 
 // 地面との判定

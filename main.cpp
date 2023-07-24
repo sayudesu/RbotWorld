@@ -15,8 +15,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMainWindowText(Game::kTitleText);
 	// 画面サイズの設定
 	SetGraphMode(Game::kScreenWidth, Game::kScreenHeight, Game::kColorDepth);
-
-//	SetUseASyncLoadFlag(true); // 非同期読み込みフラグON
+	// ウィンドのサイズを変更できるかどうか
+	SetWindowSizeChangeEnableFlag(Game::kWindowSizeChange);
+	// Log.txtでログを残すかどうか
+	SetOutApplicationLogValidFlag(Game::kLogText);
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{

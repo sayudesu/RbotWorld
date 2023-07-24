@@ -28,6 +28,9 @@ public:
 	/// </summary>
 	void Update();
 
+	// 座標を変更します
+	void UpdatePos(int x, int y);
+
 	/// <summary>
 	/// テキストを描画する
 	/// </summary>
@@ -67,7 +70,7 @@ public:
 	/// <param name="frame">枠　　</param>
 	Text(int x, int y, const char* text, int color, int size,bool frame);
 	virtual ~Text();
-
+	void UpdatePos(int x, int y);
 	void Draw();
 
 	void SetSelectFrame(bool isSelect);
@@ -77,6 +80,9 @@ private:
 	// 位置
 	int m_x;
 	int m_y;
+	// 元の位置からずらす用
+	int m_changePosX;
+	int m_changePosY;
 	// 文字
 	const char* m_text;
 	// 色
