@@ -3,6 +3,7 @@
 #include "Util/game.h"
 #include "Util/CreateText.h"
 #include "ButtonDrawer.h"
+#include "Util/Pad.h"
 
 PauseScreen::PauseScreen() :
 	m_updateFunc(&PauseScreen::UpdateStart),
@@ -104,7 +105,9 @@ void PauseScreen::UpdateStart()
 // ポーズ画面中
 void PauseScreen::UpdateMain()
 {
-	if (m_pText->GetSelectNo() == -1)
+	// 操作説明を描画していない場合
+	// 何も選択していない場合
+	if (m_pText->GetSelectNo() == -1 && !m_isButtonSettingDraw)
 	{
 		m_pText->Update();
 	}
@@ -113,6 +116,15 @@ void PauseScreen::UpdateMain()
 	if (m_isPauseEnd)
 	{
 		m_updateFunc = &PauseScreen::UpdateEnd;
+	}
+
+	// 操作説明を閉じる
+	if (m_isButtonSettingDraw)
+	{
+		if (Pad::isTrigger(PAD_INPUT_1))
+		{
+			m_isButtonSettingDraw = false;
+		}
 	}
 }
 
@@ -156,4 +168,5 @@ void PauseScreen::Reset()
 	m_boxPos = -Game::kScreenHeight;
 	m_isPauseEnd = false;
 	m_isEnd = false;
+	m_isButtonSettingDraw = false;
 }

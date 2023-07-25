@@ -58,17 +58,6 @@ UI::UI() :
 	m_pStringStatic = new StringStatic;
 	m_pStringStatic->InitFont(kFont, kFontName);
 	m_pStringStatic->AddStatic(Game::kScreenWidth/2 - 500, 100, "得点 = %d",0, 0xffffff, 100);
-
-#if DEBUG_
-	for (int i = 0; i < 2; i++)
-	{
-		m_scorePos[i] = { 0.0f,0.0f ,0.0f };
-	}
-	m_scorePos[0] = { 200.0f,260.0f ,0.0f };
-	m_scorePos[1] = { 200.0f,290.0f ,0.0f };
-	m_scoreString[0] = "コイン得点 = %d";
-	m_scoreString[1] = "ダイヤ得点 = %d";
-#endif
 }
 
 UI::~UI()

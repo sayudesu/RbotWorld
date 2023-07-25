@@ -120,15 +120,41 @@ SceneBase* SceneTitle::Update()
 	{ 
 		if (m_pDrawModeler->GetSceneChange())
 		{
+			// 説明スライド
+			static int yS = -Game::kScreenHeight;
+			static bool end = false;
+			static bool change = false;
+			// 上から下にスライド
+			if (yS < 0 && !end)
+			{
+				yS += 30;
+			}
+
 			// ボタン説明画面の座標
 			int x = Game::kScreenWidth / 2 + 100;
-			int y = Game::kScreenHeight / 2;
+			int y = Game::kScreenHeight / 2 + yS;
 			// ボタン説明画面の位置
 			m_pButtonDrawer->Update(x, y);
 
 			// 戻る
 			if (Pad::isTrigger(PAD_INPUT_1))
 			{
+				end = true;
+			}
+			// 下から上にスライド
+			if (end)
+			{
+				if(yS > Game::kScreenHeight)yS -= 30;
+				if (yS < -Game::kScreenHeight)
+				{
+					end = false;
+					change = true;
+				}
+			}
+
+			if (end && !change)
+			{
+				change = false;
 				m_pText->ResetSelectNo();
 			}
 		}
