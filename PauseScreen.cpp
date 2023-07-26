@@ -30,7 +30,7 @@ PauseScreen::~PauseScreen()
 
 void PauseScreen::Init()
 {
-	m_pText->Add(Game::kScreenWidth / 2 - 500, 250, "メニューがめんひょうじちゅう！", 0xffff00, 80, false);
+	m_pText->Add(Game::kScreenWidth / 2 - 500 + 90, 250 + 100, "メニューがめんひょうじちゅう！", 0xffff00, 55, false);
 	// スタート
 	int x = Game::kScreenWidth / 2 - 250;
 	int y = Game::kScreenHeight / 2 + 100 - 100;
@@ -121,11 +121,43 @@ void PauseScreen::UpdateMain()
 	// 操作説明を閉じる
 	if (m_isButtonSettingDraw)
 	{
-		if (Pad::isTrigger(PAD_INPUT_1))
+		// 説明スライド
+		static int yS = -Game::kScreenHeight;
+		static bool end = false;
+		// 上から下にスライド
+		if (yS < 0 && !end)
 		{
-			m_isButtonSettingDraw = false;
+			yS += 30;
+			m_isButtonSettingDraw = true;
+		}
+
+		// ボタン説明画面の座標
+		int x = Game::kScreenWidth / 2 + 100;
+		int y = Game::kScreenHeight / 2 + yS;
+		// ボタン説明画面の位置
+		m_pButtonSetting->Update(x, y);
+		// 戻る
+		if (Pad::isTrigger(PAD_INPUT_1) && !end)
+		{
+			end = true;
+		}
+		// 下から上にスライド
+		if (end)
+		{
+			if (yS > -Game::kScreenHeight)
+			{
+				yS -= 30;
+			}
+			else
+			{
+				end = false;
+				m_isButtonSettingDraw = false;
+				yS = -Game::kScreenHeight;
+			}
 		}
 	}
+
+	
 }
 
 // ポーズ画面終了用関数

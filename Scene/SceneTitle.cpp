@@ -123,7 +123,6 @@ SceneBase* SceneTitle::Update()
 			// 説明スライド
 			static int yS = -Game::kScreenHeight;
 			static bool end = false;
-			static bool change = false;
 			// 上から下にスライド
 			if (yS < 0 && !end)
 			{
@@ -137,25 +136,23 @@ SceneBase* SceneTitle::Update()
 			m_pButtonDrawer->Update(x, y);
 
 			// 戻る
-			if (Pad::isTrigger(PAD_INPUT_1))
+			if (Pad::isTrigger(PAD_INPUT_1)&&!end)
 			{
 				end = true;
 			}
 			// 下から上にスライド
 			if (end)
 			{
-				if(yS > Game::kScreenHeight)yS -= 30;
-				if (yS < -Game::kScreenHeight)
+				if (yS > -Game::kScreenHeight)
+				{
+					yS -= 30;
+				}
+				else
 				{
 					end = false;
-					change = true;
+					yS = -Game::kScreenHeight;
+					m_pText->ResetSelectNo();
 				}
-			}
-
-			if (end && !change)
-			{
-				change = false;
-				m_pText->ResetSelectNo();
 			}
 		}
 	}

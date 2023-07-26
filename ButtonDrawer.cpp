@@ -6,7 +6,7 @@ namespace
 	// 画像パス
 	const char* kImagePath = "Data/Img/Controller.png";
 	// 戻るボタン文字
-	const char* kBackString = "　A　でとじる";
+	const char* kBackString = "　えーぼたんでとじる";
 }
 
 ButtonDrawer::ButtonDrawer():
