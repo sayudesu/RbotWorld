@@ -11,7 +11,7 @@
 namespace
 {
 	// ファイル名
-	const char* const kFileName = "Data/Model/Player/Robot.mv1";
+	const char* const kFileName = "Data/Model/Player/RobotT.mv1";
 
 		// カメラの初期位置
 	constexpr VECTOR kCameraPos{ 300.0f,300.0f, -1300.0f };

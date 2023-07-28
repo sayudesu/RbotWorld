@@ -53,6 +53,12 @@ StringStatic::StringStatic() :
 
 StringStatic::~StringStatic()
 {
+	// ********** フォントのアンロード **********
+	if (RemoveFontResourceEx(m_fontPathName, FR_PRIVATE, NULL)) {
+	}
+	else {
+		MessageBox(NULL, "remove failure", "", MB_OK);
+	}
 }
 
 void StringStatic::InitFont(const char* fontPath, const char* fontName)
@@ -117,6 +123,7 @@ AddString::~AddString()
 {
 	// フォントハンドルデータのメモリ解放
 	DeleteFontToHandle(m_fontHandle);
+
 }
 
 void AddString::UpdateCharenge(int x,int y)

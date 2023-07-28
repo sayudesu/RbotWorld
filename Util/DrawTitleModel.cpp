@@ -43,6 +43,10 @@ TitleDrawModeler::~TitleDrawModeler()
 
 void TitleDrawModeler::Update()
 {
+	// マテリアルの輪郭線の太さを取得  
+	float dotwidth = MV1GetMaterialOutLineDotWidth(m_pModel->GetModelHandle(), 0);
+	// マテリアルの輪郭線の太さを拡大した分小さくする  
+	MV1SetMaterialOutLineDotWidth(m_pModel->GetModelHandle(), 0, dotwidth / 50.0f);
 	// モデルの更新処理
 	m_pModel->Update();
 	m_pModel->SetPos(VGet(m_posY, 0.0f, 0.0f));
