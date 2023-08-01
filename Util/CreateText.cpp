@@ -83,10 +83,10 @@ void CreateText::Update()
 	{
 		m_pText[selectNow + 1]->SetSelectRadius(selectRad += 6);
 
-		for (int i = 0; i < m_pText.size(); i++)
-		{
-			m_pText[selectNow + 1]->BlendMode();
-		}
+		//for (int i = 0; i < m_pText.size(); i++)
+		//{
+		//	m_pText[selectNow + 1]->BlendMode();
+		//}
 
 		if (selectRad > 100)
 		{

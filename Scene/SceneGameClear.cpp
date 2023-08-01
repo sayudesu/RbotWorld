@@ -4,6 +4,7 @@
 #include "../Util/game.h"
 #include "../Util/Pad.h"
 #include "../Util/Achievement.h"
+#include "../Util/Sound.h"
 
 namespace
 {
@@ -53,6 +54,9 @@ void SceneGameClear::Init()
 
 	m_pStringScore->AddStatic(Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 250.0f,
 		kDiamondText, m_diamondNum, 0x0000aa, 64);
+
+	// BGMÄ¶
+	Sound::startBgm(Sound::SoundId_Main, 50);
 }
 
 void SceneGameClear::End()
@@ -70,7 +74,6 @@ SceneBase* SceneGameClear::Update()
 		m_pStringScore->UpdateStatic(1, Game::kScreenWidth / 2 - 350.0f, Game::kScreenHeight / 2 - 50.0f + m_sliderPos, m_score);
 		m_pStringScore->UpdateStatic(2, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 150.0f + m_sliderPos, m_coinNum);
 		m_pStringScore->UpdateStatic(3, Game::kScreenWidth / 2 - 300.0f, Game::kScreenHeight / 2 + 250.0f + m_sliderPos, m_diamondNum);
-
 	}
 
 	m_buckLineCount++;

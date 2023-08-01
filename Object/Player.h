@@ -75,6 +75,10 @@ private:
 	bool m_isJumpImg = false;
 	bool m_isJumpPos = false;
 
+	int m_hGoal;
+	int m_goalX;
+	int m_goalY;
+
 	VECTOR screenPos = {};
 	VECTOR pos = {};
 	// 

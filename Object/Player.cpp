@@ -5,7 +5,7 @@
 #include "../Util/game.h"
 #include <cassert>
 #include "../Util/GraphAnimation.h"
-
+#include "../Util/Sound.h"
 #include <cmath>
 
 namespace
@@ -47,6 +47,9 @@ namespace
 
 Player::Player():
 	m_hJump(-1),
+	m_hGoal(-1),
+	m_goalX(0),
+	m_goalY(-Game::kScreenHeight),
 	m_updateFunc(&Player::UpdateRun),
 	m_isJumping(false),
 	m_animNo(kWalkAnimNo),
@@ -83,7 +86,6 @@ Player::Player():
 
 	// 動けます
 	m_isMove = true;
-
 }
 
 Player::~Player()
@@ -94,12 +96,14 @@ void Player::Init()
 {
 	// ジャンプエフェクト用画像をロード
 	m_hJump = DxLib::LoadGraph("Data/Img/jumpEffect.png");
+	m_hGoal = DxLib::LoadGraph("Data/Img/Goal.png");
 }
 
 void Player::End()
 {
-	// ジャンプエフェクト用ハンドルを削除
+	// ハンドルを削除
 	DxLib::DeleteGraph(m_hJump);
+	DxLib::DeleteGraph(m_hGoal);
 
 	delete m_pGraphAnimation;
 }
@@ -138,6 +142,8 @@ void Player::Draw()
 		// プレイヤーモデルの描画
 		m_pModel->Draw();
 	}
+
+	DrawRotaGraph(m_goalX, m_goalY,1, DX_PI_F * 180.0f, m_hGoal, true);
 }
 
 float Player::GetRadius() const
@@ -228,6 +234,12 @@ void Player::UpdateControl()
 	// ジャンプする
 	if (Pad::isTrigger(PAD_INPUT_1))// XBox : A
 	{
+		// 音量設定	0~255
+		if (!m_isFastJumping)
+		{
+			Sound::play(Sound::SoundId_Jump);
+			Sound::setVolume(Sound::SoundId_Jump, 100);
+		}
 		m_isFastJumping = true;
 		m_isJumpPos = true;
 	}
@@ -302,6 +314,16 @@ void Player::UpdateRun()
 		// ゲームクリア条件が揃うとクリア関数に移動
 		m_updateFunc = &Player::Goal;
 	}
+	static int count = 0;
+	count++;
+	if (count == 20)
+	{
+		Sound::play(Sound::SoundId_Run);
+		Sound::setVolume(Sound::SoundId_Run, 100);
+		count = 0;
+	}
+
+
 
 	UpdateMove();// 移動用関数
 	UpdateCamera();// カメラ用関数
@@ -371,16 +393,22 @@ void Player::Goal()
 	// 手を振るアニメ以外でこのupdateは呼ばれない
 	assert(m_animNo == kWaveAnimNo);
 
+	
+
 	// クリア画面に移行よう処理
 	// カメラの位置を変更する
 	if (m_goalCameraPos > -200.0f)
 	{
 		m_goalCameraPos -= 3.5f;
-
+	}
+	else
+	{
+		if (m_goalX < Game::kScreenWidth / 2)m_goalX += 30;
+		if (m_goalY < Game::kScreenHeight / 2)m_goalY += 30;
 	}
 
 	m_count++;
-	if (m_count > 60 * 3)
+	if (m_count > 60 * 5)
 	{
 		m_isClearSceneChange = true;
 	}
