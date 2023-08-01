@@ -10,7 +10,7 @@ class Map;
 class UI;
 class ItemManegaer;
 class PauseScreen;
-
+class EffekseerDrawer;
 class FieldBase;
 
 class SceneMain : public SceneBase
@@ -66,5 +66,7 @@ private:
 	PauseScreen* m_pPause;
 	bool m_isGameClear;
 	bool m_isGameOver;
+
+	EffekseerDrawer* m_pEffekseerDrawer;
 
 };

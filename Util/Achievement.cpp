@@ -53,12 +53,7 @@ StringStatic::StringStatic() :
 
 StringStatic::~StringStatic()
 {
-	// ********** フォントのアンロード **********
-	if (RemoveFontResourceEx(m_fontPathName, FR_PRIVATE, NULL)) {
-	}
-	else {
-		MessageBox(NULL, "remove failure", "", MB_OK);
-	}
+	
 }
 
 void StringStatic::InitFont(const char* fontPath, const char* fontName)

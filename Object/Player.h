@@ -42,6 +42,11 @@ public:
 	// 動けるかどうか
 	void SetMoveing(bool isMove) { m_isMove = isMove; }
 
+	// クリア位置に到着したかどうか
+	void SetClear(bool isClear) { m_isClear = isClear; }
+	// クリアした場合シーンを切り替える用
+	bool GetClear() { return m_isClearSceneChange; }
+
 private:
 	void UpdateInvincible();// 
 
@@ -53,6 +58,7 @@ private:
 	void UpdateRun();
 	// ジャンプする用関数
 	void UpdateJump();
+	void Goal();
 	// 移動用関数
 	void UpdateMove();
 	// 角度管理用関数
@@ -144,5 +150,13 @@ private:
 	int handle = 0;
 	// 動けるかどうか
 	bool m_isMove;
+	// クリアしたかどうか
+	bool m_isClear;
+	// クリアした時に一定フレーム経ったらtrueにする
+	bool m_isClearSceneChange;
+	// ゴール位置に移動した場合のカメラ位置を変更する
+	float m_goalCameraPos;
+	// シーン切り替えようカウント
+	int m_count; 
 };
 

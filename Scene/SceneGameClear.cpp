@@ -1,9 +1,9 @@
 #include "SceneGameClear.h"
 #include "SceneTitle.h"
 #include "SceneMain.h"
-#include "game.h"
-#include "Util/Pad.h"
-#include "Util/Achievement.h"
+#include "../Util/game.h"
+#include "../Util/Pad.h"
+#include "../Util/Achievement.h"
 
 namespace
 {

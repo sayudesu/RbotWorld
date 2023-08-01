@@ -3,7 +3,7 @@
 #include "SceneBase.h"
 #include "SceneMain.h"
 #include "SceneTitle.h"
-#include "Pad.h"
+#include "../Util/Pad.h"
 
 SceneManager::SceneManager():
 	m_pScene()

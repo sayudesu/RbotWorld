@@ -1,6 +1,6 @@
 #include "CreateText.h"
 #include <DxLib.h>
-#include "Util/Pad.h"
+#include "../Util/Pad.h"
 #include <cassert>
 
 namespace 

@@ -1,7 +1,7 @@
 #include "UI.h"
 #include <DxLib.h>
-#include "Util/Achievement.h"
-#include "Util/game.h"
+#include "../Util/Achievement.h"
+#include "../Util/game.h"
 
 namespace
 {

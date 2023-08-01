@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include <vector>
 #include <memory>
-#include "ItemName.h"
+#include "../Util/ItemName.h"
 
 class ItemBase;
 class ItemManegaer

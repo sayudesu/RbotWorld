@@ -1,16 +1,17 @@
 #include "SceneTitle.h"
 #include "SceneMain.h"
 #include <DxLib.h>
-#include "CreateText.h"
-#include "DrawTitleModel.h"
-#include "game.h"
-#include "Pad.h"
-#include "Sound.h"
-#include "ButtonDrawer.h"
-#include "FieldOne.h"
+#include "../Util/CreateText.h"
+#include "../Util/DrawTitleModel.h"
+#include "../Util/game.h"
+#include "../Util/Pad.h"
+#include "../Util/Sound.h"
+#include "../ButtonDrawer.h"
+#include "../CreditDrawer.h"
+#include "../FieldOne.h"
 
 
-#include "Shadow.h"
+#include "../Util/Shadow.h"
 
 namespace
 {
@@ -35,6 +36,7 @@ SceneTitle::SceneTitle()
 	m_pShadow = new Shadow(kFileName, kFileName2);
 	m_pText = new CreateText;
 	m_pButtonDrawer = new ButtonDrawer;
+	m_pCreditDrawer = new CreditDrawer;
 }
 
 SceneTitle::~SceneTitle()
@@ -42,6 +44,7 @@ SceneTitle::~SceneTitle()
 	delete m_pDrawModeler;
 	delete m_pText;
 	delete m_pButtonDrawer;
+	delete m_pCreditDrawer;
 }
 
 void SceneTitle::Init()
@@ -49,6 +52,7 @@ void SceneTitle::Init()
 	// BGM 再生
 	Sound::startBgm(Sound::SoundId_Title, 50);
 	m_pButtonDrawer->Init();
+	m_pCreditDrawer->Init();
 	// テキスト追加 //
 	// タイトル
 	m_pText->Add(Game::kScreenWidth/2 - 500,250 ,kTextTitle,0xffff00,130,false);
@@ -111,9 +115,45 @@ SceneBase* SceneTitle::Update()
 	{
 		if (m_pDrawModeler->GetSceneChange())
 		{
-			m_pText->ResetSelectNo();
-			DrawString(1000, 100, "まだクレジット表記はできていません。", 0xffffff);
+			// 説明スライド
+			static int yS = -Game::kScreenHeight;
+			static bool end = false;
+			// 上から下にスライド
+			if (yS < 0 && !end)
+			{
+				yS += 30;
+			}
+
+			// ボタン説明画面の座標
+			int x = Game::kScreenWidth / 2;
+			int y = Game::kScreenHeight / 2 + yS;
+			// ボタン説明画面の位置
+			m_pCreditDrawer->Update(x, y);
+
+			// 戻る
+			if (Pad::isTrigger(PAD_INPUT_1) && !end)
+			{
+				end = true;
+			}
+			// 下から上にスライド
+			if (end)
+			{
+				if (yS > -Game::kScreenHeight)
+				{
+					yS -= 30;
+				}
+				else
+				{
+					end = false;
+					yS = -Game::kScreenHeight;
+					m_pText->ResetSelectNo();
+				}
+			}
 		}
+	}
+	else
+	{
+		m_pCreditDrawer->Update(-Game::kScreenWidth / 2 + 100, 1000);
 	}
 	// 設定画面に移動
 	if (m_pText->GetSelectNo() == 2)
@@ -185,6 +225,7 @@ void SceneTitle::Draw()
 	// テキスト描画
 	m_pText->Draw();
 	m_pButtonDrawer->Draw();
+	m_pCreditDrawer->Draw();
 	// スライドを描画
 	SceneBase::DrawSliderDoor();
 }

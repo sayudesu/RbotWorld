@@ -3,23 +3,25 @@
 #include "SceneGameOver.h"
 #include "SceneGameClear.h"
 #include <DxLib.h>
-#include "game.h"
-#include "Object/Player.h"
+#include "../Util/game.h"
+#include "../Object/Player.h"
 
-#include "Object/Field.h"
-#include "Object/Map/Map.h"
-#include "UI.h"
+#include "../Object/Field.h"
+#include "../Object/Map/Map.h"
+#include "../Util/UI.h"
 
-#include "Object/Coin.h"
-#include "Object/ItemManegaer.h"
-#include "ItemName.h"
+#include "../Object/Coin.h"
+#include "../Object/ItemManegaer.h"
+#include "../Util/ItemName.h"
 
-#include "PauseScreen.h"
+#include "../PauseScreen.h"
 
-#include "FieldBase.h"
+#include "../FieldBase.h"
 
-#include "Sound.h"
-#include "Util/Pad.h"
+#include "../Util/Sound.h"
+#include "../Util/Pad.h"
+
+#include "../EffekseerDrawer.h"
 
 #include <cassert>
 
@@ -47,6 +49,7 @@ SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
 	m_pMap = new Map;
 	m_pUi = new UI;
 	m_pPause = new PauseScreen;
+	m_pEffekseerDrawer = new EffekseerDrawer;
 
 }
 
@@ -58,6 +61,7 @@ SceneMain::~SceneMain()
 	delete m_pPlayer;
 	delete m_pField;
 	delete m_pMap;
+	delete m_pEffekseerDrawer;
 }
 
 void SceneMain::Init()
@@ -75,6 +79,8 @@ void SceneMain::Init()
 	m_pField->Init();
 
 	m_pPause->Init();
+
+	m_pEffekseerDrawer->Init();
 
 	m_pMap->Load();
 
@@ -124,6 +130,8 @@ void SceneMain::End()
 
 	m_pField->End();
 
+	m_pEffekseerDrawer->End();
+
 	Sound::stopBgm(Sound::SoundId_Main);
 }
 
@@ -164,6 +172,7 @@ SceneBase* SceneMain::Update()
 	}
 
 
+
 	// 現在の指定関数に移動する
 	(this->*m_updateFunc)();
 	return this;
@@ -184,6 +193,11 @@ void SceneMain::Draw()
 	m_pUi->Draw();
 	// ポーズ画面の描画
 	m_pPause->Draw();
+	if (m_pPlayer->GetPos().x > 30000)
+	{
+		m_pEffekseerDrawer->Draw(m_pPlayer->GetPos());
+	}
+
 	// スライドの描画
 	SceneBase::DrawSliderDoor();
 }
@@ -302,13 +316,22 @@ void SceneMain::UpdateMain()
 	if (m_pPlayer->GetPos().x > 30000)
 	{
 		m_pPlayer->SetMoveing(false);
-		if (SceneBase::UpdateSliderClose())
+		// クリア位置まで来たことをプレイヤークラスに伝える
+		m_pPlayer->SetClear(true);
+
+		m_pEffekseerDrawer->Update();
+
+		// スコア表示シーンに移行できるかどうか
+		if (m_pPlayer->GetClear())
 		{
-			m_isGameClear = true;
+			if (SceneBase::UpdateSliderClose())
+			{
+				m_isGameClear = true;
+			}
 		}
 	}
-	//	return new SceneGameClear{ m_pUi->GetScore(),m_coinCount,m_diamondCount };
-		// 落下するかプレイヤーが死んだ場合はゲームオーバー画面に移動
+
+	// 落下で死んだ場合はゲームオーバー画面に移動
 	if (m_pPlayer->GetPos().y < -1000.0f ||
 		m_pPlayer->GetIsDead())
 	{

@@ -1,8 +1,8 @@
 #include "SceneGameOver.h"
 #include "SceneTitle.h"
 #include "SceneMain.h"
-#include "Util/game.h"
-#include "Util/Pad.h"
+#include "../Util/game.h"
+#include "../Util/Pad.h"
 
 
 SceneGameOver::SceneGameOver():

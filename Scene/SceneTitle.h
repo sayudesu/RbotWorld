@@ -2,13 +2,14 @@
 #include "SceneBase.h"
 #include <vector>
 #include <memory>
-#include "Util/Vec3.h"
+#include "../Util/Vec3.h"
 
 class CreateText;
 class TitleDrawModeler;
 class FieldBase;
 class Shadow;
 class ButtonDrawer;
+class CreditDrawer;
 
 class SceneTitle:public SceneBase
 {
@@ -29,6 +30,8 @@ private:
 	Shadow* m_pShadow;
 	// ボタン説明用クラス
 	ButtonDrawer* m_pButtonDrawer;
+	// クレジット表記用クラス
+	CreditDrawer* m_pCreditDrawer;
 	std::shared_ptr<FieldBase>m_pField;
 };
 

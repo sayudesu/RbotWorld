@@ -1,5 +1,5 @@
 #pragma once
-#include "Util/Vec3.h"
+#include "../Util/Vec3.h"
 #include <vector>
 #include <memory>
 class Text;

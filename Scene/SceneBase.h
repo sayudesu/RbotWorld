@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3.h"
+#include "../Util/Vec3.h"
 // ゲームシーン基底クラス
 class SceneBase
 {

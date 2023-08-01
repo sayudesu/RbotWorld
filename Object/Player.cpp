@@ -1,10 +1,10 @@
 #include "Player.h"
 #include <DxLib.h>
-#include "Pad.h"
-#include "Model.h"
-#include "game.h"
+#include "../Util/Pad.h"
+#include "../Util/Model.h"
+#include "../Util/game.h"
 #include <cassert>
-#include "GraphAnimation.h"
+#include "../Util/GraphAnimation.h"
 
 #include <cmath>
 
@@ -13,10 +13,11 @@ namespace
 	// ファイル名
 	const char* const kFileName = "Data/Model/Player/RobotT.mv1";
 
-		// カメラの初期位置
+	// カメラの初期位置
 	constexpr VECTOR kCameraPos{ 300.0f,300.0f, -1300.0f };
 	constexpr VECTOR kCameraTarget{ 300.0f,300.0f, 0.0f };
-
+	// ゴールした場合のカメラ
+	constexpr VECTOR kPlayerRotaGoal{ 0.0f,90.0f * DX_PI_F * 180.0f ,0.0f };
 	// プレイヤーの移動量
 	constexpr VECTOR kPlayerVec{ 0.0f, 0.0f, -30.0f };
 
@@ -61,7 +62,11 @@ Player::Player():
 	m_slowSpeed(0.0f),
 	m_isDead(false),// 死んでいるかどうか
 	m_hp(kMaxHp),
-	m_damageFrame(0)
+	m_damageFrame(0),
+	m_isClear(false),
+	m_isClearSceneChange(false),
+	m_goalCameraPos(200.0f),
+	m_count(0)
 
 {
 	// 3Dモデルの生成
@@ -185,15 +190,6 @@ void Player::JumpEffect()
 		{
 			m_pGraphAnimation->Animation(m_jumpImgX, imageSizeX, imageNum);
 			m_jumpImgCount = 0;
-			//if (m_jumpImgX < imageSizeX * imageNum)
-			//{
-			//	m_jumpImgX += imageSizeX;
-			//}
-			//else
-			//{
-			//	// アニメーションが終わったら画像を非表示
-			//	m_isJumpImg = false;		
-			//}
 		}
 	}
 	else
@@ -245,9 +241,7 @@ void Player::UpdateCamera()
 
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
-
-	VECTOR cameraTrans = { m_pos.x + 200.0f,0.0f,m_pos.z };
-
+	VECTOR cameraTrans = { m_pos.x + m_goalCameraPos,0.0f,m_pos.z };
 	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
 	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる
@@ -262,10 +256,9 @@ void Player::UpdateCamera()
 	SetCameraNearFar(5.0f, 2800.0f);
 	// カメラの視野角（60）を設定（ラジアン）
 	SetupCamera_Perspective(60.0f * DX_PI_F / 180.0f);
+
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
-//	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x + 125, m_pos.y + 400.0f, m_pos.z), 
-//							  VGet(cameraTarget.x, m_pos.y   + 400.0f, cameraTarget.z));
 }
 
 void Player::UpdateRun()
@@ -279,7 +272,6 @@ void Player::UpdateRun()
 	// ジャンプできるかどうか
 	if(m_isFastJumping)
 	{
-
 		// ジャンプ力
 		m_jumpAcc = kJumpPower;
 		// ジャンプアニメーションに変更
@@ -299,6 +291,16 @@ void Player::UpdateRun()
 	{
 		m_animNo = kWalkAnimNo;
 		m_pModel->ChangeAnimation(m_animNo, true, false, 4);
+	}
+
+	if (m_isClear)
+	{
+		// ジャンプアニメーションに変更
+		m_animNo = kWaveAnimNo;
+		// アニメーションを変更する
+		m_pModel->ChangeAnimation(m_animNo, true, true, 4);
+		// ゲームクリア条件が揃うとクリア関数に移動
+		m_updateFunc = &Player::Goal;
 	}
 
 	UpdateMove();// 移動用関数
@@ -362,6 +364,41 @@ void Player::UpdateJump()
 	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
 	JumpEffect();// エフェクト描画
+}
+
+void Player::Goal()
+{
+	// 手を振るアニメ以外でこのupdateは呼ばれない
+	assert(m_animNo == kWaveAnimNo);
+
+	// クリア画面に移行よう処理
+	// カメラの位置を変更する
+	if (m_goalCameraPos > -200.0f)
+	{
+		m_goalCameraPos -= 3.5f;
+
+	}
+
+	m_count++;
+	if (m_count > 60 * 3)
+	{
+		m_isClearSceneChange = true;
+	}
+
+	// モデルの更新
+	m_pModel->Update();
+	m_pModel->SetRot(kPlayerRotaGoal);
+
+	// 手を振るアニメだったら手を振るアニメに変更
+	if (m_animNo == kWaveAnimNo)
+	{
+		m_animNo = kWaveAnimNo;
+		m_pModel->ChangeAnimation(m_animNo, true, false, 4);
+	}
+
+
+	// カメラ
+	UpdateCamera();
 }
 
 void Player::UpdateMove()
