@@ -6,6 +6,8 @@ namespace
 {
 	// アイテムの回転スピード
 	constexpr float kRotaSpeed = 0.05f;
+	// アイテム描画不可位置
+	constexpr float kErasePosY = 1200.0f;
 }
 
 ItemBase::ItemBase(int handle):
@@ -33,8 +35,9 @@ void ItemBase::Update()
 
 void ItemBase::StartUpdate()
 {
+	// アイテムの状態を変更
 	ItemState();
-
+	// アイテムをプレイヤーが入手すると
 	if (m_isErase)
 	{
 		m_updateFunc = &ItemBase::Erase;
@@ -44,12 +47,15 @@ void ItemBase::StartUpdate()
 // ３Ｄモデルの描画
 void ItemBase::Draw()
 {	
-	MV1DrawModel(m_hItem);
+	// アイテム描画距離を指定
+	if(m_pos.y < kErasePosY)MV1DrawModel(m_hItem);
 }
 
 void ItemBase::Erase()
 {
+	// アイテムを上昇させる
 	m_pos.y += 30.0f;
+	// アイテムの状態を変更
 	ItemState();
 }
 
@@ -65,21 +71,21 @@ void ItemBase::ItemState()
 // オブジェクトを回転させます
 void ItemBase::UpdateRota()
 {
-	int a = GetRand(4);
+	int rotaNo = GetRand(4);
 	float speedRand = 0.0f;
-	if (a == 0)
+	if (rotaNo == 0)
 	{
 		speedRand = 0.02;
 	}
-	else if(a == 1)
+	else if(rotaNo == 1)
 	{
 		speedRand = 0.04;
 	}
-	else if (a == 2)
+	else if (rotaNo == 2)
 	{
 		speedRand = 0.06;
 	}
-	else if (a == 3)
+	else if (rotaNo == 3)
 	{
 		speedRand = 0.08;
 	}

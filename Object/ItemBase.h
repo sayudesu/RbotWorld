@@ -53,7 +53,6 @@ protected:
 	VECTOR m_rota;
 	// アイテムを消すための処理
 	bool m_isErase;
-
 	// メンバ関数ポインタ
 	void (ItemBase::*m_updateFunc)();
 };
