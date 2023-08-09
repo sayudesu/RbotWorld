@@ -16,6 +16,9 @@ namespace
 	const char* kCoinText      = "Ç±Ç¢ÇÒÇÃÇ©Ç∏   %d";
 	const char* kDiamondText   = "É_ÉCÉÑÇÃÇ©Ç∏   %d";
 
+	// BGMÇÃâπó 
+	constexpr int kBgmVolume = 50;
+
 }
 
 SceneGameClear::SceneGameClear(int score,int coinNum,int diamondNum):
@@ -36,7 +39,8 @@ SceneGameClear::SceneGameClear(int score,int coinNum,int diamondNum):
 
 SceneGameClear::~SceneGameClear()
 {
-
+	// BGM í‚é~
+	Sound::stopBgm(Sound::SoundId_Main);
 }
 
 void SceneGameClear::Init()
@@ -56,7 +60,7 @@ void SceneGameClear::Init()
 		kDiamondText, m_diamondNum, 0x0000aa, 64);
 
 	// BGMçƒê∂
-	Sound::startBgm(Sound::SoundId_Main, 50);
+	Sound::startBgm(Sound::SoundId_Main, kBgmVolume);
 }
 
 void SceneGameClear::End()

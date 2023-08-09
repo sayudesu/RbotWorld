@@ -41,6 +41,9 @@ SceneTitle::SceneTitle()
 
 SceneTitle::~SceneTitle()
 {
+	// BGM í‚é~
+	Sound::stopBgm(Sound::SoundId_Title);
+
 	delete m_pDrawModeler;
 	delete m_pText;
 	delete m_pButtonDrawer;
@@ -76,8 +79,7 @@ void SceneTitle::Init()
 
 void SceneTitle::End()
 {
-	// BGM í‚é~
-	Sound::stopBgm(Sound::SoundId_Title);
+
 }
 
 SceneBase* SceneTitle::Update()

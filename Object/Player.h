@@ -2,7 +2,6 @@
 #include <DxLib.h>
 #include <memory>
 
-class SceneTest;
 class Model;
 class GraphAnimation;
 
@@ -48,10 +47,7 @@ public:
 	bool GetClear() { return m_isClearSceneChange; }
 
 private:
-	void UpdateInvincible();// 
-
 	void JumpEffect();
-
 	// カメラの更新
 	void UpdateCamera();
 	// 動き全体の更新用関数
@@ -74,23 +70,20 @@ private:
 	int m_jumpImgX = 0;
 	bool m_isJumpImg = false;
 	bool m_isJumpPos = false;
-
+	// ゴール用変数
 	int m_hGoal;
 	int m_goalX;
 	int m_goalY;
-
-	VECTOR screenPos = {};
-	VECTOR pos = {};
-	// 
-	SceneTest* m_pScene;
 
 	// メンバ関数ポインタ
 	void (Player::*m_updateFunc)();
 
 	// プレイヤーのモデル
 	std::shared_ptr<Model> m_pModel;
-
+	// 画像アニメーション用クラス
 	GraphAnimation* m_pGraphAnimation;
+	// 画像のスクリーン位置
+	VECTOR m_screenPos;
 	
 	// ジャンプできるかどうか
 	// (true : ジャンプできる, false : ジャンプできない)
@@ -139,19 +132,9 @@ private:
 	// 死んだかどうか(true : 死んでいる,false : 死んでいない)
 	bool m_isDead;
 
-	bool m_isDamage = false;// ダメージを受けたかどうか
-	int m_tempDamage = 0;// 前回受けたダメージを保存する
-	int m_tempHp = 0;// 保存用体力
-	int m_ultimateTimer = 1;// ダメージをくらった場合の無敵判定用
-
 	// 回転角度を更新
 	float m_rad = 0.0f;
 
-	VECTOR startPos = { 0.0f,0.0f ,0.0f };
-	VECTOR endPos   = { 0.0f,0.0f ,0.0f };
-
-	int m_tempScreenH = 0;
-	int handle = 0;
 	// 動けるかどうか
 	bool m_isMove;
 	// クリアしたかどうか

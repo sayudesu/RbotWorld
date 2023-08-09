@@ -14,6 +14,9 @@ namespace
 	const char* kGameOverText = "げーむおーばー！";
 	const char* kGameOverNextText = "さいしょからだ！";
 
+	// BGMの音量
+	constexpr int kBgmVolume = 50;
+
 }
 
 SceneGameOver::SceneGameOver():
@@ -30,6 +33,9 @@ SceneGameOver::SceneGameOver():
 
 SceneGameOver::~SceneGameOver()
 {
+	// BGM 停止
+	Sound::stopBgm(Sound::SoundId_Main);
+
 	delete m_pStringScore;
 }
 
@@ -44,7 +50,7 @@ void SceneGameOver::Init()
 		kGameOverNextText, 0, 0xffffff, 64 + 32 + 16);
 
 	// BGM再生
-	Sound::startBgm(Sound::SoundId_Main, 50);
+	Sound::startBgm(Sound::SoundId_Main, kBgmVolume);
 }
 
 void SceneGameOver::End()

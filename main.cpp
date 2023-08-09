@@ -55,7 +55,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0) 
 	{
 		ChangeFont("851レトロゴ", DX_CHARSET_DEFAULT);
-	//	font = LoadFontDataToHandle("851レトロゴ");
 	}
 	else
 	{
@@ -106,8 +105,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Effekseerを終了する。
 	Effkseer_End();
-
-	DxLib_End();				// ＤＸライブラリ使用の終了処理
-
-	return 0;				// ソフトの終了 
+	// ＤＸライブラリ使用の終了処理
+	DxLib_End();				
+	// ソフトの終了 
+	return 0;				
 }

@@ -8,6 +8,8 @@ namespace
 	constexpr float kRotaSpeed = 0.05f;
 	// アイテム描画不可位置
 	constexpr float kErasePosY = 1200.0f;
+	// コイン入手サウンドの音量
+	constexpr int kCoinVolume = 80;
 }
 
 ItemBase::ItemBase(int handle):
@@ -106,5 +108,5 @@ void ItemBase::SetEraseItem(bool isErase)
 	m_isErase = isErase;
 	Sound::play(Sound::SoundId_Coin);
 	// 音量設定	0~255
-	Sound::setVolume(Sound::SoundId_Coin, 100);
+	Sound::setVolume(Sound::SoundId_Coin, kCoinVolume);
 }

@@ -39,10 +39,6 @@ namespace
 
 	// 当たり判定サイズ半径
 	constexpr float kColRaidus = 50.0f;
-
-	// HP
-	constexpr int kMaxHp = 100;
-
 }
 
 Player::Player():
@@ -64,8 +60,6 @@ Player::Player():
 	m_cameraAngle(m_angle),
 	m_slowSpeed(0.0f),
 	m_isDead(false),// 死んでいるかどうか
-	m_hp(kMaxHp),
-	m_damageFrame(0),
 	m_isClear(false),
 	m_isClearSceneChange(false),
 	m_goalCameraPos(200.0f),
@@ -125,7 +119,7 @@ void Player::Draw()
 
 		DrawRectRotaGraph
 		(
-			screenPos.x, screenPos.y - 100.0f,// 画像位置
+			m_screenPos.x, m_screenPos.y - 100.0f,// 画像位置
 			m_jumpImgX, 0,					  // 画像の左上
 			imgX, imgY,						  // 画像の右下
 			size,							  // サイズ
@@ -136,12 +130,8 @@ void Player::Draw()
 	}
 
 
-	// 点滅
-	if (m_ultimateTimer % 2 != 0)
-	{
-		// プレイヤーモデルの描画
-		m_pModel->Draw();
-	}
+	// プレイヤーモデルの描画
+	m_pModel->Draw();
 
 	DrawRotaGraph(m_goalX, m_goalY,1, DX_PI_F * 180.0f, m_hGoal, true);
 }
@@ -149,20 +139,6 @@ void Player::Draw()
 float Player::GetRadius() const
 {
 	return kColRaidus;
-}
-
-// 点滅処理 //
-void Player::UpdateInvincible()
-{
-	// 点滅処理
-	if (m_ultimateTimer > 0 + 1)
-	{
-		m_ultimateTimer--;
-	}
-	else
-	{
-		m_ultimateTimer = 1;
-	}
 }
 
 // ジャンプエフェクト //
@@ -179,8 +155,8 @@ void Player::JumpEffect()
 		// ワールド座標からスクリーン座標に変換
 		if (m_isJumpPos)
 		{
-			pos = { m_pModel->GetModelPos().x,m_pModel->GetModelPos().y ,m_pModel->GetModelPos().z };
-			screenPos = ConvWorldPosToScreenPos(pos);
+			VECTOR pos = { m_pModel->GetModelPos().x,m_pModel->GetModelPos().y ,m_pModel->GetModelPos().z };
+			m_screenPos = ConvWorldPosToScreenPos(pos);
 			m_isJumpPos = false;
 		}
 
@@ -205,7 +181,7 @@ void Player::JumpEffect()
 	}
 
 	// 画像が同じ位置にとどまらない様に
-	screenPos.x -= 30.0f;
+	m_screenPos.x -= 30.0f;
 }
 
 // 操作処理 //
@@ -328,7 +304,6 @@ void Player::UpdateRun()
 	UpdateMove();// 移動用関数
 	UpdateCamera();// カメラ用関数
 	UpdateGravity();//重力系管理用関数
-	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
 }
 
@@ -383,7 +358,6 @@ void Player::UpdateJump()
 	UpdateCamera();// カメラ用関数
 	UpdateGravity();//重力系管理用関数
 	UpdateHitField();//地面に当たった場合の処理
-	UpdateInvincible();// 無敵時間処理
 	UpdateRot();// 角度用関数
 	JumpEffect();// エフェクト描画
 }

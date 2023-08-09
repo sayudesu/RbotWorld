@@ -29,6 +29,8 @@ namespace
 {
 	// ‰ŠúˆÊ’u
 	Vec3 kPos = { static_cast<float>(Game::kScreenWidth),0.0f ,0.0f };
+	// BGM‚Ì‰¹—Ê
+	constexpr int kBgmVolume = 50;
 }
 
 SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
@@ -55,6 +57,9 @@ SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
 
 SceneMain::~SceneMain()
 {
+	m_pEffekseerDrawer->End();
+
+	Sound::stopBgm(Sound::SoundId_Main);
 
 	m_pItem.reset();
 
@@ -121,7 +126,7 @@ void SceneMain::Init()
 	m_pUi->SetItemMaxNum(Item::diamond, m_diamondNum);
 
 	// BGMÄ¶
-	Sound::startBgm(Sound::SoundId_Main, 50);
+	Sound::startBgm(Sound::SoundId_Main, kBgmVolume);
 }
 
 void SceneMain::End()
@@ -129,10 +134,6 @@ void SceneMain::End()
 	m_pPlayer->End();
 
 	m_pField->End();
-
-	m_pEffekseerDrawer->End();
-
-	Sound::stopBgm(Sound::SoundId_Main);
 }
 
 // XV //
