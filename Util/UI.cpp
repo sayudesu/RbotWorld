@@ -57,7 +57,7 @@ UI::UI() :
 
 	m_pStringStatic = new StringStatic;
 	m_pStringStatic->InitFont(kFont, kFontName);
-	m_pStringStatic->AddStatic(Game::kScreenWidth/2 - 500, 100, "得点 = %d",0, 0xffffff, 100);
+	m_pStringStatic->AddStatic(Game::kScreenWidth/2, 100, "%d",0, 0xffffff, 100);
 }
 
 UI::~UI()
@@ -80,7 +80,7 @@ void UI::Update()
 
 	// スコアの更新-------------------------------------------------------------------------------------
 	Score();
-	m_pStringStatic->UpdateStatic(0, Game::kScreenWidth / 2 - 500, 100, m_score);
+	m_pStringStatic->UpdateStatic(0, Game::kScreenWidth / 2, 100, m_score);
 	// -------------------------------------------------------------------------------------------------
 	
 }

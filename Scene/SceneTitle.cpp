@@ -47,6 +47,7 @@ SceneTitle::~SceneTitle()
 	delete m_pDrawModeler;
 	delete m_pText;
 	delete m_pButtonDrawer;
+	delete m_pShadow;
 	delete m_pCreditDrawer;
 }
 
@@ -202,6 +203,7 @@ SceneBase* SceneTitle::Update()
 	{
 		m_pButtonDrawer->Update(-Game::kScreenWidth / 2 + 100, 1000);
 	}
+
 	// ƒQ[ƒ€I—¹
 	if (m_pText->GetSelectNo() == 3)
 	{

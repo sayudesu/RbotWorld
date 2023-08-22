@@ -49,19 +49,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);
-	int font = -1;
-	// ********** フォントのロード **********
-	LPCSTR font_path = "Data/Fonts/851letrogo_007.ttf"; // 読み込むフォントファイルのパス
-	if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0) 
-	{
-		ChangeFont("851レトロゴ", DX_CHARSET_DEFAULT);
-	}
-	else
-	{
-		// フォント読込エラー処理
-		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
-	}
-	
+	//int font = -1;
+	//// ********** フォントのロード **********
+	//LPCSTR font_path = "Data/Fonts/851letrogo_007.ttf"; // 読み込むフォントファイルのパス
+	//if (AddFontResourceEx(font_path, FR_PRIVATE, NULL) > 0) 
+	//{
+	//	ChangeFont("851レトロゴ", DX_CHARSET_DEFAULT);
+	//}
+	//else
+	//{
+	//	// フォント読込エラー処理
+	//	MessageBox(NULL, "フォント読込失敗", "", MB_OK);
+	//}
+	//
 	// サウンド読み込み
 	Sound::load();
 
@@ -91,13 +91,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	// ********** フォントのアンロード **********
-	if (RemoveFontResourceEx(font_path, FR_PRIVATE, NULL)) {
-	}
-	else {
-		MessageBox(NULL, "remove failure", "", MB_OK);
-	}
-	DeleteFontToHandle(font);
+	//// ********** フォントのアンロード **********
+	//if (RemoveFontResourceEx(font_path, FR_PRIVATE, NULL)) {
+	//}
+	//else {
+	//	MessageBox(NULL, "remove failure", "", MB_OK);
+	//}
+	//DeleteFontToHandle(font);
 
 	pScene->End();
 
