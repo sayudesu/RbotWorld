@@ -111,13 +111,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(DXLIBEF_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(DXLIBEF_DIR);$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(DXLIBEF_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(DXLIBEF_DIR);$(DXLIB_DIR)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +142,6 @@
   <ItemGroup>
     <ClCompile Include="ButtonDrawer.cpp" />
     <ClCompile Include="CreditDrawer.cpp" />
-    <ClCompile Include="EffekseerDrawer.cpp" />
     <ClCompile Include="FieldBase.cpp" />
     <ClCompile Include="FieldOne.cpp" />
     <ClCompile Include="Object\Coin.cpp" />
@@ -176,7 +175,6 @@
   <ItemGroup>
     <ClInclude Include="ButtonDrawer.h" />
     <ClInclude Include="CreditDrawer.h" />
-    <ClInclude Include="EffekseerDrawer.h" />
     <ClInclude Include="FieldBase.h" />
     <ClInclude Include="FieldOne.h" />
     <ClInclude Include="Object\Coin.h" />

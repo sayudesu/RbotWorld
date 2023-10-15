@@ -21,8 +21,6 @@
 #include "../Util/Sound.h"
 #include "../Util/Pad.h"
 
-#include "../EffekseerDrawer.h"
-
 #include <cassert>
 
 namespace
@@ -51,13 +49,11 @@ SceneMain::SceneMain(std::shared_ptr<FieldBase>field):
 	m_pMap = new Map;
 	m_pUi = new UI;
 	m_pPause = new PauseScreen;
-	m_pEffekseerDrawer = new EffekseerDrawer;
 
 }
 
 SceneMain::~SceneMain()
 {
-	m_pEffekseerDrawer->End();
 
 	Sound::stopBgm(Sound::SoundId_Main);
 
@@ -66,7 +62,6 @@ SceneMain::~SceneMain()
 	delete m_pPlayer;
 	delete m_pField;
 	delete m_pMap;
-	delete m_pEffekseerDrawer;
 }
 
 void SceneMain::Init()
@@ -85,7 +80,6 @@ void SceneMain::Init()
 
 	m_pPause->Init();
 
-	m_pEffekseerDrawer->Init();
 
 	m_pMap->Load();
 
@@ -194,10 +188,6 @@ void SceneMain::Draw()
 	m_pUi->Draw();
 	// ポーズ画面の描画
 	m_pPause->Draw();
-	if (m_pPlayer->GetPos().x > 30000)
-	{
-		m_pEffekseerDrawer->Draw(m_pPlayer->GetPos());
-	}
 
 	// スライドの描画
 	SceneBase::DrawSliderDoor();
@@ -319,8 +309,6 @@ void SceneMain::UpdateMain()
 		m_pPlayer->SetMoveing(false);
 		// クリア位置まで来たことをプレイヤークラスに伝える
 		m_pPlayer->SetClear(true);
-
-		m_pEffekseerDrawer->Update();
 
 		// スコア表示シーンに移行できるかどうか
 		if (m_pPlayer->GetClear())
